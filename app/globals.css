@@ -1,0 +1,33 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --foreground-color: #000000;
+  --background-color: #ffffff;
+  --button-bg-color: #4f46e5; /* Example variable for button background */
+  --button-text-color: #ffffff; /* Example variable for button text color */
+}
+
+[data-theme='dark'] {
+  --foreground-color: #ffffff;
+  --background-color: #000000;
+  --button-bg-color: #6366f1; /* Dark theme variable for button background */
+  --button-text-color: #e5e7eb; /* Dark theme variable for button text color */
+}
+
+body {
+  color: var(--foreground-color);
+  background-color: var(--background-color);
+}
+
+button {
+  background-color: var(--button-bg-color);
+  color: var(--button-text-color);
+}
+
+@layer utilities {
+  .text-balance {
+    text-wrap: balance;
+  }
+}
