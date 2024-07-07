@@ -1,3 +1,4 @@
+// pwa-burton-next/components/ThemeProviderWrapper.tsx
 import React, { ReactNode, cloneElement, isValidElement, useContext } from 'react';
 import { ThemeContext } from '../context/themeContext';
 
@@ -12,14 +13,28 @@ const ThemeProviderWrapper = ({ children }: ThemeProviderWrapperProps) => {
     throw new Error('ThemeProviderWrapper must be used within a ThemeProvider');
   }
 
-  const { theme } = themeContext;
+  const { foreground, background } = themeContext;
+
+  const addThemeToChild = (child: React.ReactElement) => {
+    const existingStyle = child.props.style || {};
+
+    const newStyle = {
+      ...existingStyle,
+      '--foreground-color': foreground,
+      '--background-color': background,
+    };
+
+    if (typeof child.type === 'string' || (typeof child.type === 'function' && 'propTypes' in child.type)) {
+      return cloneElement(child, { style: newStyle });
+    }
+
+    return child;
+  };
 
   return (
     <>
       {React.Children.map(children, (child) =>
-        isValidElement(child)
-          ? cloneElement(child, { style: { ...child.props.style, '--foreground-color': theme.foreground, '--background-color': theme.background } })
-          : child
+        isValidElement(child) ? addThemeToChild(child) : child
       )}
     </>
   );

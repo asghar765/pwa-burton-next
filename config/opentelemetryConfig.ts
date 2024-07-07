@@ -1,3 +1,4 @@
+// pwa-burton-next/config/opentelemetryConfig.ts
 import { BasicTracerProvider, ConsoleSpanExporter, SimpleSpanProcessor } from '@opentelemetry/sdk-trace-base';
 import { WebTracerProvider } from '@opentelemetry/sdk-trace-web';
 

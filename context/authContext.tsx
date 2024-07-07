@@ -3,7 +3,7 @@ import React, { createContext, useContext, useEffect, useState } from 'react';
 import { getAuth, onAuthStateChanged, User } from 'firebase/auth';
 import { doc, getDoc, getFirestore } from 'firebase/firestore';
 import { initializeApp } from 'firebase/app';
-import { firebaseConfig } from '../config/firebaseConfig';
+import { firebaseConfig } from '../config/firebaseConfig'; // Import the firebaseConfig from the config file
 
 const firebaseApp = initializeApp(firebaseConfig);
 

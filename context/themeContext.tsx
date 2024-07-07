@@ -1,11 +1,13 @@
+// pwa-burton-next/context/themeContext.tsx
 'use client';
 
 import React, { createContext, useContext, useState, useEffect } from 'react';
+import { themeConfig } from '../config/themeConfig';
 
 interface ThemeContextType {
-  foreground: any;
-  background: any;
   theme: 'light' | 'dark';
+  foreground: string;
+  background: string;
   toggleTheme: () => void;
 }
 
@@ -35,8 +37,10 @@ export const ThemeProvider: React.FC<{ children: React.ReactNode }> = ({ childre
     document.documentElement.setAttribute('data-theme', newTheme);
   };
 
+  const currentThemeConfig = themeConfig[theme];
+
   return (
-    <ThemeContext.Provider value={{ theme, toggleTheme }}>
+    <ThemeContext.Provider value={{ theme, foreground: currentThemeConfig.foreground, background: currentThemeConfig.background, toggleTheme }}>
       {children}
     </ThemeContext.Provider>
   );

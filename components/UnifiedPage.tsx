@@ -1,21 +1,24 @@
-import React from 'react';
-import { useTheme } from '../context/themeContext';
+// pwa-burton-next/components/UnifiedPage.tsx
+import React, { useContext } from 'react';
+import { ThemeContext } from '../context/themeContext';
 
-interface UnifiedPageProps {
-  children: React.ReactNode;
-}
+const UnifiedPage = () => {
+  const themeContext = useContext(ThemeContext);
 
-const UnifiedPage: React.FC<UnifiedPageProps> = ({ children }) => {
-  const { theme } = useTheme();
+  if (!themeContext) {
+    throw new Error('UnifiedPage must be used within a ThemeProvider');
+  }
+
+  const { foreground, background } = themeContext;
 
   const unifiedPageStyle = {
-    color: theme.foreground,
-    backgroundColor: theme.background,
+    color: foreground,
+    backgroundColor: background,
   };
 
   return (
-    <div style={unifiedPageStyle} className="min-h-screen flex flex-col">
-      {children}
+    <div style={unifiedPageStyle}>
+      {/* Your component JSX */}
     </div>
   );
 };

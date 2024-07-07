@@ -10,13 +10,22 @@ export const diagnoseRoute = (url: string, isSuccess: boolean) => {
     try {
       console.log(isSuccess ? `Route ${url} is functional.` : `Issue detected in route ${url}.`);
     } catch (error) {
-      console.error(`Error during route diagnostics for ${url}`, error.message, error.stack);
-      span.recordException({
-        name: 'RouteDiagnosticException',
-        message: `Diagnostic error for route: ${url}`,
-        stack: error.stack
-      });
-      span.setStatus({ code: SpanStatusCode.ERROR, message: error.message });
+      if (error instanceof Error) {
+        console.error(`Error during route diagnostics for ${url}`, error.message, error.stack);
+        span.recordException({
+          name: 'RouteDiagnosticException',
+          message: `Diagnostic error for route: ${url}`,
+          stack: error.stack
+        });
+        span.setStatus({ code: SpanStatusCode.ERROR, message: error.message });
+      } else {
+        console.error(`Error during route diagnostics for ${url}`, error);
+        span.recordException({
+          name: 'RouteDiagnosticException',
+          message: `Diagnostic error for route: ${url}`,
+        });
+        span.setStatus({ code: SpanStatusCode.ERROR, message: 'Unknown error occurred' });
+      }
     } finally {
       span.end();
     }
