@@ -1,4 +1,5 @@
 import { trace, SpanStatusCode } from '@opentelemetry/api';
+import { auth } from '../config/firebaseConfig';
 
 export const diagnoseRoute = (url: string, isSuccess: boolean) => {
   const tracer = trace.getTracer('pwa-app-route-diagnostic');
