@@ -3,7 +3,7 @@ import { getFirestore } from 'firebase/firestore';
 import { getAuth } from 'firebase/auth';
 
 const firebaseConfig = {
-  apiKey: "AIzaSyBIdEm_bTr7X_AYKrW_e5-vjNxpu8vRSKg",
+  apiKey: "AIzaSyAd9Zg5iyK8vVFo5UjfZntNyyCtdSuhTIE",
   authDomain: "bwaapp1.firebaseapp.com",
   databaseURL: "https://bwaapp1-default-rtdb.europe-west1.firebasedatabase.app",
   projectId: "bwaapp1",
