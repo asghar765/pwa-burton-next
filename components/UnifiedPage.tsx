@@ -1,6 +1,7 @@
 // pwa-burton-next/components/UnifiedPage.tsx
 import React, { useContext } from 'react';
 import { ThemeContext } from '../context/themeContext';
+import { auth } from '../config/firebaseConfig';
 
 const UnifiedPage = () => {
   const themeContext = useContext(ThemeContext);
