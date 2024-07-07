@@ -2,7 +2,7 @@
 
 import React, { useState, ChangeEvent, FormEvent, useEffect } from 'react';
 import { db } from '../config/firebaseConfig';
-import { auth } from '../config/firebaseConfig';  // Adjust path as needed
+import { auth } from '../config/firebaseConfig';
 import { addDoc, collection, getDocs, query } from 'firebase/firestore';
 import { useTheme } from '../context/themeContext';
 
