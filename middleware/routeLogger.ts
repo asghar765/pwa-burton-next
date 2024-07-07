@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import { trace, SpanStatusCode, diag } from '@opentelemetry/api';
 import { initTracing } from '../config/opentelemetryConfig';
 import logger from '../utils/logger';
+import { auth } from '../config/firebaseConfig';
 
 initTracing();
 
