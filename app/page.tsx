@@ -57,7 +57,7 @@ export default function Home() {
         <h1 className="text-5xl mb-4">
           <GradientText className="">Pakistan Welfare Association</GradientText>
         </h1>
-        <p className="text-xl text-blue-200 mb-8">Supporting our Muslim community in Burton Upon Trent since 1979</p>
+        <p className="text-xl text-blue-200 mb-8">Supporting our Muslim community in Burton Upon Trent since early 1970's</p>
         <div className="flex justify-center space-x-4">
           <Link
             href="/registration"
