@@ -13,8 +13,11 @@ const firebaseConfig = {
   measurementId: "G-5Z8RVSZRXD"
 };
 
-const app = !getApps().length ? initializeApp(firebaseConfig) : getApp();
+// Check if an app instance already exists
+const app = getApps().length > 0 ? getApp() : initializeApp(firebaseConfig);
+
+// Export the app instance and other Firebase services
 const db = getFirestore(app);
 const auth = getAuth(app);
 
-export { db, auth, firebaseConfig };
+export { app, db, auth, firebaseConfig };

@@ -13,14 +13,13 @@
     "@opentelemetry/sdk-trace-base": "^1.25.1",
     "@opentelemetry/sdk-trace-web": "^1.25.1",
     "bootstrap": "^5.3.3",
-    "firebase": "^10.12.2",
+    "firebase": "^10.12.3",
     "next": "14.2.4",
     "next-auth": "^4.24.7",
     "react": "^18",
     "react-dom": "^18",
     "react-firebase-hooks": "^5.1.1",
     "sass": "^1.77.6",
-    "tools": "^0.0.0",
     "winston": "^3.13.0",
     "zod": "^3.23.8"
   },
@@ -36,6 +35,6 @@
     "typescript": "^5"
   },
   "engines": {
-    "node": "20.x"
+    "node": ">=14"
   }
 }

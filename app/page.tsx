@@ -2,22 +2,7 @@
 
 import React, { ReactNode } from 'react';
 import Link from 'next/link';
-import { initializeApp } from 'firebase/app';
-import { getAuth } from 'firebase/auth';
-
-const firebaseConfig = {
-  apiKey: "AIzaSyBIdEm_bTr7X_AYKrW_e5-vjNxpu8vRSKg",
-  authDomain: "bwaapp1.firebaseapp.com",
-  databaseURL: "https://bwaapp1-default-rtdb.europe-west1.firebasedatabase.app",
-  projectId: "bwaapp1",
-  storageBucket: "bwaapp1.appspot.com",
-  messagingSenderId: "698509084521",
-  appId: "1:698509084521:web:38e0db08bca05848dfdff8",
-  measurementId: "G-5Z8RVSZRXD"
-};
-
-const app = initializeApp(firebaseConfig);
-const auth = getAuth(app);
+import { auth } from '../config/firebaseConfig';
 
 const IconUsers = () => (
   <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
