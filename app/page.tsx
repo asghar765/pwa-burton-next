@@ -57,7 +57,7 @@ export default function Home() {
         <h1 className="text-5xl mb-4">
           <GradientText className="">Pakistan Welfare Association</GradientText>
         </h1>
-        <p className="text-xl text-blue-200 mb-8">Supporting our Muslim community in Burton Upon Trent since 2024</p>
+        <p className="text-xl text-blue-200 mb-8">Supporting our Muslim community in Burton Upon Trent since 1979</p>
         <div className="flex justify-center space-x-4">
           <Link
             href="/registration"
@@ -135,12 +135,12 @@ export default function Home() {
         <p className="text-blue-100">
           Email: pwaburton@proton.me<br />
           Phone: +44 1234 567890<br />
-          Address: 123 Main Street, Burton Upon Trent, DE14 1AA
+          Address: Wellington Street Post Office, Burton Upon Trent, DE14 2DR
         </p>
       </div>
 
       <footer className="w-full max-w-5xl text-center text-blue-200">
-        <p>&copy; 2024 Pakistan Welfare Association, Burton Upon Trent. All rights reserved.</p>
+        <p>&copy; 2024 SmartFIX Technologies, Burton Upon Trent. All rights reserved.</p>
       </footer>
     </div>
   );
