@@ -3,14 +3,13 @@ import { getFirestore } from 'firebase/firestore';
 import { getAuth } from 'firebase/auth';
 
 const firebaseConfig = {
-  apiKey: "AIzaSyAd9Zg5iyK8vVFo5UjfZntNyyCtdSuhTIE",
-  authDomain: "bwaapp1.firebaseapp.com",
-  databaseURL: "https://bwaapp1-default-rtdb.europe-west1.firebasedatabase.app",
-  projectId: "bwaapp1",
-  storageBucket: "bwaapp1.appspot.com",
-  messagingSenderId: "698509084521",
-  appId: "1:698509084521:web:38e0db08bca05848dfdff8",
-  measurementId: "G-5Z8RVSZRXD"
+  apiKey: process.env.NEXT_PUBLIC_FIREBASE_API_KEY,
+  authDomain: process.env.NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN,
+  projectId: process.env.NEXT_PUBLIC_FIREBASE_PROJECT_ID,
+  storageBucket: process.env.NEXT_PUBLIC_FIREBASE_STORAGE_BUCKET,
+  messagingSenderId: process.env.NEXT_PUBLIC_FIREBASE_MESSAGING_SENDER_ID,
+  appId: process.env.NEXT_PUBLIC_FIREBASE_APP_ID,
+  measurementId: process.env.NEXT_PUBLIC_FIREBASE_MEASUREMENT_ID
 };
 
 // Check if an app instance already exists
