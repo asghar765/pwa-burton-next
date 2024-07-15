@@ -1,9 +1,9 @@
 // context/authContext.tsx
 import React, { createContext, useContext, useEffect, useState } from 'react';
 import { getAuth, onAuthStateChanged, User } from 'firebase/auth';
-import { doc, getDoc, getFirestore } from 'firebase/firestore';
+import { doc, getDoc, setDoc, getFirestore } from 'firebase/firestore';
 import { initializeApp } from 'firebase/app';
-import { firebaseConfig } from '../config/firebaseConfig'; // Import the firebaseConfig from the config file
+import { firebaseConfig } from '../config/firebaseConfig';
 
 const firebaseApp = initializeApp(firebaseConfig);
 
@@ -39,28 +39,32 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         if (authUser) {
           const userDocRef = doc(db, "users", authUser.uid);
           try {
-            const userDoc = await getDoc(userDocRef);
-            if (userDoc.exists()) {
-              const userData = userDoc.data();
-              const savedUser = localStorage.getItem('user');
-              const savedUserRole = localStorage.getItem('userRole');
-
-              if (!savedUser || !savedUserRole || JSON.parse(savedUser).uid !== authUser.uid || savedUserRole !== userData.role) {
-                localStorage.setItem('user', JSON.stringify(authUser));
-                localStorage.setItem('userRole', userData.role);
-              }
-
+            let userDoc = await getDoc(userDocRef);
+            if (!userDoc.exists()) {
+              await setDoc(userDocRef, {
+                email: authUser.email,
+                displayName: authUser.displayName,
+                photoURL: authUser.photoURL,
+                createdAt: new Date(),
+                role: 'user'
+              });
+              userDoc = await getDoc(userDocRef);
+            }
+            const userData = userDoc.data();
+            if (userData) {
+              localStorage.setItem('user', JSON.stringify(authUser));
+              localStorage.setItem('userRole', userData.role);
               setUser(authUser);
               setUserRole(userData.role);
             } else {
-              console.error("User document does not exist in Firestore.");
-              setUser(null);
-              setUserRole(null);
-              localStorage.removeItem('user');
-              localStorage.removeItem('userRole');
+              throw new Error('User data is undefined');
             }
           } catch (error) {
-            console.error('Error fetching user document from Firestore:', error);
+            console.error('Error fetching or creating user document in Firestore:', error);
+            setUser(null);
+            setUserRole(null);
+            localStorage.removeItem('user');
+            localStorage.removeItem('userRole');
           }
         } else {
           setUser(null);

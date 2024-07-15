@@ -4,7 +4,9 @@ import React, { useState, ChangeEvent, FormEvent, useEffect } from 'react';
 import { db, auth } from '../config/firebaseConfig';
 import { addDoc, collection, getDocs, query } from 'firebase/firestore';
 import { useTheme } from '../context/themeContext';
-
+import { createUserWithEmailAndPassword } from 'firebase/auth';
+import { doc, setDoc } from 'firebase/firestore';
+import { useRouter } from 'next/router';
 type FormField = {
   value: string;
   error: string | null;
@@ -64,6 +66,7 @@ export default function RegistrationForm() {
 
   const [formState, setFormState] = useState<RegistrationFormState>(initialState);
   const [showNextOfKin, setShowNextOfKin] = useState(false);
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   useEffect(() => {
     const fetchMembershipInfo = async () => {
@@ -119,16 +122,21 @@ export default function RegistrationForm() {
 
   const handleSubmit = async (e: FormEvent) => {
     e.preventDefault();
+    console.log("Form submission initiated");
+  
     if (!isFormValid()) {
       console.error('Form validation failed');
-      alert('Please correct the errors before submitting the form.');
+      alert('Please fill in all mandatory fields.');
       return;
     }
+  
     try {
+      setIsSubmitting(true);
+      const formData = Object.fromEntries(
+        Object.entries(formState).map(([key, value]) => [key, typeof value === 'object' && 'value' in value ? value.value : value])
+      );
       const docRef = await addDoc(collection(db, "registrations"), {
-        ...Object.fromEntries(
-          Object.entries(formState).map(([key, value]) => [key, typeof value === 'object' && 'value' in value ? value.value : value])
-        ),
+        ...formData,
         timestamp: new Date(),
       });
       console.log("Registration submitted successfully!", docRef.id);
@@ -137,8 +145,12 @@ export default function RegistrationForm() {
     } catch (error) {
       console.error("Error submitting registration: ", error);
       alert("An error occurred. Please try again.");
+    } finally {
+      setIsSubmitting(false);
     }
   };
+  
+  
 
   const handleSpouseChange = (index: number, field: keyof Spouse, value: string) => {
     const updatedSpouses = [...formState.spouses];
@@ -386,8 +398,8 @@ export default function RegistrationForm() {
           </div>
           <div className="p-4 border border-gray-600 rounded bg-gray-800">
             <h4 className="text-lg font-medium mb-2 text-blue-200">Membership Fee</h4>
-            <p className="text-white">Annual fee: £150</p>
-            <p className="text-white">Bi-annual fee: £40 (collected in January and June)</p>
+            <p className="text-white">Registration fee: £150</p>
+            <p className="text-white">Annual fee: £40 (collected £20 in January and £20 in June)</p>
           </div>
         </div>
 
@@ -412,9 +424,9 @@ export default function RegistrationForm() {
         <button
           type="submit"
           className="w-full py-2 px-4 bg-blue-600 text-white rounded-lg shadow hover:bg-blue-700 transition-colors"
-          disabled={!isFormValid()}
+          disabled={isSubmitting || !isFormValid()}
         >
-          Submit Registration
+          {isSubmitting ? 'Submitting...' : 'Submit Registration'}
         </button>
       </form>
     </div>

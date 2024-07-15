@@ -12,10 +12,7 @@ const firebaseConfig = {
   measurementId: process.env.NEXT_PUBLIC_FIREBASE_MEASUREMENT_ID
 };
 
-// Check if an app instance already exists
 const app = getApps().length > 0 ? getApp() : initializeApp(firebaseConfig);
-
-// Export the app instance and other Firebase services
 const db = getFirestore(app);
 const auth = getAuth(app);
 

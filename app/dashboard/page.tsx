@@ -1,12 +1,11 @@
 'use client';
 
 import { getAuth, signOut, User } from 'firebase/auth';
-import { getDatabase, ref, onValue } from 'firebase/database';
+import { getDatabase, ref, onValue, set, remove, push } from 'firebase/database';
 import { app, auth } from '../../config/firebaseConfig';
 import React, { useState, useEffect } from 'react';
 
 const database = getDatabase(app);
-
 
 interface RouteStatus {
   path: string;
@@ -19,6 +18,19 @@ interface MembershipData {
   pendingApprovals: number;
 }
 
+interface Role {
+  id: string;
+  name: string;
+  permissions: string[];
+}
+
+interface MemberDetails {
+  id: string;
+  name: string;
+  email: string;
+  role: string;
+}
+
 const Dashboard = () => {
   const [user, setUser] = useState<User | null>(null);
   const [routesStatus, setRoutesStatus] = useState<RouteStatus[]>([]);
@@ -27,6 +39,8 @@ const Dashboard = () => {
     activeMembers: 0,
     pendingApprovals: 0
   });
+  const [roles, setRoles] = useState<Role[]>([]);
+  const [members, setMembers] = useState<MemberDetails[]>([]);
 
   useEffect(() => {
     const unsubscribe = auth.onAuthStateChanged((currentUser) => {
@@ -38,7 +52,6 @@ const Dashboard = () => {
 
   useEffect(() => {
     if (user) {
-      // Fetch route statuses
       const routesRef = ref(database, 'routes');
       onValue(routesRef, (snapshot) => {
         const data = snapshot.val();
@@ -49,17 +62,66 @@ const Dashboard = () => {
         setRoutesStatus(routesList);
       });
 
-      // Fetch membership data
       const membershipRef = ref(database, 'membership');
       onValue(membershipRef, (snapshot) => {
         const data = snapshot.val();
         setMembershipData(data || { totalMembers: 0, activeMembers: 0, pendingApprovals: 0 });
+      });
+
+      const rolesRef = ref(database, 'roles');
+      onValue(rolesRef, (snapshot) => {
+        const data = snapshot.val();
+        const rolesList: Role[] = Object.entries(data || {}).map(([id, role]: [string, any]) => ({
+          id,
+          ...role
+        }));
+        setRoles(rolesList);
+      });
+
+      const membersRef = ref(database, 'members');
+      onValue(membersRef, (snapshot) => {
+        const data = snapshot.val();
+        const membersList: MemberDetails[] = Object.entries(data || {}).map(([id, member]: [string, any]) => ({
+          id,
+          ...member
+        }));
+        setMembers(membersList);
       });
     }
   }, [user]);
 
   const handleSignOut = () => {
     signOut(auth).catch((error) => console.error('Error signing out:', error));
+  };
+
+  const addRole = (name: string, permissions: string[]) => {
+    const rolesRef = ref(database, 'roles');
+    push(rolesRef, { name, permissions });
+  };
+
+  const updateRole = (id: string, name: string, permissions: string[]) => {
+    const roleRef = ref(database, `roles/${id}`);
+    set(roleRef, { name, permissions });
+  };
+
+  const deleteRole = (id: string) => {
+    const roleRef = ref(database, `roles/${id}`);
+    remove(roleRef);
+  };
+
+  const addMember = (name: string, email: string, role: string) => {
+    const membersRef = ref(database, 'members');
+    push(membersRef, { name, email, role });
+  };
+
+  const updateMember = (id: string, name: string, email: string, role: string) => {
+    const memberRef = ref(database, `members/${id}`);
+    set(memberRef, { name, email, role });
+  };
+
+  const deleteMember = (id: string) => {
+    const memberRef = ref(database, `members/${id}`);
+    remove(memberRef);
   };
 
   if (!user) {
@@ -105,7 +167,7 @@ const Dashboard = () => {
           </div>
         </div>
 
-        <div className="bg-white p-6 rounded-lg shadow">
+        <div className="bg-white p-6 rounded-lg shadow mb-8">
           <h2 className="text-xl font-semibold mb-4">Route Statuses</h2>
           <ul className="divide-y divide-gray-200">
             {routesStatus.map((route, index) => (
@@ -119,6 +181,32 @@ const Dashboard = () => {
               </li>
             ))}
           </ul>
+        </div>
+
+        <div className="bg-white p-6 rounded-lg shadow mb-8">
+          <h2 className="text-xl font-semibold mb-4">Roles</h2>
+          <ul className="divide-y divide-gray-200">
+            {roles.map((role) => (
+              <li key={role.id} className="py-4 flex justify-between items-center">
+                <span className="text-gray-800">{role.name}</span>
+                <button onClick={() => deleteRole(role.id)} className="px-3 py-1 bg-red-500 text-white rounded">Delete</button>
+              </li>
+            ))}
+          </ul>
+          {/* Add form for adding/updating roles */}
+        </div>
+
+        <div className="bg-white p-6 rounded-lg shadow mb-8">
+          <h2 className="text-xl font-semibold mb-4">Member Details</h2>
+          <ul className="divide-y divide-gray-200">
+            {members.map((member) => (
+              <li key={member.id} className="py-4 flex justify-between items-center">
+                <span className="text-gray-800">{member.name} - {member.email}</span>
+                <span className="text-gray-600">{member.role}</span>
+              </li>
+            ))}
+          </ul>
+          {/* Add form for adding/updating members */}
         </div>
       </div>
     </div>

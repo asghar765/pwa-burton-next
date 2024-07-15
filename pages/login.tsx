@@ -1,7 +1,9 @@
 import React, { useState, ReactNode } from 'react';
 import Link from 'next/link';
+import { useRouter } from 'next/router';
 import { signInWithEmailAndPassword, signInWithPopup, GoogleAuthProvider } from 'firebase/auth';
-import { auth } from '../config/firebaseConfig';
+import { doc, setDoc, getDoc } from 'firebase/firestore';
+import { db, auth } from '../config/firebaseConfig';
 
 interface GradientTextProps {
   children: ReactNode;
@@ -15,6 +17,7 @@ const GradientText = ({ children, className = '' }: GradientTextProps) => (
 );
 
 const LoginPage = () => {
+  const router = useRouter();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
@@ -24,49 +27,59 @@ const LoginPage = () => {
     try {
       const result = await signInWithPopup(auth, provider);
       console.log('Google Sign-In successful:', result);
-      // Redirect or handle the user on successful login
+
+      const userDocRef = doc(db, 'users', result.user.uid);
+      const userDoc = await getDoc(userDocRef);
+
+      if (!userDoc.exists()) {
+        await setDoc(userDocRef, {
+          email: result.user.email,
+          displayName: result.user.displayName,
+          photoURL: result.user.photoURL,
+          createdAt: new Date(),
+          role: 'user'
+        });
+        console.log('New user document created in Firestore');
+      } else {
+        console.log('Existing user logged in');
+      }
+
+      router.push('/dashboard');
     } catch (error: any) {
       const errorCode = error.code;
       const errorMessage = error.message;
-      const email = error.customData.email;
+      const email = error.customData?.email;
       const credential = GoogleAuthProvider.credentialFromError(error);
   
       console.error('An error occurred during Google login:', errorCode, errorMessage, email, credential);
   
       switch (errorCode) {
         case 'auth/account-exists-with-different-credential':
-          console.error('Email already associated with another account.');
           setError('Email already associated with another account.');
           break;
         case 'auth/auth-domain-config-required':
-          console.error('Authentication domain configuration is required.');
           setError('Authentication domain configuration is required.');
           break;
         case 'auth/cancelled-popup-request':
-          console.error('The popup has been closed by the user before finalizing the operation.');
           setError('The popup has been closed by the user before finalizing the operation.');
           break;
         case 'auth/operation-not-allowed':
-          console.error('Operation not allowed. Please enable Google Sign-In in the Firebase console.');
           setError('Operation not allowed. Please enable Google Sign-In in the Firebase console.');
           break;
         case 'auth/user-disabled':
-          console.error('The user account has been disabled by an administrator.');
           setError('The user account has been disabled by an administrator.');
           break;
         default:
-          console.error('An unknown error occurred during Google login:', errorMessage);
           setError('Google login failed. Please try again.');
           break;
       }
     }
   };
-  
 
   const loginWithEmail = async () => {
     try {
       await signInWithEmailAndPassword(auth, email, password);
-      // Redirect or handle the user on successful login
+      router.push('/dashboard');
     } catch (error: any) {
       console.error('An error occurred during email login:', error.message, error.stack);
       setError('Email login failed. Please check your credentials and try again.');
