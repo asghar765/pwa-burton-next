@@ -7,6 +7,7 @@ import { useTheme } from '../context/themeContext';
 import { createUserWithEmailAndPassword } from 'firebase/auth';
 import { doc, setDoc } from 'firebase/firestore';
 import { useRouter } from 'next/router';
+import { Alert, AlertDescription, AlertTitle } from '../components/ui/alert';
 type FormField = {
   value: string;
   error: string | null;
@@ -43,58 +44,65 @@ type RegistrationFormState = {
   nextOfKinPhone: FormField;
 };
 
+const initialState: RegistrationFormState = {
+  fullName: { value: '', error: null },
+  address: { value: '', error: null },
+  town: { value: '', error: null },
+  postCode: { value: '', error: null },
+  email: { value: '', error: null },
+  mobileNo: { value: '', error: null },
+  dateOfBirth: { value: '', error: null },
+  placeOfBirth: { value: '', error: null },
+  maritalStatus: { value: '', error: null },
+  gender: { value: '', error: null },
+  membershipInfo: '',
+  spouses: [],
+  dependants: [],
+  nextOfKinName: { value: '', error: null },
+  nextOfKinAddress: { value: '', error: null },
+  nextOfKinPhone: { value: '', error: null },
+};
+
 export default function RegistrationForm() {
   const theme = useTheme();
-  const initialState: RegistrationFormState = {
-    fullName: { value: '', error: null },
-    address: { value: '', error: null },
-    town: { value: '', error: null },
-    postCode: { value: '', error: null },
-    email: { value: '', error: null },
-    mobileNo: { value: '', error: null },
-    dateOfBirth: { value: '', error: null },
-    placeOfBirth: { value: '', error: null },
-    maritalStatus: { value: '', error: null },
-    gender: { value: '', error: null },
-    membershipInfo: '',
-    spouses: [],
-    dependants: [],
-    nextOfKinName: { value: '', error: null },
-    nextOfKinAddress: { value: '', error: null },
-    nextOfKinPhone: { value: '', error: null },
-  };
-
+  const router = useRouter();
   const [formState, setFormState] = useState<RegistrationFormState>(initialState);
   const [showNextOfKin, setShowNextOfKin] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [submitSuccess, setSubmitSuccess] = useState(false);
+  const [submitError, setSubmitError] = useState<string | null>(null);
+  const [isGiftAidEligible, setIsGiftAidEligible] = useState(false);
+  const [agreeToTerms, setAgreeToTerms] = useState(false);
 
   useEffect(() => {
-    const fetchMembershipInfo = async () => {
-      try {
-        const q = query(collection(db, "membershipInfo"));
-        const querySnapshot = await getDocs(q);
-        const membershipData = querySnapshot.docs.map(doc => doc.data());
-        if (membershipData.length > 0) {
-          setFormState(prevState => ({ ...prevState, membershipInfo: membershipData[0].info }));
-        }
-      } catch (error) {
-        console.error("Error fetching membership information: ", error);
-      }
-    };
-
     fetchMembershipInfo();
   }, []);
+
+  const fetchMembershipInfo = async () => {
+    try {
+      const q = query(collection(db, "membershipInfo"));
+      const querySnapshot = await getDocs(q);
+      const membershipData = querySnapshot.docs.map(doc => doc.data());
+      if (membershipData.length > 0) {
+        setFormState(prevState => ({ ...prevState, membershipInfo: membershipData[0].info }));
+      }
+    } catch (error) {
+      console.error("Error fetching membership information: ", error);
+      setSubmitError("Failed to fetch membership information. Please try again later.");
+    }
+  };
 
   const handleInputChange = (e: ChangeEvent<HTMLInputElement | HTMLSelectElement>, field: keyof RegistrationFormState) => {
     const value = e.target.value;
     const error = validateField(field, value);
-    setFormState({ ...formState, [field]: { value, error } });
+    setFormState(prevState => ({ ...prevState, [field]: { value, error } }));
   };
 
   const validateField = (field: keyof RegistrationFormState, value: string): string | null => {
-    if (!value.trim()) {
-      return `${field} is required`;
-    }
+    if (!value.trim()) return `${field} is required`;
+    if (field === 'email' && !/\S+@\S+\.\S+/.test(value)) return 'Invalid email address';
+    if (field === 'mobileNo' && !/^\d{10,}$/.test(value)) return 'Invalid mobile number';
+    if (field === 'postCode' && !/^[A-Z]{1,2}\d[A-Z\d]? ?\d[A-Z]{2}$/i.test(value)) return 'Invalid UK postcode';
     return null;
   };
 
@@ -122,35 +130,31 @@ export default function RegistrationForm() {
 
   const handleSubmit = async (e: FormEvent) => {
     e.preventDefault();
-    console.log("Form submission initiated");
-  
-    if (!isFormValid()) {
-      console.error('Form validation failed');
-      alert('Please fill in all mandatory fields.');
+    if (!isFormValid() || !agreeToTerms) {
+      setSubmitError('Please fill in all mandatory fields and agree to the terms.');
       return;
     }
-  
+
     try {
       setIsSubmitting(true);
+      setSubmitError(null);
       const formData = Object.fromEntries(
         Object.entries(formState).map(([key, value]) => [key, typeof value === 'object' && 'value' in value ? value.value : value])
       );
       const docRef = await addDoc(collection(db, "registrations"), {
         ...formData,
+        isGiftAidEligible,
         timestamp: new Date(),
       });
-      console.log("Registration submitted successfully!", docRef.id);
-      alert("Registration submitted successfully!");
-      setFormState(initialState);
+      setSubmitSuccess(true);
+      router.push('/registration-success'); // Redirect to a success page
     } catch (error) {
       console.error("Error submitting registration: ", error);
-      alert("An error occurred. Please try again.");
+      setSubmitError("An error occurred while submitting. Please try again.");
     } finally {
       setIsSubmitting(false);
     }
   };
-  
-  
 
   const handleSpouseChange = (index: number, field: keyof Spouse, value: string) => {
     const updatedSpouses = [...formState.spouses];
@@ -210,6 +214,20 @@ export default function RegistrationForm() {
             PWA Burton On Trent Registration Form
           </span>
         </h2>
+
+        {submitSuccess && (
+          <Alert variant="success">
+            <AlertTitle>Success!</AlertTitle>
+            <AlertDescription>Your registration has been submitted successfully.</AlertDescription>
+          </Alert>
+        )}
+
+        {submitError && (
+          <Alert variant="destructive">
+            <AlertTitle>Error</AlertTitle>
+            <AlertDescription>{submitError}</AlertDescription>
+          </Alert>
+        )}
 
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
           {Object.entries(formState).map(([field, value]) => {
@@ -309,8 +327,8 @@ export default function RegistrationForm() {
           </h3>
           {formState.spouses.map((spouse, index) => (
             <div key={index} className="p-4 border border-gray-600 rounded bg-gray-800">
-              <h4 className="text-lg font-medium mb-2 text-blue-200">Spouse {index + 1}</h4>
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+     <h4 className="text-lg font-medium mb-2 text-blue-200">Spouse {index + 1}</h4>
+     <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 {Object.entries(spouse).map(([field, value]) => (
                   <div key={field} className="space-y-2">
                     <label htmlFor={`spouse-${index}-${field}`} className="block font-medium text-blue-200">{field.replace(/([A-Z])/g, ' $1').trim()}</label>
@@ -329,7 +347,7 @@ export default function RegistrationForm() {
             </div>
           ))}
           <button type="button" onClick={addSpouse} className="w-full py-2 px-4 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors">Add Spouse</button>
-          </div>
+        </div>
 
         <div className="space-y-4">
           <h3 className="text-3xl mb-4">
@@ -385,7 +403,7 @@ export default function RegistrationForm() {
             </div>
           ))}
           <button type="button" onClick={addDependant} className="w-full py-2 px-4 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors">Add Dependant</button>        
-          </div>
+        </div>
 
         <div className="space-y-4">
           <h3 className="text-3xl mb-4">
@@ -405,7 +423,12 @@ export default function RegistrationForm() {
 
         <div className="space-y-2">
           <label className="flex items-center">
-            <input type="checkbox" className="form-checkbox bg-gray-800 border-gray-600 text-blue-600" />
+            <input
+              type="checkbox"
+              className="form-checkbox bg-gray-800 border-gray-600 text-blue-600"
+              checked={isGiftAidEligible}
+              onChange={(e) => setIsGiftAidEligible(e.target.checked)}
+            />
             <span className="ml-2 text-blue-200">I am eligible for Gift Aid</span>
           </label>
           <p className="text-sm italic text-blue-200">Please see eligibility information on app/website</p>
@@ -416,15 +439,22 @@ export default function RegistrationForm() {
             I/We Hereby confirm the above details provided are genuine and valid. I/We also understand that submitting an application or making payment does not obligate PWA Burton On Trent to grant Membership. Membership will only be approved once all criteria are met, Supporting documents presented, Payment made in Full and approval is informed by the Management of PWA Burton On Trent. I/We understand and agree that it is my/our duty and responsibility to notify PWA Burton On Trent of ALL changes in circumstance in relation to myself/ALL those under this Membership, at my/our earliest convenience.
           </p>
           <div className="flex items-center">
-            <input type="checkbox" id="agreement" className="form-checkbox bg-gray-800 border-gray-600 text-blue-600" required />
+            <input
+              type="checkbox"
+              id="agreement"
+              className="form-checkbox bg-gray-800 border-gray-600 text-blue-600"
+              checked={agreeToTerms}
+              onChange={(e) => setAgreeToTerms(e.target.checked)}
+              required
+            />
             <label htmlFor="agreement" className="ml-2 text-blue-200">I agree to the terms and conditions</label>
           </div>
         </div>
 
         <button
           type="submit"
-          className="w-full py-2 px-4 bg-blue-600 text-white rounded-lg shadow hover:bg-blue-700 transition-colors"
-          disabled={isSubmitting || !isFormValid()}
+          className="w-full py-2 px-4 bg-blue-600 text-white rounded-lg shadow hover:bg-blue-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+          disabled={isSubmitting || !isFormValid() || !agreeToTerms}
         >
           {isSubmitting ? 'Submitting...' : 'Submit Registration'}
         </button>

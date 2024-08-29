@@ -2,7 +2,7 @@ import React, { useState, ReactNode } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/router';
 import { signInWithEmailAndPassword, signInWithPopup, GoogleAuthProvider } from 'firebase/auth';
-import { doc, setDoc, getDoc } from 'firebase/firestore';
+import { doc, setDoc, getDoc, collection, query, where, getDocs } from 'firebase/firestore';
 import { db, auth } from '../config/firebaseConfig';
 
 interface GradientTextProps {
@@ -18,7 +18,7 @@ const GradientText = ({ children, className = '' }: GradientTextProps) => (
 
 const LoginPage = () => {
   const router = useRouter();
-  const [email, setEmail] = useState('');
+  const [memberNumber, setMemberNumber] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
 
@@ -76,13 +76,27 @@ const LoginPage = () => {
     }
   };
 
-  const loginWithEmail = async () => {
+  const loginWithMemberNumber = async () => {
     try {
-      await signInWithEmailAndPassword(auth, email, password);
+      // Query Firestore to find the user document with the given member number
+      const usersRef = collection(db, 'users');
+      const q = query(usersRef, where("memberNumber", "==", memberNumber));
+      const querySnapshot = await getDocs(q);
+
+      if (querySnapshot.empty) {
+        setError('No user found with this member number.');
+        return;
+      }
+
+      const userDoc = querySnapshot.docs[0];
+      const userData = userDoc.data();
+
+      // Use the email associated with the member number to sign in
+      await signInWithEmailAndPassword(auth, userData.email, password);
       router.push('/dashboard');
     } catch (error: any) {
-      console.error('An error occurred during email login:', error.message, error.stack);
-      setError('Email login failed. Please check your credentials and try again.');
+      console.error('An error occurred during member number login:', error.message, error.stack);
+      setError('Login failed. Please check your credentials and try again.');
     }
   };
 
@@ -96,8 +110,8 @@ const LoginPage = () => {
         <div className="bg-gray-800 p-8 rounded-lg shadow-md">
           <input 
             type="text" 
-            placeholder="Email" 
-            onChange={(e) => setEmail(e.target.value)} 
+            placeholder="Member Number" 
+            onChange={(e) => setMemberNumber(e.target.value)} 
             className="w-full mb-4 p-2 rounded bg-gray-700 text-white placeholder-gray-400"
           />
           <input 
@@ -107,10 +121,10 @@ const LoginPage = () => {
             className="w-full mb-4 p-2 rounded bg-gray-700 text-white placeholder-gray-400"
           />
           <button 
-            onClick={loginWithEmail} 
+            onClick={loginWithMemberNumber} 
             className="w-full bg-blue-600 text-white px-4 py-2 rounded-full text-lg font-semibold hover:bg-blue-700 transition-colors mb-4"
           >
-            Login with Email
+            Login with Member Number
           </button>
           <button
             onClick={loginWithGoogle}
