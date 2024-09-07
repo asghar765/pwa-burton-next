@@ -21,10 +21,10 @@ export const metadata: Metadata = {
 export default function RootLayout({ children }: RootLayoutProps) {
   return (
     <html lang="en">
-      <body>
+      <body className={inter.className}>
         <AuthProvider>
           <ThemeProvider>
-            <div className={inter.className}>
+            <div className="min-h-screen flex flex-col">
               <nav className="bg-gray-800 text-white p-4">
                 <div className="container mx-auto flex justify-between items-center">
                   <Link href="/" className="text-xl font-bold">PWA Burton</Link>
@@ -34,7 +34,9 @@ export default function RootLayout({ children }: RootLayoutProps) {
                   </div>
                 </div>
               </nav>
-              {children}
+              <main className="flex-grow">
+                {children}
+              </main>
             </div>
           </ThemeProvider>
         </AuthProvider>
