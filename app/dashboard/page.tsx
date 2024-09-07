@@ -299,7 +299,8 @@ const AdminDashboard: React.FC = () => {
       const amount = typeof expense.amount === 'number' ? expense.amount : parseFloat(expense.amount) || 0;
       return sum + (isNaN(amount) ? 0 : amount);
     }, 0);
-    return totalPayments - totalExpenses;
+    const balance = totalPayments - totalExpenses;
+    return isNaN(balance) ? 0 : balance;
   };
 
   const calculatedAccountBalance = calculateAccountBalance(payments, expenses);
@@ -320,6 +321,7 @@ const AdminDashboard: React.FC = () => {
           totalMembers,
         };
       })
+      .filter(item => !isNaN(Date.parse(item.date))) // Filter out invalid dates
       .sort((a, b) => a.date.localeCompare(b.date))
       .slice(-12);
 
