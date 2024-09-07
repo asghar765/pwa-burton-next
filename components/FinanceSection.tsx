@@ -102,12 +102,22 @@ const FinanceSection: React.FC<FinanceSectionProps> = ({
     <div className="space-y-6">
       <h2 className="text-2xl font-bold">Finance Section</h2>
       
-      <div className="bg-white p-4 rounded shadow">
-        <h3 className="text-xl font-semibold mb-2">Account Summary</h3>
-        <p className="text-2xl font-bold">Total Payments: {currencySymbol}{formatAmount(totalPayments)}</p>
-        <p className="text-lg">Balance after Expenses: {currencySymbol}{formatAmount(calculatedBalance)}</p>
-        <p className="text-lg">Total Expenses: {currencySymbol}{formatAmount(totalExpenses)}</p>
-        {/* Debug information and Expense Details removed */}
+      <div className="bg-white p-6 rounded shadow">
+        <h3 className="text-2xl font-bold mb-4">Account Summary</h3>
+        <div className="grid grid-cols-3 gap-4 text-center">
+          <div>
+            <p className="text-lg font-semibold mb-2">Total Payments</p>
+            <p className="text-2xl font-bold text-green-600">{currencySymbol}{formatAmount(totalPayments)}</p>
+          </div>
+          <div>
+            <p className="text-lg font-semibold mb-2">Balance</p>
+            <p className="text-2xl font-bold text-blue-600">{currencySymbol}{formatAmount(calculatedBalance)}</p>
+          </div>
+          <div>
+            <p className="text-lg font-semibold mb-2">Total Expenses</p>
+            <p className="text-2xl font-bold text-red-600">{currencySymbol}{formatAmount(totalExpenses)}</p>
+          </div>
+        </div>
       </div>
 
       <div className="bg-white p-4 rounded shadow">
