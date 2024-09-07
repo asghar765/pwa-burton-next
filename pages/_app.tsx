@@ -3,6 +3,7 @@
 import React, { useEffect } from 'react';
 import { AppProps } from 'next/app';
 import dynamic from 'next/dynamic';
+import Head from 'next/head';
 import '../styles/tailwind.css';
 
 const AuthProviderWithNoSSR = dynamic(() => import('../context/authContext').then((mod) => mod.AuthProvider), {
@@ -22,6 +23,9 @@ const MyApp = ({ Component, pageProps }: AppProps) => {
   return (
     <AuthProviderWithNoSSR>
       <ThemeProviderWithNoSSR>
+        <Head>
+          <link rel="icon" href="/favicon.ico" />
+        </Head>
         <Component {...pageProps} />
       </ThemeProviderWithNoSSR>
     </AuthProviderWithNoSSR>
