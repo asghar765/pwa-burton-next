@@ -34,8 +34,6 @@ const FinanceSection: React.FC<FinanceSectionProps> = ({
   const [newExpenseDescription, setNewExpenseDescription] = useState<string>('');
   const [searchTerm, setSearchTerm] = useState<string>('');
   const [expenseSearchTerm, setExpenseSearchTerm] = useState<string>('');
-  const [currentPage, setCurrentPage] = useState(1);
-  const itemsPerPage = 10;
 
   const handleAddExpense = (e: React.FormEvent) => {
     e.preventDefault();
@@ -108,12 +106,6 @@ const FinanceSection: React.FC<FinanceSectionProps> = ({
       });
   }, [expenses, expenseSearchTerm]);
 
-  const paginatedExpenses = useMemo(() => {
-    const startIndex = (currentPage - 1) * itemsPerPage;
-    return filteredExpenses.slice(startIndex, startIndex + itemsPerPage);
-  }, [filteredExpenses, currentPage]);
-
-  const totalPages = Math.ceil(filteredExpenses.length / itemsPerPage);
 
   return (
     <div className="space-y-6">
@@ -169,17 +161,14 @@ const FinanceSection: React.FC<FinanceSectionProps> = ({
           <input
             type="text"
             value={expenseSearchTerm}
-            onChange={(e) => {
-              setExpenseSearchTerm(e.target.value);
-              setCurrentPage(1);
-            }}
+            onChange={(e) => setExpenseSearchTerm(e.target.value)}
             placeholder="Search expenses by date, description, or amount"
             className="w-full px-3 py-2 border rounded"
           />
         </div>
         <div className="h-60 overflow-y-auto pr-4" style={{ scrollbarWidth: 'thin', scrollbarColor: '#CBD5E0 #EDF2F7' }}>
           <ul className="space-y-2">
-            {paginatedExpenses.map((expense) => (
+            {filteredExpenses.map((expense) => (
               <li key={expense.id} className="flex justify-between items-center">
                 <span>{formatDate(expense.date)} - {expense.description}</span>
                 <span className="font-semibold">{currencySymbol}{formatAmount(expense.amount)}</span>
