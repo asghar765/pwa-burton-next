@@ -31,16 +31,38 @@ const FinanceSection: React.FC<FinanceSectionProps> = ({
 
   const formatDate = (date: Date | string | number): string => {
     if (date instanceof Date) {
-      return date.toLocaleDateString();
+      return date.toLocaleDateString('en-GB');
     }
-    if (typeof date === 'string' || typeof date === 'number') {
+    if (typeof date === 'string') {
+      try {
+        const parsedDate = JSON.parse(date);
+        if (parsedDate && parsedDate.date) {
+          return new Date(parsedDate.date).toLocaleDateString('en-GB');
+        }
+      } catch (e) {
+        // If JSON parsing fails, continue with normal date parsing
+      }
       const parsedDate = new Date(date);
-      return isNaN(parsedDate.getTime()) ? 'Invalid Date' : parsedDate.toLocaleDateString();
+      return isNaN(parsedDate.getTime()) ? 'Invalid Date' : parsedDate.toLocaleDateString('en-GB');
+    }
+    if (typeof date === 'number') {
+      const parsedDate = new Date(date);
+      return isNaN(parsedDate.getTime()) ? 'Invalid Date' : parsedDate.toLocaleDateString('en-GB');
     }
     return 'Invalid Date';
   };
 
   const formatAmount = (amount: number | string): string => {
+    if (typeof amount === 'string') {
+      try {
+        const parsedAmount = JSON.parse(amount);
+        if (parsedAmount && parsedAmount.amount) {
+          amount = parseFloat(parsedAmount.amount);
+        }
+      } catch (e) {
+        // If JSON parsing fails, continue with normal parsing
+      }
+    }
     const parsedAmount = typeof amount === 'string' ? parseFloat(amount) : amount;
     return isNaN(parsedAmount) ? '0.00' : parsedAmount.toFixed(2);
   };
@@ -60,7 +82,7 @@ const FinanceSection: React.FC<FinanceSectionProps> = ({
           {payments.slice(0, 5).map((payment) => (
             <li key={payment.id} className="flex justify-between items-center">
               <span>{formatDate(payment.date)}</span>
-              <span className="font-semibold">{currencySymbol}{typeof payment.amount === 'number' ? formatAmount(payment.amount) : payment.amount}</span>
+              <span className="font-semibold">{currencySymbol}{formatAmount(payment.amount)}</span>
             </li>
           ))}
         </ul>
@@ -72,7 +94,7 @@ const FinanceSection: React.FC<FinanceSectionProps> = ({
           {expenses.slice(0, 5).map((expense) => (
             <li key={expense.id} className="flex justify-between items-center">
               <span>{formatDate(expense.date)} - {expense.description}</span>
-              <span className="font-semibold">{currencySymbol}{typeof expense.amount === 'number' ? formatAmount(expense.amount) : expense.amount}</span>
+              <span className="font-semibold">{currencySymbol}{formatAmount(expense.amount)}</span>
             </li>
           ))}
         </ul>
