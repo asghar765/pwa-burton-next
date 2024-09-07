@@ -147,18 +147,22 @@ const MembersSection: React.FC<MembersSectionProps> = ({
                 {/* Payment History */}
                 <div className="mt-4">
                   <h5 className="font-semibold">Payment History</h5>
-                  {member.payments && member.payments.length > 0 ? (
+                  {members.some(m => m.memberNumber === member.memberNumber && m.payments && m.payments.length > 0) ? (
                     <ul className="list-disc list-inside">
-                      {member.payments.map((payment, index) => (
-                        <li key={index}>
-                          {new Date(payment.date).toLocaleDateString()}: £
-                          {typeof payment.amount === 'number'
-                            ? payment.amount.toFixed(2)
-                            : typeof payment.amount === 'string'
-                            ? parseFloat(payment.amount).toFixed(2)
-                            : 'N/A'}
-                        </li>
-                      ))}
+                      {members
+                        .filter(m => m.memberNumber === member.memberNumber)
+                        .flatMap(m => m.payments || [])
+                        .sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime())
+                        .map((payment, index) => (
+                          <li key={index}>
+                            {new Date(payment.date).toLocaleDateString()}: £
+                            {typeof payment.amount === 'number'
+                              ? payment.amount.toFixed(2)
+                              : typeof payment.amount === 'string'
+                              ? parseFloat(payment.amount).toFixed(2)
+                              : 'N/A'}
+                          </li>
+                        ))}
                     </ul>
                   ) : (
                     <p>No payment history available.</p>
