@@ -248,6 +248,17 @@ const AdminDashboard: React.FC = () => {
     }
   };
 
+  const handleUpdateUserRole = async (userId: string, newRole: string) => {
+    try {
+      const userRef = doc(db, 'users', userId);
+      await updateDoc(userRef, { role: newRole });
+      fetchData();
+    } catch (error) {
+      console.error('Error updating user role:', error);
+      setErrorMessage('Failed to update user role. Please try again.');
+    }
+  };
+
   const handleApproveRegistration = async (registration: Registration) => {
     try {
       const registrationRef = doc(db, 'registrations', registration.id);
@@ -305,6 +316,7 @@ const AdminDashboard: React.FC = () => {
             currentUserRole={userRole || ''}
             onAddPayment={handleAddPayment}
             onAddNote={handleAddNote}
+            onUpdateUserRole={handleUpdateUserRole}
           />
         );
       case 'collectors':

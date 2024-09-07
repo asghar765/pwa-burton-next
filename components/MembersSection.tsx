@@ -36,6 +36,7 @@ export interface MembersSectionProps {
   currentUserRole: string;
   onAddPayment: (memberId: string, payment: Omit<Payment, 'id'>) => void;
   onAddNote: (memberId: string, note: string) => void;
+  onUpdateUserRole: (userId: string, newRole: string) => void;
 }
 
 const MembersSection: React.FC<MembersSectionProps> = React.memo(function MembersSection({
