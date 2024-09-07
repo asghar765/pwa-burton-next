@@ -172,7 +172,7 @@ const MembersSection: React.FC<MembersSectionProps> = ({
                 {/* Payment History */}
                 <div className="mt-4">
                   <h5 className="font-semibold">Payment History</h5>
-                  {member.payments.length > 0 ? (
+                  {member.payments && member.payments.length > 0 ? (
                     <table className="w-full mt-2">
                       <thead>
                         <tr>
@@ -182,16 +182,12 @@ const MembersSection: React.FC<MembersSectionProps> = ({
                       </thead>
                       <tbody>
                         {member.payments
+                          .slice()
                           .sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime())
                           .map((payment, index) => (
-                            <tr key={index}>
+                            <tr key={payment.id || index}>
                               <td>{new Date(payment.date).toLocaleDateString()}</td>
-                              <td>£{typeof payment.amount === 'number'
-                                ? payment.amount.toFixed(2)
-                                : typeof payment.amount === 'string'
-                                ? parseFloat(payment.amount).toFixed(2)
-                                : 'N/A'}
-                              </td>
+                              <td>£{payment.amount.toFixed(2)}</td>
                             </tr>
                           ))}
                       </tbody>
