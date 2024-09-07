@@ -53,6 +53,7 @@ const MembersSection: React.FC<MembersSectionProps> = React.memo(({
   onUpdateUserRole
 }) => {
   const [firebaseUsers, setFirebaseUsers] = useState<FirebaseUser[]>([]);
+  const [userSearchTerm, setUserSearchTerm] = useState('');
 
   useEffect(() => {
     const fetchFirebaseUsers = async () => {
@@ -90,6 +91,17 @@ const MembersSection: React.FC<MembersSectionProps> = React.memo(({
       alert("Failed to update user role. Please try again.");
     }
   };
+
+  const filteredFirebaseUsers = useMemo(() => {
+    return firebaseUsers.filter(user => {
+      const search = userSearchTerm.toLowerCase();
+      return (
+        user.displayName?.toLowerCase().includes(search) ||
+        user.email?.toLowerCase().includes(search) ||
+        user.role?.toLowerCase().includes(search)
+      );
+    });
+  }, [firebaseUsers, userSearchTerm]);
   const [newMember, setNewMember] = useState({ name: '', email: '', role: '' });
   const [newPaymentAmounts, setNewPaymentAmounts] = useState<Record<string, string>>({});
   const [newNote, setNewNote] = useState('');
@@ -330,9 +342,19 @@ const MembersSection: React.FC<MembersSectionProps> = React.memo(({
       {/* Logged Users Section */}
       <div className="mt-8">
         <h2 className="text-xl font-semibold mb-4">Logged Users</h2>
-        {firebaseUsers && firebaseUsers.length > 0 ? (
+        <div className="mb-4 flex items-center">
+          <input
+            type="text"
+            value={userSearchTerm}
+            onChange={(e) => setUserSearchTerm(e.target.value)}
+            placeholder="Search logged users"
+            className="p-2 border border-gray-300 rounded mr-2 flex-grow"
+          />
+          <MagnifyingGlassIcon className="h-5 w-5 text-gray-400" />
+        </div>
+        {filteredFirebaseUsers.length > 0 ? (
           <ul className="space-y-4">
-            {firebaseUsers.map(user => (
+            {filteredFirebaseUsers.map(user => (
               <li key={user.id} className="bg-white rounded shadow p-4">
                 <div className="flex items-center justify-between">
                   <div className="flex items-center">
