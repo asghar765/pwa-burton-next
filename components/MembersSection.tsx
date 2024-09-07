@@ -1,4 +1,4 @@
-import React, { useState, useCallback, useMemo } from 'react';
+import React, { useState, useCallback, useMemo, useEffect } from 'react';
 import Image from 'next/image';
 import { Member, Payment, Note } from '../types';
 import { Dialog } from '@headlessui/react';
