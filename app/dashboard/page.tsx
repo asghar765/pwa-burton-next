@@ -207,7 +207,7 @@ const AdminDashboard: React.FC = () => {
               amount: typeof payment.amount === 'number' ? payment.amount : parseFloat(payment.amount) || 0,
               date: typeof payment.date === 'string' 
                 ? (isNaN(Date.parse(payment.date)) ? new Date().toISOString() : new Date(payment.date).toISOString())
-                : (payment.date instanceof Date ? payment.date.toISOString() : new Date().toISOString()),
+                : new Date().toISOString(),
               // Ensure all properties are primitive values
               ...Object.entries(payment).reduce((acc, [key, value]) => {
                 acc[key] = typeof value === 'object' && value !== null ? JSON.stringify(value) : value;
