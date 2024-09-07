@@ -34,8 +34,6 @@ const AdminDashboard: React.FC = () => {
   const [expandedMembers, setExpandedMembers] = useState<Record<string, boolean>>({});
   const [lastRefreshed, setLastRefreshed] = useState<Date | null>(null);
 
-  const intervalRef = useRef<NodeJS.Timeout | null>(null);
-
   const fetchData = useCallback(async () => {
     try {
       setLoading(true);
@@ -138,21 +136,9 @@ const AdminDashboard: React.FC = () => {
   useEffect(() => {
     if (user && userRole === 'admin') {
       fetchData();
-      
-      // Set up auto-refresh interval
-      intervalRef.current = setInterval(() => {
-        fetchData();
-      }, 60000); // Refresh every 60 seconds
     } else {
       setLoading(false);
     }
-
-    // Clean up interval on component unmount
-    return () => {
-      if (intervalRef.current) {
-        clearInterval(intervalRef.current);
-      }
-    };
   }, [user, userRole, fetchData]);
 
   const handleAddExpense = async (amount: number, description: string) => {
