@@ -1,8 +1,10 @@
 import React, { useState, useCallback, useMemo, useEffect } from 'react';
 import Image from 'next/image';
-import { Member, Payment, Note } from '../types';
+import { Member, Payment, Note, FirebaseUser } from '../types';
 import { Dialog } from '@headlessui/react';
 import { MagnifyingGlassIcon, ChevronDownIcon, ChevronUpIcon } from '@heroicons/react/24/solid';
+import { collection, getDocs } from 'firebase/firestore';
+import { db } from '../config/firebaseConfig';
 
 interface MemberWithPayments extends Member {
   payments: Payment[];
@@ -22,7 +24,6 @@ interface LoggedUser {
 
 interface MembersSectionProps {
   members: MemberWithPayments[];
-  loggedUsers: LoggedUser[];
   searchTerm: string;
   setSearchTerm: (term: string) => void;
   expandedMembers: Record<string, boolean>;
@@ -39,7 +40,6 @@ interface MembersSectionProps {
 
 const MembersSection: React.FC<MembersSectionProps> = React.memo(({
   members,
-  loggedUsers,
   searchTerm,
   setSearchTerm,
   expandedMembers,
@@ -53,6 +53,19 @@ const MembersSection: React.FC<MembersSectionProps> = React.memo(({
   onAddNote,
   onUpdateUserRole
 }) => {
+  const [firebaseUsers, setFirebaseUsers] = useState<FirebaseUser[]>([]);
+
+  useEffect(() => {
+    const fetchFirebaseUsers = async () => {
+      const usersCollection = collection(db, 'users');
+      const usersSnapshot = await getDocs(usersCollection);
+      const usersData = usersSnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() } as FirebaseUser));
+      setFirebaseUsers(usersData);
+    };
+
+    fetchFirebaseUsers();
+  }, []);
+
   useEffect(() => {
     console.log('Members updated:', members);
     members.forEach(member => {
@@ -299,9 +312,9 @@ const MembersSection: React.FC<MembersSectionProps> = React.memo(({
       {/* Logged Users Section */}
       <div className="mt-8">
         <h2 className="text-xl font-semibold mb-4">Logged Users</h2>
-        {loggedUsers && loggedUsers.length > 0 ? (
+        {firebaseUsers && firebaseUsers.length > 0 ? (
           <ul className="space-y-4">
-            {loggedUsers.map(user => (
+            {firebaseUsers.map(user => (
               <li key={user.id} className="bg-white rounded shadow p-4">
                 <div className="flex items-center">
                   {user.photoURL && (
@@ -323,7 +336,7 @@ const MembersSection: React.FC<MembersSectionProps> = React.memo(({
                         <option value="admin">Admin</option>
                       </select>
                     </p>
-                    <p>Created: {user.createdAt ? new Date(user.createdAt.seconds * 1000).toLocaleDateString() : 'N/A'}</p>
+                    <p>Created: {user.createdAt ? new Date(user.createdAt).toLocaleDateString() : 'N/A'}</p>
                   </div>
                 </div>
               </li>
