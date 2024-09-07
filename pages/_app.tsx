@@ -24,7 +24,7 @@ const MyApp = ({ Component, pageProps }: AppProps) => {
     <AuthProviderWithNoSSR>
       <ThemeProviderWithNoSSR>
         <Head>
-          <link rel="icon" href="/favicon.ico" />
+          {/* Favicon will be handled by a separate file */}
         </Head>
         <Component {...pageProps} />
       </ThemeProviderWithNoSSR>
