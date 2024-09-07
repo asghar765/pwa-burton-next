@@ -84,7 +84,7 @@ const FinanceSection: React.FC<FinanceSectionProps> = ({
       
       <div className="bg-white p-4 rounded shadow">
         <h3 className="text-xl font-semibold mb-2">Account Balance</h3>
-        <p className="text-2xl font-bold">{currencySymbol}{formatAmount(calculatedBalance)}</p>
+        <p className="text-2xl font-bold">{currencySymbol}{formatAmount(totalPayments)}</p>
         <p className="text-sm text-gray-600">Total Payments: {currencySymbol}{formatAmount(totalPayments)}</p>
         <p className="text-sm text-gray-600">Total Expenses: {currencySymbol}{formatAmount(totalExpenses)}</p>
       </div>
