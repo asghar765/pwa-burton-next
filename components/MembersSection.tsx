@@ -3,7 +3,7 @@ import Image from 'next/image';
 import { Member, Payment, Note, FirebaseUser } from '../types';
 import { Dialog } from '@headlessui/react';
 import { MagnifyingGlassIcon, ChevronDownIcon, ChevronUpIcon } from '@heroicons/react/24/solid';
-import { collection, getDocs } from 'firebase/firestore';
+import { collection, getDocs, doc, updateDoc } from 'firebase/firestore';
 import { db } from '../config/firebaseConfig';
 
 interface MemberWithPayments extends Member {
@@ -35,7 +35,6 @@ interface MembersSectionProps {
   currentUserRole: string;
   onAddPayment: (memberId: string, payment: Omit<Payment, 'id'>) => void;
   onAddNote: (memberId: string, note: string) => void;
-  onUpdateUserRole: (userId: string, newRole: string) => void;
 }
 
 const MembersSection: React.FC<MembersSectionProps> = React.memo(({
@@ -72,6 +71,25 @@ const MembersSection: React.FC<MembersSectionProps> = React.memo(({
       console.log(`Member ${member.id} payments:`, member.payments);
     });
   }, [members]);
+
+  const handleUpdateUserRole = async (userId: string, newRole: string) => {
+    try {
+      const userRef = doc(db, 'users', userId);
+      await updateDoc(userRef, { role: newRole });
+      
+      // Update local state
+      setFirebaseUsers(prevUsers =>
+        prevUsers.map(user =>
+          user.id === userId ? { ...user, role: newRole } : user
+        )
+      );
+
+      console.log(`User ${userId} role updated to ${newRole}`);
+    } catch (error) {
+      console.error("Error updating user role:", error);
+      alert("Failed to update user role. Please try again.");
+    }
+  };
   const [newMember, setNewMember] = useState({ name: '', email: '', role: '' });
   const [newPaymentAmounts, setNewPaymentAmounts] = useState<Record<string, string>>({});
   const [newNote, setNewNote] = useState('');
@@ -327,7 +345,7 @@ const MembersSection: React.FC<MembersSectionProps> = React.memo(({
                       Role: 
                       <select
                         value={user.role || ''}
-                        onChange={(e) => onUpdateUserRole(user.id, e.target.value)}
+                        onChange={(e) => handleUpdateUserRole(user.id, e.target.value)}
                         className="ml-2 p-1 border border-gray-300 rounded"
                       >
                         <option value="">Select Role</option>
