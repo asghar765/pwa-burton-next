@@ -172,6 +172,9 @@ const MembersSection: React.FC<MembersSectionProps> = ({
                   <p className="mt-2 text-sm text-gray-500">
                     Debug info: {JSON.stringify(member.payments)}
                   </p>
+                  <p className="mt-2 text-sm text-gray-500">
+                    Member object: {JSON.stringify(member)}
+                  </p>
                 </div>
 
                 {/* Add Payment */}
