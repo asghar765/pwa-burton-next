@@ -25,6 +25,7 @@ const MyApp = ({ Component, pageProps }: AppProps) => {
       <ThemeProviderWithNoSSR>
         <Head>
           {/* Favicon will be handled by a separate file */}
+          <title>PWA App</title>
         </Head>
         <Component {...pageProps} />
       </ThemeProviderWithNoSSR>
