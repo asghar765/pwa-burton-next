@@ -37,7 +37,7 @@ interface MembersSectionProps {
   onAddNote: (memberId: string, note: string) => void;
 }
 
-const MembersSection: React.FC<MembersSectionProps> = React.memo(({
+const MembersSection: React.FC<MembersSectionProps> = React.memo(function MembersSection({
   members,
   searchTerm,
   setSearchTerm,
