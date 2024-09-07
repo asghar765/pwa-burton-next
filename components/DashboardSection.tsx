@@ -36,7 +36,7 @@ const DashboardSection: React.FC<DashboardSectionProps> = ({
         
         <div className="bg-white p-4 rounded shadow">
           <h3 className="text-xl font-semibold mb-2">Account Balance</h3>
-          <p className="text-2xl font-bold">${accountBalance.toFixed(2)}</p>
+          <p className="text-2xl font-bold">£{accountBalance.toFixed(2)}</p>
         </div>
       </div>
 
