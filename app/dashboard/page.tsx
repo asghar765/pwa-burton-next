@@ -36,7 +36,7 @@ const AdminDashboard: React.FC = () => {
   const [notes, setNotes] = useState<Note[]>([]);
   const [payments, setPayments] = useState<Payment[]>([]);
   const [expenses, setExpenses] = useState<Expense[]>([]);
-  const [accountBalance, setAccountBalance] = useState(0);
+  const [accountBalanceState, setAccountBalanceState] = useState(0);
   const [firebaseUsers, setFirebaseUsers] = useState<FirebaseUser[]>([]);
   
   const [activeSection, setActiveSection] = useState('dashboard');
@@ -142,7 +142,7 @@ const AdminDashboard: React.FC = () => {
       const accountBalance = totalPayments - totalExpenses;
       console.log('Account Balance:', accountBalance);
 
-      setAccountBalance(accountBalance);
+      setAccountBalanceState(accountBalance);
 
       setLoading(false);
     } catch (error) {
@@ -290,7 +290,7 @@ const AdminDashboard: React.FC = () => {
     return <div className="p-8">You do not have permission to access this page.</div>;
   }
 
-  const accountBalance = useMemo(() => {
+  const calculatedAccountBalance = useMemo(() => {
     const totalPayments = payments.reduce((sum, payment) => sum + (typeof payment.amount === 'number' ? payment.amount : parseFloat(payment.amount) || 0), 0);
     const totalExpenses = expenses.reduce((sum, expense) => sum + (typeof expense.amount === 'number' ? expense.amount : parseFloat(expense.amount) || 0), 0);
     return totalPayments - totalExpenses;
@@ -304,7 +304,7 @@ const AdminDashboard: React.FC = () => {
             members={members}
             registrations={registrations}
             collectors={collectors}
-            accountBalance={accountBalance}
+            accountBalance={calculatedAccountBalance}
           />
         );
       case 'members':
@@ -340,7 +340,7 @@ const AdminDashboard: React.FC = () => {
       case 'finance':
         return (
           <FinanceSection
-            accountBalance={accountBalance}
+            accountBalance={calculatedAccountBalance}
             payments={payments.map(payment => ({
               ...payment,
               amount: typeof payment.amount === 'number' ? payment.amount : parseFloat(payment.amount) || 0,
