@@ -50,11 +50,20 @@ const DashboardSection: React.FC<DashboardSectionProps> = ({
             margin={{ top: 20, right: 30, left: 20, bottom: 5 }}
           >
             <CartesianGrid strokeDasharray="3 3" />
-            <XAxis dataKey="date" />
-            <YAxis yAxisId="left" label={{ value: 'Registrations', angle: -90, position: 'insideLeft' }} />
-            <YAxis yAxisId="right" orientation="right" label={{ value: 'Total Members', angle: 90, position: 'insideRight' }} />
-            <Tooltip />
-            <Legend />
+            <XAxis dataKey="date" angle={-45} textAnchor="end" height={70} />
+            <YAxis 
+              yAxisId="left" 
+              label={{ value: 'Registrations', angle: -90, position: 'insideLeft' }} 
+              tickFormatter={(value) => value.toLocaleString()}
+            />
+            <YAxis 
+              yAxisId="right" 
+              orientation="right" 
+              label={{ value: 'Total Members', angle: 90, position: 'insideRight' }} 
+              tickFormatter={(value) => value.toLocaleString()}
+            />
+            <Tooltip formatter={(value) => value.toLocaleString()} />
+            <Legend wrapperStyle={{ paddingTop: '20px' }} />
             <Bar yAxisId="left" dataKey="registrations" name="Monthly Registrations" fill="#8884d8" />
             <Bar yAxisId="right" dataKey="totalMembers" name="Total Members" fill="#82ca9d" />
           </BarChart>
