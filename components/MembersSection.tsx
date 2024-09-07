@@ -3,7 +3,7 @@ import { Member, Payment, Note } from '../types';
 
 // Ensure Member interface includes payments
 interface MemberWithPayments extends Member {
-  payments?: Payment[];
+  payments?: Payment[] | null;
 }
 import { MagnifyingGlassIcon, ChevronDownIcon, ChevronUpIcon } from '@heroicons/react/24/solid';
 
@@ -153,31 +153,31 @@ const MembersSection: React.FC<MembersSectionProps> = ({
                   <p className="mt-2 text-sm text-gray-500">
                     Debug info (member): {JSON.stringify(member)}
                   </p>
-                  {member.payments ? (
-                    Array.isArray(member.payments) ? (
-                      member.payments.length > 0 ? (
-                        <ul className="list-disc list-inside">
-                          {member.payments
-                            .sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime())
-                            .map((payment, index) => (
-                              <li key={index}>
-                                {new Date(payment.date).toLocaleDateString()}: £
-                                {typeof payment.amount === 'number'
-                                  ? payment.amount.toFixed(2)
-                                  : typeof payment.amount === 'string'
-                                  ? parseFloat(payment.amount).toFixed(2)
-                                  : 'N/A'}
-                              </li>
-                            ))}
-                        </ul>
-                      ) : (
-                        <p>No payments recorded for this member.</p>
-                      )
+                  {member.payments === undefined ? (
+                    <p>Payment data is not available for this member.</p>
+                  ) : member.payments === null ? (
+                    <p>No payments have been recorded for this member.</p>
+                  ) : Array.isArray(member.payments) ? (
+                    member.payments.length > 0 ? (
+                      <ul className="list-disc list-inside">
+                        {member.payments
+                          .sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime())
+                          .map((payment, index) => (
+                            <li key={index}>
+                              {new Date(payment.date).toLocaleDateString()}: £
+                              {typeof payment.amount === 'number'
+                                ? payment.amount.toFixed(2)
+                                : typeof payment.amount === 'string'
+                                ? parseFloat(payment.amount).toFixed(2)
+                                : 'N/A'}
+                            </li>
+                          ))}
+                      </ul>
                     ) : (
-                      <p>Payment data is not in the correct format.</p>
+                      <p>No payments recorded for this member.</p>
                     )
                   ) : (
-                    <p>No payment data available for this member.</p>
+                    <p>Payment data is not in the correct format.</p>
                   )}
                 </div>
 
