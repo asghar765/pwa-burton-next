@@ -173,10 +173,12 @@ const AdminDashboard: React.FC = () => {
   }, []);
 
   useEffect(() => {
-    if (user && userRole === 'admin') {
-      fetchData();
-    } else {
-      setLoading(false);
+    if (typeof window !== 'undefined') {
+      if (user && userRole === 'admin') {
+        fetchData();
+      } else {
+        setLoading(false);
+      }
     }
   }, [user, userRole, fetchData]);
 
