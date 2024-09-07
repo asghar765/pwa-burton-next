@@ -259,6 +259,17 @@ const AdminDashboard: React.FC = () => {
     }
   };
 
+  const handleReinstateRevokedMember = async (member: Member) => {
+    try {
+      const memberRef = doc(db, 'members', member.id);
+      await updateDoc(memberRef, { verified: true });
+      fetchData();
+    } catch (error) {
+      console.error('Error reinstating member:', error);
+      setErrorMessage('Failed to reinstate member. Please try again.');
+    }
+  };
+
   if (loading) {
     return <div className="p-8">Loading...</div>;
   }
@@ -301,7 +312,9 @@ const AdminDashboard: React.FC = () => {
       case 'registrations':
         return <RegistrationsSection 
           registrations={registrations}
+          revokedMembers={members.filter(member => !member.verified)}
           onApproveRegistration={handleApproveRegistration}
+          onReinstateRevokedMember={handleReinstateRevokedMember}
         />;
       case 'database':
         return <DatabaseSection />;
