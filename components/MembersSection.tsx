@@ -3,7 +3,7 @@ import { Member, Payment, Note } from '../types';
 
 // Ensure Member interface includes payments
 interface MemberWithPayments extends Member {
-  payments?: Payment[] | null | undefined;
+  payments: Payment[];
 }
 import { MagnifyingGlassIcon, ChevronDownIcon, ChevronUpIcon } from '@heroicons/react/24/solid';
 
@@ -34,6 +34,11 @@ const MembersSection: React.FC<MembersSectionProps> = ({
   onAddPayment,
   onAddNote
 }) => {
+  // Ensure all members have a payments array
+  const membersWithPayments = members.map(member => ({
+    ...member,
+    payments: member.payments || []
+  }));
   const [newMember, setNewMember] = useState({ name: '', email: '', role: '' });
   const [newPaymentAmounts, setNewPaymentAmounts] = useState<Record<string, string>>({});
   const [newNote, setNewNote] = useState('');
@@ -115,7 +120,13 @@ const MembersSection: React.FC<MembersSectionProps> = ({
         </button>
       </div>
       <ul className="space-y-4">
-        {filteredMembers.map(member => (
+        {membersWithPayments.filter(member => {
+          const search = searchTerm ? searchTerm.toLowerCase() : '';
+          return (
+            (member.name && member.name.toLowerCase().includes(search)) ||
+            (member.memberNumber && member.memberNumber.toLowerCase().includes(search))
+          );
+        }).map(member => (
           <li key={member.id || 'temp-' + Math.random()} className="bg-white rounded shadow">
             <div 
               className="p-4 flex justify-between items-center cursor-pointer"
@@ -151,38 +162,25 @@ const MembersSection: React.FC<MembersSectionProps> = ({
                     Debug info (member): {JSON.stringify(member)}
                   </p>
                   <p className="mt-2 text-sm text-gray-500">
-                    Debug info (payments property exists): {'payments' in member ? 'Yes' : 'No'}
+                    Debug info (payments): {JSON.stringify(member.payments)}
                   </p>
-                  <p className="mt-2 text-sm text-gray-500">
-                    Debug info (payments value): {JSON.stringify(member.payments)}
-                  </p>
-                  {!('payments' in member) ? (
-                    <p>Payment data is not available for this member. The 'payments' property is missing.</p>
-                  ) : member.payments === undefined ? (
-                    <p>Payment data is undefined for this member.</p>
-                  ) : member.payments === null ? (
-                    <p>No payments have been recorded for this member (null value).</p>
-                  ) : Array.isArray(member.payments) ? (
-                    member.payments.length > 0 ? (
-                      <ul className="list-disc list-inside">
-                        {member.payments
-                          .sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime())
-                          .map((payment, index) => (
-                            <li key={index}>
-                              {new Date(payment.date).toLocaleDateString()}: £
-                              {typeof payment.amount === 'number'
-                                ? payment.amount.toFixed(2)
-                                : typeof payment.amount === 'string'
-                                ? parseFloat(payment.amount).toFixed(2)
-                                : 'N/A'}
-                            </li>
-                          ))}
-                      </ul>
-                    ) : (
-                      <p>No payments recorded for this member (empty array).</p>
-                    )
+                  {member.payments.length > 0 ? (
+                    <ul className="list-disc list-inside">
+                      {member.payments
+                        .sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime())
+                        .map((payment, index) => (
+                          <li key={index}>
+                            {new Date(payment.date).toLocaleDateString()}: £
+                            {typeof payment.amount === 'number'
+                              ? payment.amount.toFixed(2)
+                              : typeof payment.amount === 'string'
+                              ? parseFloat(payment.amount).toFixed(2)
+                              : 'N/A'}
+                          </li>
+                        ))}
+                    </ul>
                   ) : (
-                    <p>Payment data is not in the correct format. Expected an array, but got: {typeof member.payments}</p>
+                    <p>No payments recorded for this member.</p>
                   )}
                 </div>
 
