@@ -217,11 +217,12 @@ const AdminDashboard: React.FC = () => {
             expenses={expenses.map(expense => ({
               ...expense,
               amount: typeof expense.amount === 'number' ? expense.amount : parseFloat(expense.amount) || 0,
-              date: expense.date instanceof Date ? expense.date.toISOString() : 
-                (isNaN(Date.parse(expense.date)) ? new Date().toISOString() : new Date(expense.date).toISOString()),
+              date: typeof expense.date === 'string' 
+                ? (isNaN(Date.parse(expense.date)) ? new Date().toISOString() : new Date(expense.date).toISOString())
+                : new Date().toISOString(),
               // Ensure all properties are primitive values
               ...Object.entries(expense).reduce((acc, [key, value]) => {
-                acc[key] = typeof value === 'object' ? JSON.stringify(value) : value;
+                acc[key] = typeof value === 'object' && value !== null ? JSON.stringify(value) : value;
                 return acc;
               }, {} as Record<string, any>)
             }))}
