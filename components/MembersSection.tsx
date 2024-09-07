@@ -305,21 +305,22 @@ const MembersSection: React.FC<MembersSectionProps> = React.memo(({
                     <Image src={user.photoURL} alt={user.displayName || 'User'} width={40} height={40} className="rounded-full mr-4" />
                   )}
                   <div>
-                    <h4 className="font-bold">{user.displayName}</h4>
-                    <p>Email: {user.email}</p>
+                    <h4 className="font-bold">{user.displayName || 'N/A'}</h4>
+                    <p>Email: {user.email || 'N/A'}</p>
                     <p>
                       Role: 
                       <select
-                        value={user.role}
+                        value={user.role || ''}
                         onChange={(e) => onUpdateUserRole(user.id, e.target.value)}
                         className="ml-2 p-1 border border-gray-300 rounded"
                       >
+                        <option value="">Select Role</option>
                         <option value="member">Member</option>
                         <option value="collector">Collector</option>
                         <option value="admin">Admin</option>
                       </select>
                     </p>
-                    <p>Created: {new Date(user.createdAt).toLocaleDateString()}</p>
+                    <p>Created: {user.createdAt ? new Date(user.createdAt).toLocaleDateString() : 'N/A'}</p>
                   </div>
                 </div>
               </li>
