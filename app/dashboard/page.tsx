@@ -202,8 +202,16 @@ const AdminDashboard: React.FC = () => {
         return (
           <FinanceSection
             accountBalance={accountBalance}
-            payments={payments}
-            expenses={expenses}
+            payments={payments.map(payment => ({
+              ...payment,
+              amount: payment.amount.toString(),
+              date: payment.date.toString()
+            }))}
+            expenses={expenses.map(expense => ({
+              ...expense,
+              amount: expense.amount.toString(),
+              date: expense.date.toString()
+            }))}
             onAddExpense={handleAddExpense}
           />
         );
