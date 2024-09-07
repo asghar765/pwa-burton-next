@@ -10,7 +10,10 @@ interface MemberWithPayments extends Member {
 
 interface LoggedUser {
   id: string;
-  createdAt: string;
+  createdAt: {
+    seconds: number;
+    nanoseconds: number;
+  };
   displayName: string;
   email: string;
   photoURL: string;
@@ -320,7 +323,7 @@ const MembersSection: React.FC<MembersSectionProps> = React.memo(({
                         <option value="admin">Admin</option>
                       </select>
                     </p>
-                    <p>Created: {user.createdAt ? new Date(user.createdAt).toLocaleDateString() : 'N/A'}</p>
+                    <p>Created: {user.createdAt ? new Date(user.createdAt.seconds * 1000).toLocaleDateString() : 'N/A'}</p>
                   </div>
                 </div>
               </li>
