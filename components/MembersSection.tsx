@@ -148,17 +148,20 @@ const MembersSection: React.FC<MembersSectionProps> = ({
                 <div className="mt-4">
                   <h5 className="font-semibold">Payment History</h5>
                   <p className="mt-2 text-sm text-gray-500">
-                    Debug info (payments): {JSON.stringify(member.payments)}
-                  </p>
-                  <p className="mt-2 text-sm text-gray-500">
                     Debug info (member): {JSON.stringify(member)}
                   </p>
+                  <p className="mt-2 text-sm text-gray-500">
+                    Debug info (payments property exists): {'payments' in member ? 'Yes' : 'No'}
+                  </p>
+                  <p className="mt-2 text-sm text-gray-500">
+                    Debug info (payments value): {JSON.stringify(member.payments)}
+                  </p>
                   {!('payments' in member) ? (
-                    <p>Payment data is not available for this member.</p>
+                    <p>Payment data is not available for this member. The 'payments' property is missing.</p>
                   ) : member.payments === undefined ? (
                     <p>Payment data is undefined for this member.</p>
                   ) : member.payments === null ? (
-                    <p>No payments have been recorded for this member.</p>
+                    <p>No payments have been recorded for this member (null value).</p>
                   ) : Array.isArray(member.payments) ? (
                     member.payments.length > 0 ? (
                       <ul className="list-disc list-inside">
@@ -176,10 +179,10 @@ const MembersSection: React.FC<MembersSectionProps> = ({
                           ))}
                       </ul>
                     ) : (
-                      <p>No payments recorded for this member.</p>
+                      <p>No payments recorded for this member (empty array).</p>
                     )
                   ) : (
-                    <p>Payment data is not in the correct format.</p>
+                    <p>Payment data is not in the correct format. Expected an array, but got: {typeof member.payments}</p>
                   )}
                 </div>
 
