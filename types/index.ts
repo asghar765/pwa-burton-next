@@ -52,6 +52,7 @@ export interface Expense {
 
 export interface FirebaseUser {
   id: string;
+  uid?: string;
   createdAt: string;
   displayName: string;
   email: string;
