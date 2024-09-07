@@ -3,7 +3,7 @@ import { Member, Payment, Note } from '../types';
 
 // Ensure Member interface includes payments
 interface MemberWithPayments extends Member {
-  payments?: Payment[] | null;
+  payments?: Payment[] | null | undefined;
 }
 import { MagnifyingGlassIcon, ChevronDownIcon, ChevronUpIcon } from '@heroicons/react/24/solid';
 
@@ -153,8 +153,10 @@ const MembersSection: React.FC<MembersSectionProps> = ({
                   <p className="mt-2 text-sm text-gray-500">
                     Debug info (member): {JSON.stringify(member)}
                   </p>
-                  {member.payments === undefined ? (
+                  {!('payments' in member) ? (
                     <p>Payment data is not available for this member.</p>
+                  ) : member.payments === undefined ? (
+                    <p>Payment data is undefined for this member.</p>
                   ) : member.payments === null ? (
                     <p>No payments have been recorded for this member.</p>
                   ) : Array.isArray(member.payments) ? (
