@@ -225,6 +225,7 @@ const AdminDashboard: React.FC = () => {
               }, {} as Record<string, any>)
             }))}
             onAddExpense={handleAddExpense}
+            currencySymbol="£"
           />
         );
       default:
