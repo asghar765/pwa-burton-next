@@ -18,7 +18,15 @@ const FinanceSection: React.FC<FinanceSectionProps> = ({
 }) => {
   const totalPayments = useMemo(() => payments.reduce((sum, payment) => sum + payment.amount, 0), [payments]);
   const totalExpenses = useMemo(() => expenses.reduce((sum, expense) => {
-    const expenseAmount = typeof expense.amount === 'number' ? expense.amount : parseFloat(expense.amount);
+    let expenseAmount;
+    if (typeof expense.amount === 'number') {
+      expenseAmount = expense.amount;
+    } else if (typeof expense.amount === 'string') {
+      expenseAmount = parseFloat(expense.amount);
+    } else {
+      console.warn(`Invalid expense amount for expense ${expense.id}:`, expense.amount);
+      expenseAmount = 0;
+    }
     return sum + (isNaN(expenseAmount) ? 0 : expenseAmount);
   }, 0), [expenses]);
   const calculatedBalance = useMemo(() => totalPayments - totalExpenses, [totalPayments, totalExpenses]);
@@ -102,9 +110,14 @@ const FinanceSection: React.FC<FinanceSectionProps> = ({
         <p className="text-sm text-gray-600 mt-2">
           Debug: calculatedBalance = {totalPayments.toFixed(2)} - {totalExpenses.toFixed(2)} = {calculatedBalance.toFixed(2)}
         </p>
-        <p className="text-sm text-gray-600">
-          Raw expenses: {JSON.stringify(expenses)}
-        </p>
+        <details>
+          <summary className="text-sm text-gray-600 cursor-pointer">Expense Details</summary>
+          <pre className="text-xs text-gray-600 mt-2 overflow-auto max-h-40">
+            {expenses.map(expense => 
+              `ID: ${expense.id}, Amount: ${expense.amount}, Type: ${typeof expense.amount}\n`
+            ).join('')}
+          </pre>
+        </details>
       </div>
 
       <div className="bg-white p-4 rounded shadow">
