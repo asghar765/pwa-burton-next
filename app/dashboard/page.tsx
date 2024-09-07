@@ -5,7 +5,7 @@ import { collection, query, getDocs, addDoc, updateDoc, deleteDoc, doc, where, o
 import { db, auth } from '../../config/firebaseConfig';
 import { useAuth } from '../../context/authContext';
 import { useRouter } from 'next/navigation';
-import { Member, Registration, Collector, Note, Payment, Expense, GoogleUser } from '../../types';
+import { Member, Registration, Collector, Note, Payment, Expense } from '../../types';
 import DashboardSection from '../../components/DashboardSection';
 import MembersSection from '../../components/MembersSection';
 import CollectorsSection from '../../components/CollectorsSection';
@@ -13,6 +13,15 @@ import RegistrationsSection from '../../components/RegistrationsSection';
 import DatabaseSection from '../../components/DatabaseSection';
 import FinanceSection from '../../components/FinanceSection';
 import ErrorBoundary from '../../components/ErrorBoundary';
+
+interface FirebaseUser {
+  id: string;
+  createdAt: string;
+  displayName: string;
+  email: string;
+  photoURL: string;
+  role: string;
+}
 
 const AdminDashboard: React.FC = () => {
   const { user, userRole } = useAuth();
@@ -27,7 +36,7 @@ const AdminDashboard: React.FC = () => {
   const [payments, setPayments] = useState<Payment[]>([]);
   const [expenses, setExpenses] = useState<Expense[]>([]);
   const [accountBalance, setAccountBalance] = useState(0);
-  const [googleUsers, setGoogleUsers] = useState<GoogleUser[]>([]);
+  const [firebaseUsers, setFirebaseUsers] = useState<FirebaseUser[]>([]);
   
   const [activeSection, setActiveSection] = useState('dashboard');
   const [searchTerm, setSearchTerm] = useState('');
@@ -43,16 +52,18 @@ const AdminDashboard: React.FC = () => {
       const collectorsQuery = query(collection(db, 'collectors'));
       const paymentsQuery = query(collection(db, 'payments'));
       const expensesQuery = query(collection(db, 'expenses'));
+      const usersQuery = query(collection(db, 'users'));
 
       setLastRefreshed(new Date());
 
-      const [membersSnapshot, registrationsSnapshot, notesSnapshot, collectorsSnapshot, paymentsSnapshot, expensesSnapshot] = await Promise.all([
+      const [membersSnapshot, registrationsSnapshot, notesSnapshot, collectorsSnapshot, paymentsSnapshot, expensesSnapshot, usersSnapshot] = await Promise.all([
         getDocs(membersQuery),
         getDocs(registrationsQuery),
         getDocs(notesQuery),
         getDocs(collectorsQuery),
         getDocs(paymentsQuery),
-        getDocs(expensesQuery)
+        getDocs(expensesQuery),
+        getDocs(usersQuery)
       ]);
 
       setMembers(membersSnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() } as Member)));
@@ -67,6 +78,7 @@ const AdminDashboard: React.FC = () => {
       }));
       setPayments(paymentsWithMemberNumbers);
       setExpenses(expensesSnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() } as Expense)));
+      setFirebaseUsers(usersSnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() } as FirebaseUser)));
 
       let totalPayments = 0;
       let totalExpenses = 0;
@@ -118,12 +130,6 @@ const AdminDashboard: React.FC = () => {
       console.log('Account Balance:', accountBalance);
 
       setAccountBalance(accountBalance);
-
-      // Fetch Google users
-      const googleUsersQuery = query(collection(db, 'users'), where('provider', '==', 'google'));
-      const googleUsersSnapshot = await getDocs(googleUsersQuery);
-      const googleUsersData = googleUsersSnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() } as GoogleUser));
-      setGoogleUsers(googleUsersData);
 
       setLoading(false);
     } catch (error) {
@@ -240,7 +246,7 @@ const AdminDashboard: React.FC = () => {
         return (
           <MembersSection
             members={members}
-            googleUsers={googleUsers}
+            firebaseUsers={firebaseUsers}
             searchTerm={searchTerm}
             setSearchTerm={setSearchTerm}
             expandedMembers={expandedMembers}
@@ -248,6 +254,7 @@ const AdminDashboard: React.FC = () => {
             onAddMember={handleAddMember}
             onUpdateMember={handleUpdateMember}
             onDeleteMember={handleDeleteMember}
+            onRevokeMember={handleRevokeMember}
             currentUserRole={userRole || ''}
             onAddPayment={handleAddPayment}
             onAddNote={handleAddNote}

@@ -46,9 +46,11 @@ export interface Expense {
   userId: string;
 }
 
-export interface GoogleUser {
+export interface FirebaseUser {
   id: string;
-  name: string;
+  createdAt: string;
+  displayName: string;
   email: string;
+  photoURL: string;
   role: string;
 }

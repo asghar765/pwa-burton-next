@@ -7,23 +7,18 @@ interface MemberWithPayments extends Member {
   payments: Payment[];
 }
 
-interface GoogleUser {
+interface FirebaseUser {
   id: string;
-  name: string;
+  createdAt: string;
+  displayName: string;
   email: string;
-  role: string;
-}
-
-interface GoogleUser {
-  id: string;
-  name: string;
-  email: string;
+  photoURL: string;
   role: string;
 }
 
 interface MembersSectionProps {
   members: MemberWithPayments[];
-  googleUsers: GoogleUser[];  // Make googleUsers required
+  firebaseUsers: FirebaseUser[];
   searchTerm: string;
   setSearchTerm: (term: string) => void;
   expandedMembers: Record<string, boolean>;
@@ -295,21 +290,29 @@ const MembersSection: React.FC<MembersSectionProps> = ({
         ))}
       </ul>
 
-      {/* Google Login Users Section */}
+      {/* Firebase Users Section */}
       <div className="mt-8">
-        <h2 className="text-xl font-semibold mb-4">Google Login Users</h2>
-        {googleUsers.length > 0 ? (
+        <h2 className="text-xl font-semibold mb-4">Firebase Users</h2>
+        {firebaseUsers.length > 0 ? (
           <ul className="space-y-4">
-            {googleUsers.map(user => (
+            {firebaseUsers.map(user => (
               <li key={user.id} className="bg-white rounded shadow p-4">
-                <h4 className="font-bold">{user.name}</h4>
-                <p>Email: {user.email}</p>
-                <p>Role: {user.role}</p>
+                <div className="flex items-center">
+                  {user.photoURL && (
+                    <img src={user.photoURL} alt={user.displayName} className="w-10 h-10 rounded-full mr-4" />
+                  )}
+                  <div>
+                    <h4 className="font-bold">{user.displayName}</h4>
+                    <p>Email: {user.email}</p>
+                    <p>Role: {user.role}</p>
+                    <p>Created: {new Date(user.createdAt).toLocaleDateString()}</p>
+                  </div>
+                </div>
               </li>
             ))}
           </ul>
         ) : (
-          <p>No Google login users found.</p>
+          <p>No Firebase users found.</p>
         )}
       </div>
 
