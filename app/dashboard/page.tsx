@@ -377,7 +377,7 @@ const AdminDashboard: React.FC = () => {
   );
 
   const renderDatabaseSection = () => (
-    <DatabaseSection />
+    <DatabaseSection tables={tables} error={error} />
   );
 
   const renderFinanceSection = () => {
