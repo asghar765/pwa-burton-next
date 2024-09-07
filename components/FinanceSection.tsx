@@ -22,6 +22,8 @@ const FinanceSection: React.FC<FinanceSectionProps> = ({
   const [newExpenseAmount, setNewExpenseAmount] = useState<string>('');
   const [newExpenseDescription, setNewExpenseDescription] = useState<string>('');
   const [searchTerm, setSearchTerm] = useState<string>('');
+  const [currentPage, setCurrentPage] = useState(1);
+  const itemsPerPage = 10;
 
   const handleAddExpense = (e: React.FormEvent) => {
     e.preventDefault();
@@ -78,6 +80,13 @@ const FinanceSection: React.FC<FinanceSectionProps> = ({
     );
   }, [payments, searchTerm]);
 
+  const paginatedExpenses = useMemo(() => {
+    const startIndex = (currentPage - 1) * itemsPerPage;
+    return expenses.slice(startIndex, startIndex + itemsPerPage);
+  }, [expenses, currentPage]);
+
+  const totalPages = Math.ceil(expenses.length / itemsPerPage);
+
   return (
     <div className="space-y-6">
       <h2 className="text-2xl font-bold">Finance Section</h2>
@@ -111,15 +120,32 @@ const FinanceSection: React.FC<FinanceSectionProps> = ({
       </div>
 
       <div className="bg-white p-4 rounded shadow">
-        <h3 className="text-xl font-semibold mb-2">Recent Expenses</h3>
+        <h3 className="text-xl font-semibold mb-2">Expenses</h3>
         <ul className="space-y-2">
-          {expenses.slice(0, 5).map((expense) => (
+          {paginatedExpenses.map((expense) => (
             <li key={expense.id} className="flex justify-between items-center">
               <span>{formatDate(expense.date)} - {expense.description}</span>
               <span className="font-semibold">{currencySymbol}{formatAmount(expense.amount)}</span>
             </li>
           ))}
         </ul>
+        <div className="mt-4 flex justify-between items-center">
+          <button
+            onClick={() => setCurrentPage(prev => Math.max(prev - 1, 1))}
+            disabled={currentPage === 1}
+            className="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600 disabled:bg-gray-300"
+          >
+            Previous
+          </button>
+          <span>Page {currentPage} of {totalPages}</span>
+          <button
+            onClick={() => setCurrentPage(prev => Math.min(prev + 1, totalPages))}
+            disabled={currentPage === totalPages}
+            className="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600 disabled:bg-gray-300"
+          >
+            Next
+          </button>
+        </div>
       </div>
 
       <div className="bg-white p-4 rounded shadow">
