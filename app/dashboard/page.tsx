@@ -5,7 +5,7 @@ import { collection, query, getDocs, addDoc, updateDoc, deleteDoc, doc, where, o
 import { db, auth } from '../../config/firebaseConfig';
 import { useAuth } from '../../context/authContext';
 import { useRouter } from 'next/navigation';
-import { Member, Registration, Collector, Note, Payment, Expense } from '../../types';
+import { Member, MemberWithPayments, Registration, Collector, Note, Payment, Expense } from '../../types';
 import DashboardSection from '../../components/DashboardSection';
 import MembersSection from '../../components/MembersSection';
 import CollectorsSection from '../../components/CollectorsSection';

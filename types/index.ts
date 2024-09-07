@@ -9,6 +9,10 @@ export interface Member {
   notes?: Note[];
 }
 
+export interface MemberWithPayments extends Member {
+  payments: Payment[];
+}
+
 export interface Registration {
   id: string;
   fullName: string;
