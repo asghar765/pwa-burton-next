@@ -147,7 +147,13 @@ const MembersSection: React.FC<MembersSectionProps> = ({
                 {/* Payment History */}
                 <div className="mt-4">
                   <h5 className="font-semibold">Payment History</h5>
-                  {member.payments ? (
+                  <p className="mt-2 text-sm text-gray-500">
+                    Debug info (payments): {JSON.stringify(member.payments)}
+                  </p>
+                  <p className="mt-2 text-sm text-gray-500">
+                    Debug info (member): {JSON.stringify(member)}
+                  </p>
+                  {Array.isArray(member.payments) ? (
                     member.payments.length > 0 ? (
                       <ul className="list-disc list-inside">
                         {member.payments
@@ -167,14 +173,8 @@ const MembersSection: React.FC<MembersSectionProps> = ({
                       <p>No payments recorded for this member.</p>
                     )
                   ) : (
-                    <p>Payment data is not available. (payments property is undefined)</p>
+                    <p>Payment data is not available or not in the correct format.</p>
                   )}
-                  <p className="mt-2 text-sm text-gray-500">
-                    Debug info: {JSON.stringify(member.payments)}
-                  </p>
-                  <p className="mt-2 text-sm text-gray-500">
-                    Member object: {JSON.stringify(member)}
-                  </p>
                 </div>
 
                 {/* Add Payment */}
