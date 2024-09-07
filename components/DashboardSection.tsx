@@ -44,12 +44,15 @@ const DashboardSection: React.FC<DashboardSectionProps> = ({
 
       <div className="bg-white p-4 rounded shadow mt-6">
         <h3 className="text-xl font-semibold mb-4">Monthly Registrations and Total Members (Last 12 Months)</h3>
-        <ResponsiveContainer width="100%" height={300}>
-          <BarChart data={registrationChartData}>
+        <ResponsiveContainer width="100%" height={400} minHeight={300}>
+          <BarChart
+            data={registrationChartData}
+            margin={{ top: 20, right: 30, left: 20, bottom: 5 }}
+          >
             <CartesianGrid strokeDasharray="3 3" />
             <XAxis dataKey="date" />
-            <YAxis yAxisId="left" />
-            <YAxis yAxisId="right" orientation="right" />
+            <YAxis yAxisId="left" label={{ value: 'Registrations', angle: -90, position: 'insideLeft' }} />
+            <YAxis yAxisId="right" orientation="right" label={{ value: 'Total Members', angle: 90, position: 'insideRight' }} />
             <Tooltip />
             <Legend />
             <Bar yAxisId="left" dataKey="registrations" name="Monthly Registrations" fill="#8884d8" />
