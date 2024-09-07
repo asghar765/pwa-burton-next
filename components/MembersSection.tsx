@@ -8,7 +8,7 @@ interface MemberWithPayments extends Member {
   payments: Payment[];
 }
 
-interface FirebaseUser {
+interface LoggedUser {
   id: string;
   createdAt: string;
   displayName: string;
@@ -19,7 +19,7 @@ interface FirebaseUser {
 
 interface MembersSectionProps {
   members: MemberWithPayments[];
-  firebaseUsers: FirebaseUser[];
+  loggedUsers: LoggedUser[];
   searchTerm: string;
   setSearchTerm: (term: string) => void;
   expandedMembers: Record<string, boolean>;
@@ -31,11 +31,12 @@ interface MembersSectionProps {
   currentUserRole: string;
   onAddPayment: (memberId: string, payment: Omit<Payment, 'id'>) => void;
   onAddNote: (memberId: string, note: string) => void;
+  onUpdateUserRole: (userId: string, newRole: string) => void;
 }
 
 const MembersSection: React.FC<MembersSectionProps> = React.memo(({
   members,
-  firebaseUsers,
+  loggedUsers,
   searchTerm,
   setSearchTerm,
   expandedMembers,
@@ -46,7 +47,8 @@ const MembersSection: React.FC<MembersSectionProps> = React.memo(({
   onRevokeMember,
   currentUserRole,
   onAddPayment,
-  onAddNote
+  onAddNote,
+  onUpdateUserRole
 }) => {
   useEffect(() => {
     console.log('Members updated:', members);
@@ -291,12 +293,12 @@ const MembersSection: React.FC<MembersSectionProps> = React.memo(({
         ))}
       </ul>
 
-      {/* Firebase Users Section */}
+      {/* Logged Users Section */}
       <div className="mt-8">
-        <h2 className="text-xl font-semibold mb-4">Firebase Users</h2>
-        {firebaseUsers.length > 0 ? (
+        <h2 className="text-xl font-semibold mb-4">Logged Users</h2>
+        {loggedUsers.length > 0 ? (
           <ul className="space-y-4">
-            {firebaseUsers.map(user => (
+            {loggedUsers.map(user => (
               <li key={user.id} className="bg-white rounded shadow p-4">
                 <div className="flex items-center">
                   {user.photoURL && (
@@ -305,7 +307,18 @@ const MembersSection: React.FC<MembersSectionProps> = React.memo(({
                   <div>
                     <h4 className="font-bold">{user.displayName}</h4>
                     <p>Email: {user.email}</p>
-                    <p>Role: {user.role}</p>
+                    <p>
+                      Role: 
+                      <select
+                        value={user.role}
+                        onChange={(e) => onUpdateUserRole(user.id, e.target.value)}
+                        className="ml-2 p-1 border border-gray-300 rounded"
+                      >
+                        <option value="member">Member</option>
+                        <option value="collector">Collector</option>
+                        <option value="admin">Admin</option>
+                      </select>
+                    </p>
                     <p>Created: {new Date(user.createdAt).toLocaleDateString()}</p>
                   </div>
                 </div>
@@ -313,7 +326,7 @@ const MembersSection: React.FC<MembersSectionProps> = React.memo(({
             ))}
           </ul>
         ) : (
-          <p>No Firebase users found.</p>
+          <p>No logged users found.</p>
         )}
       </div>
 
