@@ -142,13 +142,17 @@ const MembersSection: React.FC<MembersSectionProps> = ({
                 {/* Payment History */}
                 <div className="mt-4">
                   <h5 className="font-semibold">Payment History</h5>
-                  <ul className="list-disc list-inside">
-                    {member.payments?.map((payment, index) => (
-                      <li key={index}>
-                        {new Date(payment.date).toLocaleDateString()}: £{payment.amount}
-                      </li>
-                    ))}
-                  </ul>
+                  {member.payments && member.payments.length > 0 ? (
+                    <ul className="list-disc list-inside">
+                      {member.payments.map((payment, index) => (
+                        <li key={index}>
+                          {new Date(payment.date).toLocaleDateString()}: £{payment.amount.toFixed(2)}
+                        </li>
+                      ))}
+                    </ul>
+                  ) : (
+                    <p>No payment history available.</p>
+                  )}
                 </div>
 
                 {/* Add Payment */}
@@ -167,18 +171,6 @@ const MembersSection: React.FC<MembersSectionProps> = ({
                   >
                     Add Payment
                   </button>
-                </div>
-
-                {/* Payment History */}
-                <div className="mt-4">
-                  <h5 className="font-semibold">Payment History</h5>
-                  <ul className="list-disc list-inside">
-                    {member.payments?.map((payment, index) => (
-                      <li key={index}>
-                        {new Date(payment.date).toLocaleDateString()}: £{payment.amount.toFixed(2)}
-                      </li>
-                    ))}
-                  </ul>
                 </div>
 
                 {/* Notes Section (Admin Only) */}
