@@ -83,8 +83,9 @@ const RegistrationsSection: React.FC<RegistrationsSectionProps> = ({
             )}
           </li>
         ))}
-        {revokedMembers.map(member => (
-          <li key={member.id} className="bg-white rounded shadow">
+        {revokedMembers && revokedMembers.length > 0 ? (
+          revokedMembers.map(member => (
+            <li key={member.id} className="bg-white rounded shadow">
             <div 
               className="p-4 flex justify-between items-center cursor-pointer"
               onClick={() => toggleItemExpansion(member.id)}
@@ -114,8 +115,13 @@ const RegistrationsSection: React.FC<RegistrationsSectionProps> = ({
                 </button>
               </div>
             )}
+            </li>
+          ))
+        ) : (
+          <li className="bg-white rounded shadow p-4">
+            <p>No revoked members to display.</p>
           </li>
-        ))}
+        )}
       </ul>
     </div>
   );
