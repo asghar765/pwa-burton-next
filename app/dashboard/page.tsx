@@ -1,10 +1,9 @@
 "use client";
 
-import React, { useState, useEffect, useCallback, useRef } from 'react';
-import { collection, query, getDocs, addDoc, updateDoc, deleteDoc, doc, where, orderBy, limit, getDoc } from 'firebase/firestore';
+import React, { useState, useEffect, useCallback } from 'react';
+import { collection, query, getDocs, addDoc, updateDoc, deleteDoc, doc, where, getDoc } from 'firebase/firestore';
 import { db, auth } from '../../config/firebaseConfig';
 import { useAuth } from '../../context/authContext';
-import { useRouter } from 'next/navigation';
 import { Member, MemberWithPayments, Registration, Collector, Note, Payment, Expense } from '../../types';
 import DashboardSection from '../../components/DashboardSection';
 import MembersSection from '../../components/MembersSection';
@@ -13,7 +12,6 @@ import RegistrationsSection from '../../components/RegistrationsSection';
 import DatabaseSection from '../../components/DatabaseSection';
 import FinanceSection from '../../components/FinanceSection';
 import ErrorBoundary from '../../components/ErrorBoundary';
-import { useMemo } from 'react';
 
 interface FirebaseUser {
   id: string;
@@ -290,11 +288,13 @@ const AdminDashboard: React.FC = () => {
     return <div className="p-8">You do not have permission to access this page.</div>;
   }
 
-  const calculatedAccountBalance = useMemo(() => {
+  const calculateAccountBalance = (payments: Payment[], expenses: Expense[]) => {
     const totalPayments = payments.reduce((sum, payment) => sum + (typeof payment.amount === 'number' ? payment.amount : parseFloat(payment.amount) || 0), 0);
     const totalExpenses = expenses.reduce((sum, expense) => sum + (typeof expense.amount === 'number' ? expense.amount : parseFloat(expense.amount) || 0), 0);
     return totalPayments - totalExpenses;
-  }, [payments, expenses]);
+  };
+
+  const calculatedAccountBalance = calculateAccountBalance(payments, expenses);
 
   const renderDashboardSection = () => (
     <DashboardSection
@@ -341,35 +341,41 @@ const AdminDashboard: React.FC = () => {
     <DatabaseSection />
   );
 
-  const renderFinanceSection = () => (
-    <FinanceSection
-      accountBalance={calculatedAccountBalance}
-      payments={payments.map(payment => ({
-        ...payment,
-        amount: typeof payment.amount === 'number' ? payment.amount : parseFloat(payment.amount) || 0,
-        date: typeof payment.date === 'string' 
-          ? (isNaN(Date.parse(payment.date)) ? new Date().toISOString() : new Date(payment.date).toISOString())
-          : new Date().toISOString(),
-        ...Object.entries(payment).reduce((acc, [key, value]) => {
-          acc[key] = typeof value === 'object' && value !== null ? JSON.stringify(value) : value;
-          return acc;
-        }, {} as Record<string, any>)
-      }))}
-      expenses={expenses.map(expense => ({
-        ...expense,
-        amount: typeof expense.amount === 'number' ? expense.amount : parseFloat(expense.amount) || 0,
-        date: typeof expense.date === 'string' 
-          ? (isNaN(Date.parse(expense.date)) ? new Date().toISOString() : new Date(expense.date).toISOString())
-          : new Date().toISOString(),
-        ...Object.entries(expense).reduce((acc, [key, value]) => {
-          acc[key] = typeof value === 'object' && value !== null ? JSON.stringify(value) : value;
-          return acc;
-        }, {} as Record<string, any>)
-      }))}
-      onAddExpense={handleAddExpense}
-      currencySymbol="£"
-    />
-  );
+  const renderFinanceSection = () => {
+    const formattedPayments = payments.map(payment => ({
+      ...payment,
+      amount: typeof payment.amount === 'number' ? payment.amount : parseFloat(payment.amount) || 0,
+      date: typeof payment.date === 'string' 
+        ? (isNaN(Date.parse(payment.date)) ? new Date().toISOString() : new Date(payment.date).toISOString())
+        : new Date().toISOString(),
+      ...Object.entries(payment).reduce((acc, [key, value]) => {
+        acc[key] = typeof value === 'object' && value !== null ? JSON.stringify(value) : value;
+        return acc;
+      }, {} as Record<string, any>)
+    }));
+
+    const formattedExpenses = expenses.map(expense => ({
+      ...expense,
+      amount: typeof expense.amount === 'number' ? expense.amount : parseFloat(expense.amount) || 0,
+      date: typeof expense.date === 'string' 
+        ? (isNaN(Date.parse(expense.date)) ? new Date().toISOString() : new Date(expense.date).toISOString())
+        : new Date().toISOString(),
+      ...Object.entries(expense).reduce((acc, [key, value]) => {
+        acc[key] = typeof value === 'object' && value !== null ? JSON.stringify(value) : value;
+        return acc;
+      }, {} as Record<string, any>)
+    }));
+
+    return (
+      <FinanceSection
+        accountBalance={calculateAccountBalance(formattedPayments, formattedExpenses)}
+        payments={formattedPayments}
+        expenses={formattedExpenses}
+        onAddExpense={handleAddExpense}
+        currencySymbol="£"
+      />
+    );
+  };
 
   const renderActiveSection = () => {
     switch (activeSection) {
