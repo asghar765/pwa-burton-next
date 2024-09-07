@@ -36,23 +36,6 @@ interface MembersSectionProps {
 
 const MembersSection: React.FC<MembersSectionProps> = React.memo(({
   members,
-  loggedUsers = [],
-  searchTerm,
-  setSearchTerm,
-  expandedMembers,
-  setExpandedMembers,
-  onAddMember,
-  onUpdateMember,
-  onDeleteMember,
-  onRevokeMember,
-  currentUserRole,
-  onAddPayment,
-  onAddNote,
-  onUpdateUserRole
-}) => {
-
-const MembersSection: React.FC<MembersSectionProps> = React.memo(({
-  members,
   loggedUsers,
   searchTerm,
   setSearchTerm,
@@ -373,6 +356,6 @@ const MembersSection: React.FC<MembersSectionProps> = React.memo(({
       </Dialog>
     </div>
   );
-});
+}));
 
 export default MembersSection;
