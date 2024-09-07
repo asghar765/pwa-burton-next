@@ -296,7 +296,82 @@ const AdminDashboard: React.FC = () => {
     return totalPayments - totalExpenses;
   }, [payments, expenses]);
 
-  const renderActiveSection = () => {
+  const renderDashboardSection = useCallback(() => (
+    <DashboardSection
+      members={members}
+      registrations={registrations}
+      collectors={collectors}
+      accountBalance={calculatedAccountBalance}
+    />
+  ), [members, registrations, collectors, calculatedAccountBalance]);
+
+  const renderMembersSection = useCallback(() => (
+    <MembersSection
+      members={members}
+      firebaseUsers={firebaseUsers}
+      searchTerm={searchTerm}
+      setSearchTerm={setSearchTerm}
+      expandedMembers={expandedMembers}
+      setExpandedMembers={setExpandedMembers}
+      onAddMember={handleAddMember}
+      onUpdateMember={handleUpdateMember}
+      onDeleteMember={handleDeleteMember}
+      onRevokeMember={handleRevokeMember}
+      currentUserRole={userRole || ''}
+      onAddPayment={handleAddPayment}
+      onAddNote={handleAddNote}
+      onUpdateUserRole={handleUpdateUserRole}
+    />
+  ), [members, firebaseUsers, searchTerm, expandedMembers, userRole]);
+
+  const renderCollectorsSection = useCallback(() => (
+    <CollectorsSection collectors={collectors} />
+  ), [collectors]);
+
+  const renderRegistrationsSection = useCallback(() => (
+    <RegistrationsSection 
+      registrations={registrations}
+      revokedMembers={members.filter(member => !member.verified)}
+      onApproveRegistration={handleApproveRegistration}
+      onReinstateRevokedMember={handleReinstateRevokedMember}
+    />
+  ), [registrations, members]);
+
+  const renderDatabaseSection = useCallback(() => (
+    <DatabaseSection />
+  ), []);
+
+  const renderFinanceSection = useCallback(() => (
+    <FinanceSection
+      accountBalance={calculatedAccountBalance}
+      payments={payments.map(payment => ({
+        ...payment,
+        amount: typeof payment.amount === 'number' ? payment.amount : parseFloat(payment.amount) || 0,
+        date: typeof payment.date === 'string' 
+          ? (isNaN(Date.parse(payment.date)) ? new Date().toISOString() : new Date(payment.date).toISOString())
+          : new Date().toISOString(),
+        ...Object.entries(payment).reduce((acc, [key, value]) => {
+          acc[key] = typeof value === 'object' && value !== null ? JSON.stringify(value) : value;
+          return acc;
+        }, {} as Record<string, any>)
+      }))}
+      expenses={expenses.map(expense => ({
+        ...expense,
+        amount: typeof expense.amount === 'number' ? expense.amount : parseFloat(expense.amount) || 0,
+        date: typeof expense.date === 'string' 
+          ? (isNaN(Date.parse(expense.date)) ? new Date().toISOString() : new Date(expense.date).toISOString())
+          : new Date().toISOString(),
+        ...Object.entries(expense).reduce((acc, [key, value]) => {
+          acc[key] = typeof value === 'object' && value !== null ? JSON.stringify(value) : value;
+          return acc;
+        }, {} as Record<string, any>)
+      }))}
+      onAddExpense={handleAddExpense}
+      currencySymbol="£"
+    />
+  ), [calculatedAccountBalance, payments, expenses]);
+
+  const renderActiveSection = useCallback(() => {
     switch (activeSection) {
       case 'dashboard':
         return (
