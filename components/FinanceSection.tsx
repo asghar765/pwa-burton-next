@@ -148,14 +148,19 @@ const FinanceSection: React.FC<FinanceSectionProps> = ({
             className="w-full px-3 py-2 border rounded"
           />
         </div>
-        <ul className="space-y-2">
-          {filteredPayments.map((payment) => (
-            <li key={payment.id} className="flex justify-between items-center">
-              <span>{formatDate(payment.date)} - Member No: {payment.memberNumber || payment.memberId || 'N/A'}</span>
-              <span className="font-semibold">{currencySymbol}{formatAmount(payment.amount)}</span>
-            </li>
-          ))}
-        </ul>
+        <div className="h-60 overflow-y-auto">
+          <ul className="space-y-2">
+            {filteredPayments.slice(0, 5).map((payment) => (
+              <li key={payment.id} className="flex justify-between items-center">
+                <span>{formatDate(payment.date)} - Member No: {payment.memberNumber || payment.memberId || 'N/A'}</span>
+                <span className="font-semibold">{currencySymbol}{formatAmount(payment.amount)}</span>
+              </li>
+            ))}
+          </ul>
+        </div>
+        {filteredPayments.length > 5 && (
+          <p className="text-center text-gray-500 mt-2">Scroll to see more payments</p>
+        )}
       </div>
 
       <div className="bg-white p-4 rounded shadow">
@@ -172,35 +177,21 @@ const FinanceSection: React.FC<FinanceSectionProps> = ({
             className="w-full px-3 py-2 border rounded"
           />
         </div>
-        <ul className="space-y-2">
-          {paginatedExpenses.map((expense) => (
-            <li key={expense.id} className="flex justify-between items-center">
-              <span>{formatDate(expense.date)} - {expense.description}</span>
-              <span className="font-semibold">{currencySymbol}{formatAmount(expense.amount)}</span>
-            </li>
-          ))}
-        </ul>
+        <div className="h-60 overflow-y-auto">
+          <ul className="space-y-2">
+            {filteredExpenses.slice(0, 5).map((expense) => (
+              <li key={expense.id} className="flex justify-between items-center">
+                <span>{formatDate(expense.date)} - {expense.description}</span>
+                <span className="font-semibold">{currencySymbol}{formatAmount(expense.amount)}</span>
+              </li>
+            ))}
+          </ul>
+        </div>
+        {filteredExpenses.length > 5 && (
+          <p className="text-center text-gray-500 mt-2">Scroll to see more expenses</p>
+        )}
         {filteredExpenses.length === 0 && (
           <p className="text-center text-gray-500 my-4">No expenses found matching your search.</p>
-        )}
-        {filteredExpenses.length > 0 && (
-          <div className="mt-4 flex justify-between items-center">
-            <button
-              onClick={() => setCurrentPage(prev => Math.max(prev - 1, 1))}
-              disabled={currentPage === 1}
-              className="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600 disabled:bg-gray-300"
-            >
-              Previous
-            </button>
-            <span>Page {currentPage} of {totalPages}</span>
-            <button
-              onClick={() => setCurrentPage(prev => Math.min(prev + 1, totalPages))}
-              disabled={currentPage === totalPages}
-              className="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600 disabled:bg-gray-300"
-            >
-              Next
-            </button>
-          </div>
         )}
       </div>
 
