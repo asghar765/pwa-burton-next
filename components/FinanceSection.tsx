@@ -86,18 +86,26 @@ const FinanceSection: React.FC<FinanceSectionProps> = ({
   };
 
   const filteredPayments = useMemo(() => {
-    return payments.filter(payment => 
-      payment.memberNumber?.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      payment.memberId?.toLowerCase().includes(searchTerm.toLowerCase())
-    );
+    return payments
+      .filter(payment => 
+        payment.memberNumber?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        payment.memberId?.toLowerCase().includes(searchTerm.toLowerCase())
+      )
+      .sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime());
   }, [payments, searchTerm]);
 
   const filteredExpenses = useMemo(() => {
-    return expenses.filter(expense => 
-      formatDate(expense.date).toLowerCase().includes(expenseSearchTerm.toLowerCase()) ||
-      expense.description.toLowerCase().includes(expenseSearchTerm.toLowerCase()) ||
-      formatAmount(expense.amount).includes(expenseSearchTerm)
-    );
+    return expenses
+      .filter(expense => 
+        formatDate(expense.date).toLowerCase().includes(expenseSearchTerm.toLowerCase()) ||
+        expense.description.toLowerCase().includes(expenseSearchTerm.toLowerCase()) ||
+        formatAmount(expense.amount).includes(expenseSearchTerm)
+      )
+      .sort((a, b) => {
+        const dateA = new Date(a.date);
+        const dateB = new Date(b.date);
+        return dateB.getTime() - dateA.getTime();
+      });
   }, [expenses, expenseSearchTerm]);
 
   const paginatedExpenses = useMemo(() => {
