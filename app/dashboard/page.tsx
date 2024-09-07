@@ -64,37 +64,56 @@ const AdminDashboard: React.FC = () => {
       setPayments(paymentsWithMemberNumbers);
       setExpenses(expensesSnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() } as Expense)));
 
-      const totalPayments = paymentsSnapshot.docs.reduce((sum, doc) => {
-        const paymentData = doc.data();
-        const amount = paymentData.amount;
-        let parsedAmount = 0;
-        if (typeof amount === 'number') {
-          parsedAmount = amount;
-        } else if (typeof amount === 'string') {
-          try {
-            parsedAmount = JSON.parse(amount).amount || parseFloat(amount) || 0;
-          } catch {
-            parsedAmount = parseFloat(amount) || 0;
+      let totalPayments = 0;
+      let totalExpenses = 0;
+
+      try {
+        totalPayments = paymentsSnapshot.docs.reduce((sum, doc) => {
+          const paymentData = doc.data();
+          const amount = paymentData.amount;
+          let parsedAmount = 0;
+          if (typeof amount === 'number') {
+            parsedAmount = amount;
+          } else if (typeof amount === 'string') {
+            try {
+              parsedAmount = JSON.parse(amount).amount || parseFloat(amount) || 0;
+            } catch {
+              parsedAmount = parseFloat(amount) || 0;
+            }
           }
-        }
-        return sum + parsedAmount;
-      }, 0);
-      const totalExpenses = expensesSnapshot.docs.reduce((sum, doc) => {
-        const expenseData = doc.data();
-        const amount = expenseData.amount;
-        let parsedAmount = 0;
-        if (typeof amount === 'number') {
-          parsedAmount = amount;
-        } else if (typeof amount === 'string') {
-          try {
-            parsedAmount = JSON.parse(amount).amount || parseFloat(amount) || 0;
-          } catch {
-            parsedAmount = parseFloat(amount) || 0;
+          return sum + parsedAmount;
+        }, 0);
+      } catch (error) {
+        console.error('Error calculating total payments:', error);
+      }
+
+      try {
+        totalExpenses = expensesSnapshot.docs.reduce((sum, doc) => {
+          const expenseData = doc.data();
+          const amount = expenseData.amount;
+          let parsedAmount = 0;
+          if (typeof amount === 'number') {
+            parsedAmount = amount;
+          } else if (typeof amount === 'string') {
+            try {
+              parsedAmount = JSON.parse(amount).amount || parseFloat(amount) || 0;
+            } catch {
+              parsedAmount = parseFloat(amount) || 0;
+            }
           }
-        }
-        return sum + parsedAmount;
-      }, 0);
-      setAccountBalance(totalPayments - totalExpenses);
+          return sum + parsedAmount;
+        }, 0);
+      } catch (error) {
+        console.error('Error calculating total expenses:', error);
+      }
+
+      console.log('Total Payments:', totalPayments);
+      console.log('Total Expenses:', totalExpenses);
+
+      const accountBalance = totalPayments - totalExpenses;
+      console.log('Account Balance:', accountBalance);
+
+      setAccountBalance(accountBalance);
 
       setLoading(false);
     } catch (error) {
