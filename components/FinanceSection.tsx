@@ -81,7 +81,7 @@ const FinanceSection: React.FC<FinanceSectionProps> = ({
         <ul className="space-y-2">
           {payments.slice(0, 5).map((payment) => (
             <li key={payment.id} className="flex justify-between items-center">
-              <span>{formatDate(payment.date)} - Member No: {payment.memberNumber || 'N/A'}</span>
+              <span>{formatDate(payment.date)} - Member No: {payment.memberNumber || payment.memberId || 'N/A'}</span>
               <span className="font-semibold">{currencySymbol}{formatAmount(payment.amount)}</span>
             </li>
           ))}
