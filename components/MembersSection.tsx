@@ -1,5 +1,6 @@
-import React, { useState } from 'react';
+import React, { useState, useCallback } from 'react';
 import { Member, Payment, Note } from '../types';
+import { Dialog } from '@headlessui/react';
 
 // Ensure Member interface includes payments
 interface MemberWithPayments extends Member {
@@ -42,8 +43,9 @@ const MembersSection: React.FC<MembersSectionProps> = ({
   const [newMember, setNewMember] = useState({ name: '', email: '', role: '' });
   const [newPaymentAmounts, setNewPaymentAmounts] = useState<Record<string, string>>({});
   const [newNote, setNewNote] = useState('');
+  const [memberToDelete, setMemberToDelete] = useState<string | null>(null);
 
-  const filteredMembers = members.filter(member => {
+  const filteredMembers = useCallback(() => members.filter(member => {
     const search = searchTerm ? searchTerm.toLowerCase() : '';
     return (
       (member.name && member.name.toLowerCase().includes(search)) ||
@@ -71,10 +73,22 @@ const MembersSection: React.FC<MembersSectionProps> = ({
         });
         setNewPaymentAmounts(prev => ({ ...prev, [memberId]: '' }));
       } else {
-        console.error('Invalid payment amount');
+        alert('Please enter a valid payment amount.');
       }
     } else {
       console.error('onAddPayment is not a function');
+      alert('An error occurred while processing the payment. Please try again.');
+    }
+  };
+
+  const handleDeleteMember = (id: string) => {
+    setMemberToDelete(id);
+  };
+
+  const confirmDeleteMember = () => {
+    if (memberToDelete) {
+      onDeleteMember(memberToDelete);
+      setMemberToDelete(null);
     }
   };
 
@@ -150,7 +164,7 @@ const MembersSection: React.FC<MembersSectionProps> = ({
                   <button onClick={() => onUpdateMember(member.id, { ...member, name: member.name + ' (updated)' })} className="px-2 py-1 bg-yellow-500 text-white rounded hover:bg-yellow-600 mr-2">
                     Edit
                   </button>
-                  <button onClick={() => onDeleteMember(member.id)} className="px-2 py-1 bg-red-500 text-white rounded hover:bg-red-600 mr-2">
+                  <button onClick={() => handleDeleteMember(member.id)} className="px-2 py-1 bg-red-500 text-white rounded hover:bg-red-600 mr-2">
                     Delete
                   </button>
                 </div>
@@ -158,27 +172,30 @@ const MembersSection: React.FC<MembersSectionProps> = ({
                 {/* Payment History */}
                 <div className="mt-4">
                   <h5 className="font-semibold">Payment History</h5>
-                  <p className="mt-2 text-sm text-gray-500">
-                    Debug info (member): {JSON.stringify(member)}
-                  </p>
-                  <p className="mt-2 text-sm text-gray-500">
-                    Debug info (payments): {JSON.stringify(member.payments)}
-                  </p>
                   {member.payments.length > 0 ? (
-                    <ul className="list-disc list-inside">
-                      {member.payments
-                        .sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime())
-                        .map((payment, index) => (
-                          <li key={index}>
-                            {new Date(payment.date).toLocaleDateString()}: £
-                            {typeof payment.amount === 'number'
-                              ? payment.amount.toFixed(2)
-                              : typeof payment.amount === 'string'
-                              ? parseFloat(payment.amount).toFixed(2)
-                              : 'N/A'}
-                          </li>
-                        ))}
-                    </ul>
+                    <table className="w-full mt-2">
+                      <thead>
+                        <tr>
+                          <th className="text-left">Date</th>
+                          <th className="text-left">Amount</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        {member.payments
+                          .sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime())
+                          .map((payment, index) => (
+                            <tr key={index}>
+                              <td>{new Date(payment.date).toLocaleDateString()}</td>
+                              <td>£{typeof payment.amount === 'number'
+                                ? payment.amount.toFixed(2)
+                                : typeof payment.amount === 'string'
+                                ? parseFloat(payment.amount).toFixed(2)
+                                : 'N/A'}
+                              </td>
+                            </tr>
+                          ))}
+                      </tbody>
+                    </table>
                   ) : (
                     <p>No payments recorded for this member.</p>
                   )}
@@ -208,7 +225,10 @@ const MembersSection: React.FC<MembersSectionProps> = ({
                     <h5 className="font-semibold">Admin Notes</h5>
                     <ul className="list-disc list-inside">
                       {member.notes?.map((note: Note, index: number) => (
-                        <li key={index}>{note.content}</li>
+                        <li key={index}>
+                          <span className="font-medium">{new Date(note.date).toLocaleDateString()}: </span>
+                          {note.content}
+                        </li>
                       ))}
                     </ul>
                     <textarea
@@ -219,8 +239,12 @@ const MembersSection: React.FC<MembersSectionProps> = ({
                     />
                     <button
                       onClick={() => {
-                        onAddNote(member.id, newNote);
-                        setNewNote('');
+                        if (newNote.trim()) {
+                          onAddNote(member.id, newNote);
+                          setNewNote('');
+                        } else {
+                          alert('Please enter a note before adding.');
+                        }
                       }}
                       className="px-2 py-1 bg-purple-500 text-white rounded hover:bg-purple-600 mt-2"
                     >
@@ -233,6 +257,31 @@ const MembersSection: React.FC<MembersSectionProps> = ({
           </li>
         ))}
       </ul>
+
+      {/* Delete Confirmation Dialog */}
+      <Dialog open={!!memberToDelete} onClose={() => setMemberToDelete(null)}>
+        <div className="fixed inset-0 bg-black/30" aria-hidden="true" />
+        <div className="fixed inset-0 flex items-center justify-center p-4">
+          <Dialog.Panel className="mx-auto max-w-sm rounded bg-white p-6">
+            <Dialog.Title className="text-lg font-medium mb-4">Confirm Deletion</Dialog.Title>
+            <p>Are you sure you want to delete this member? This action cannot be undone.</p>
+            <div className="mt-4 flex justify-end space-x-2">
+              <button
+                className="px-4 py-2 bg-gray-200 text-gray-800 rounded hover:bg-gray-300"
+                onClick={() => setMemberToDelete(null)}
+              >
+                Cancel
+              </button>
+              <button
+                className="px-4 py-2 bg-red-500 text-white rounded hover:bg-red-600"
+                onClick={confirmDeleteMember}
+              >
+                Delete
+              </button>
+            </div>
+          </Dialog.Panel>
+        </div>
+      </Dialog>
     </div>
   );
 };
