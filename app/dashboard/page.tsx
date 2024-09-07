@@ -374,80 +374,21 @@ const AdminDashboard: React.FC = () => {
   const renderActiveSection = useCallback(() => {
     switch (activeSection) {
       case 'dashboard':
-        return (
-          <DashboardSection
-            members={members}
-            registrations={registrations}
-            collectors={collectors}
-            accountBalance={calculatedAccountBalance}
-          />
-        );
+        return renderDashboardSection();
       case 'members':
-        return (
-          <MembersSection
-            members={members}
-            firebaseUsers={firebaseUsers}
-            searchTerm={searchTerm}
-            setSearchTerm={setSearchTerm}
-            expandedMembers={expandedMembers}
-            setExpandedMembers={setExpandedMembers}
-            onAddMember={handleAddMember}
-            onUpdateMember={handleUpdateMember}
-            onDeleteMember={handleDeleteMember}
-            onRevokeMember={handleRevokeMember}
-            currentUserRole={userRole || ''}
-            onAddPayment={handleAddPayment}
-            onAddNote={handleAddNote}
-            onUpdateUserRole={handleUpdateUserRole}
-          />
-        );
+        return renderMembersSection();
       case 'collectors':
-        return <CollectorsSection collectors={collectors} />;
+        return renderCollectorsSection();
       case 'registrations':
-        return <RegistrationsSection 
-          registrations={registrations}
-          revokedMembers={members.filter(member => !member.verified)}
-          onApproveRegistration={handleApproveRegistration}
-          onReinstateRevokedMember={handleReinstateRevokedMember}
-        />;
+        return renderRegistrationsSection();
       case 'database':
-        return <DatabaseSection />;
+        return renderDatabaseSection();
       case 'finance':
-        return (
-          <FinanceSection
-            accountBalance={calculatedAccountBalance}
-            payments={payments.map(payment => ({
-              ...payment,
-              amount: typeof payment.amount === 'number' ? payment.amount : parseFloat(payment.amount) || 0,
-              date: typeof payment.date === 'string' 
-                ? (isNaN(Date.parse(payment.date)) ? new Date().toISOString() : new Date(payment.date).toISOString())
-                : new Date().toISOString(),
-              // Ensure all properties are primitive values
-              ...Object.entries(payment).reduce((acc, [key, value]) => {
-                acc[key] = typeof value === 'object' && value !== null ? JSON.stringify(value) : value;
-                return acc;
-              }, {} as Record<string, any>)
-            }))}
-            expenses={expenses.map(expense => ({
-              ...expense,
-              amount: typeof expense.amount === 'number' ? expense.amount : parseFloat(expense.amount) || 0,
-              date: typeof expense.date === 'string' 
-                ? (isNaN(Date.parse(expense.date)) ? new Date().toISOString() : new Date(expense.date).toISOString())
-                : new Date().toISOString(),
-              // Ensure all properties are primitive values
-              ...Object.entries(expense).reduce((acc, [key, value]) => {
-                acc[key] = typeof value === 'object' && value !== null ? JSON.stringify(value) : value;
-                return acc;
-              }, {} as Record<string, any>)
-            }))}
-            onAddExpense={handleAddExpense}
-            currencySymbol="£"
-          />
-        );
+        return renderFinanceSection();
       default:
         return null;
     }
-  };
+  }, [activeSection, renderDashboardSection, renderMembersSection, renderCollectorsSection, renderRegistrationsSection, renderDatabaseSection, renderFinanceSection]);
 
   return (
     <div className="flex">
