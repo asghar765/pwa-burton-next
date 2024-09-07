@@ -33,6 +33,7 @@ const FinanceSection: React.FC<FinanceSectionProps> = ({
   const [newExpenseAmount, setNewExpenseAmount] = useState<string>('');
   const [newExpenseDescription, setNewExpenseDescription] = useState<string>('');
   const [searchTerm, setSearchTerm] = useState<string>('');
+  const [expenseSearchTerm, setExpenseSearchTerm] = useState<string>('');
   const [currentPage, setCurrentPage] = useState(1);
   const itemsPerPage = 10;
 
@@ -91,12 +92,20 @@ const FinanceSection: React.FC<FinanceSectionProps> = ({
     );
   }, [payments, searchTerm]);
 
+  const filteredExpenses = useMemo(() => {
+    return expenses.filter(expense => 
+      formatDate(expense.date).toLowerCase().includes(expenseSearchTerm.toLowerCase()) ||
+      expense.description.toLowerCase().includes(expenseSearchTerm.toLowerCase()) ||
+      formatAmount(expense.amount).includes(expenseSearchTerm)
+    );
+  }, [expenses, expenseSearchTerm]);
+
   const paginatedExpenses = useMemo(() => {
     const startIndex = (currentPage - 1) * itemsPerPage;
-    return expenses.slice(startIndex, startIndex + itemsPerPage);
-  }, [expenses, currentPage]);
+    return filteredExpenses.slice(startIndex, startIndex + itemsPerPage);
+  }, [filteredExpenses, currentPage]);
 
-  const totalPages = Math.ceil(expenses.length / itemsPerPage);
+  const totalPages = Math.ceil(filteredExpenses.length / itemsPerPage);
 
   return (
     <div className="space-y-6">
@@ -143,6 +152,18 @@ const FinanceSection: React.FC<FinanceSectionProps> = ({
 
       <div className="bg-white p-4 rounded shadow">
         <h3 className="text-xl font-semibold mb-2">Expenses</h3>
+        <div className="mb-4">
+          <input
+            type="text"
+            value={expenseSearchTerm}
+            onChange={(e) => {
+              setExpenseSearchTerm(e.target.value);
+              setCurrentPage(1);
+            }}
+            placeholder="Search expenses by date, description, or amount"
+            className="w-full px-3 py-2 border rounded"
+          />
+        </div>
         <ul className="space-y-2">
           {paginatedExpenses.map((expense) => (
             <li key={expense.id} className="flex justify-between items-center">
@@ -151,23 +172,28 @@ const FinanceSection: React.FC<FinanceSectionProps> = ({
             </li>
           ))}
         </ul>
-        <div className="mt-4 flex justify-between items-center">
-          <button
-            onClick={() => setCurrentPage(prev => Math.max(prev - 1, 1))}
-            disabled={currentPage === 1}
-            className="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600 disabled:bg-gray-300"
-          >
-            Previous
-          </button>
-          <span>Page {currentPage} of {totalPages}</span>
-          <button
-            onClick={() => setCurrentPage(prev => Math.min(prev + 1, totalPages))}
-            disabled={currentPage === totalPages}
-            className="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600 disabled:bg-gray-300"
-          >
-            Next
-          </button>
-        </div>
+        {filteredExpenses.length === 0 && (
+          <p className="text-center text-gray-500 my-4">No expenses found matching your search.</p>
+        )}
+        {filteredExpenses.length > 0 && (
+          <div className="mt-4 flex justify-between items-center">
+            <button
+              onClick={() => setCurrentPage(prev => Math.max(prev - 1, 1))}
+              disabled={currentPage === 1}
+              className="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600 disabled:bg-gray-300"
+            >
+              Previous
+            </button>
+            <span>Page {currentPage} of {totalPages}</span>
+            <button
+              onClick={() => setCurrentPage(prev => Math.min(prev + 1, totalPages))}
+              disabled={currentPage === totalPages}
+              className="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600 disabled:bg-gray-300"
+            >
+              Next
+            </button>
+          </div>
+        )}
       </div>
 
       <div className="bg-white p-4 rounded shadow">
