@@ -3,22 +3,29 @@
 @tailwind utilities;
 
 :root {
-  --foreground-color: #000000;
-  --background-color: #ffffff;
-  --button-bg-color: #4f46e5; /* Example variable for button background */
-  --button-text-color: #ffffff; /* Example variable for button text color */
+  --foreground-rgb: 0, 0, 0;
+  --background-start-rgb: 214, 219, 220;
+  --background-end-rgb: 255, 255, 255;
+  --button-bg-color: #4f46e5;
+  --button-text-color: #ffffff;
 }
 
 [data-theme='dark'] {
-  --foreground-color: #ffffff;
-  --background-color: #000000;
-  --button-bg-color: #6366f1; /* Dark theme variable for button background */
-  --button-text-color: #e5e7eb; /* Dark theme variable for button text color */
+  --foreground-rgb: 255, 255, 255;
+  --background-start-rgb: 0, 0, 0;
+  --background-end-rgb: 0, 0, 0;
+  --button-bg-color: #6366f1;
+  --button-text-color: #e5e7eb;
 }
 
 body {
-  color: var(--foreground-color);
-  background-color: var(--background-color);
+  color: rgb(var(--foreground-rgb));
+  background: linear-gradient(
+      to bottom,
+      transparent,
+      rgb(var(--background-end-rgb))
+    )
+    rgb(var(--background-start-rgb));
 }
 
 button {
