@@ -289,9 +289,9 @@ const MembersSection: React.FC<MembersSectionProps> = ({
       </ul>
 
       {/* Google Login Users Section */}
-      {googleUsers.length > 0 && (
-        <>
-          <h2 className="text-xl font-semibold mb-4 mt-8">Google Login Users</h2>
+      {googleUsers && googleUsers.length > 0 && (
+        <div className="mt-8">
+          <h2 className="text-xl font-semibold mb-4">Google Login Users</h2>
           <ul className="space-y-4">
             {googleUsers.map(user => (
               <li key={user.id} className="bg-white rounded shadow p-4">
@@ -301,7 +301,7 @@ const MembersSection: React.FC<MembersSectionProps> = ({
               </li>
             ))}
           </ul>
-        </>
+        </div>
       )}
 
       {/* Delete Confirmation Dialog */}
