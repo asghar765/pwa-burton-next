@@ -24,6 +24,7 @@ interface LoggedUser {
 
 export interface MembersSectionProps {
   members: MemberWithPayments[];
+  firebaseUsers: FirebaseUser[];
   searchTerm: string;
   setSearchTerm: (term: string) => void;
   expandedMembers: Record<string, boolean>;
