@@ -1,4 +1,4 @@
-import React, { useState, useCallback, useMemo } from 'react';
+import React, { useState, useCallback, useMemo, useEffect } from 'react';
 import { Member, Payment, Note } from '../types';
 import { Dialog } from '@headlessui/react';
 import { MagnifyingGlassIcon, ChevronDownIcon, ChevronUpIcon } from '@heroicons/react/24/solid';
@@ -34,29 +34,32 @@ const MembersSection: React.FC<MembersSectionProps> = ({
   onAddPayment,
   onAddNote
 }) => {
+  useEffect(() => {
+    console.log('Members updated:', members);
+  }, [members]);
   const [newMember, setNewMember] = useState({ name: '', email: '', role: '' });
   const [newPaymentAmounts, setNewPaymentAmounts] = useState<Record<string, string>>({});
   const [newNote, setNewNote] = useState('');
   const [memberToDelete, setMemberToDelete] = useState<string | null>(null);
 
-  const membersWithPayments = useMemo(() => 
-    members.map(member => ({
+  const membersWithPayments = useMemo(() => {
+    console.log('Recalculating membersWithPayments');
+    return members.map(member => ({
       ...member,
       payments: member.payments || []
-    })),
-    [members]
-  );
+    }));
+  }, [members]);
 
-  const filteredMembers = useMemo(() => 
-    membersWithPayments.filter(member => {
+  const filteredMembers = useMemo(() => {
+    console.log('Recalculating filteredMembers');
+    return membersWithPayments.filter(member => {
       const search = searchTerm.toLowerCase();
       return (
         (member.name && member.name.toLowerCase().includes(search)) ||
         (member.memberNumber && member.memberNumber.toLowerCase().includes(search))
       );
-    }),
-    [membersWithPayments, searchTerm]
-  );
+    });
+  }, [membersWithPayments, searchTerm]);
 
   const toggleMemberExpansion = useCallback((memberId: string) => {
     setExpandedMembers(prev => ({ ...prev, [memberId]: !prev[memberId] }));
@@ -70,11 +73,13 @@ const MembersSection: React.FC<MembersSectionProps> = ({
   const handleAddPayment = useCallback((memberId: string) => {
     const amount = parseFloat(newPaymentAmounts[memberId] || '0');
     if (!isNaN(amount) && amount > 0) {
-      onAddPayment(memberId, {
+      const newPayment = {
         amount: amount,
         date: new Date().toISOString(),
         memberId: memberId
-      });
+      };
+      console.log('Adding new payment:', newPayment);
+      onAddPayment(memberId, newPayment);
       setNewPaymentAmounts(prev => ({ ...prev, [memberId]: '' }));
     } else {
       alert('Please enter a valid payment amount.');
