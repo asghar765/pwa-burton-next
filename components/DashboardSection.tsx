@@ -5,15 +5,19 @@ interface DashboardSectionProps {
   members: Member[];
   registrations: Registration[];
   collectors: Collector[];
-  accountBalance: number;
+  totalPayments: number;
+  totalExpenses: number;
 }
 
 const DashboardSection: React.FC<DashboardSectionProps> = ({
   members,
   registrations,
   collectors,
-  accountBalance,
+  totalPayments,
+  totalExpenses,
 }) => {
+  const accountBalance = totalPayments - totalExpenses;
+
   return (
     <div className="space-y-6">
       <h2 className="text-2xl font-bold">Dashboard Overview</h2>

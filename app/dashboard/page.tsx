@@ -297,7 +297,8 @@ const AdminDashboard: React.FC = () => {
             members={members}
             registrations={registrations}
             collectors={collectors}
-            accountBalance={accountBalance}
+            totalPayments={payments.reduce((sum, payment) => sum + (typeof payment.amount === 'number' ? payment.amount : parseFloat(payment.amount) || 0), 0)}
+            totalExpenses={expenses.reduce((sum, expense) => sum + (typeof expense.amount === 'number' ? expense.amount : parseFloat(expense.amount) || 0), 0)}
           />
         );
       case 'members':
