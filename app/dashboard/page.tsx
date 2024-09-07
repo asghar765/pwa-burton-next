@@ -7,6 +7,7 @@ import { db, auth } from '../../config/firebaseConfig';
 import { useAuth } from '../../context/authContext';
 import { Member, MemberWithPayments, Registration, Collector, Note, Payment, Expense } from '../../types';
 import DashboardSection from '../../components/DashboardSection';
+import { groupBy } from 'lodash';
 import MembersSection from '../../components/MembersSection';
 import CollectorsSection from '../../components/CollectorsSection';
 import RegistrationsSection from '../../components/RegistrationsSection';
@@ -297,12 +298,27 @@ const AdminDashboard: React.FC = () => {
 
   const calculatedAccountBalance = calculateAccountBalance(payments, expenses);
 
+  const processRegistrationData = () => {
+    const groupedRegistrations = groupBy(registrations, (reg) => {
+      const date = new Date(reg.createdAt);
+      return `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')}`;
+    });
+
+    const chartData = Object.entries(groupedRegistrations).map(([date, regs]) => ({
+      date,
+      count: regs.length,
+    }));
+
+    return chartData.sort((a, b) => a.date.localeCompare(b.date)).slice(-12);
+  };
+
   const renderDashboardSection = () => (
     <DashboardSection
       members={members}
       registrations={registrations}
       collectors={collectors}
       accountBalance={calculatedAccountBalance}
+      registrationChartData={processRegistrationData()}
     />
   );
 

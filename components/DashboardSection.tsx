@@ -1,11 +1,13 @@
 import React from 'react';
 import { Member, Registration, Collector } from '../types';
+import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
 
 interface DashboardSectionProps {
   members: Member[];
   registrations: Registration[];
   collectors: Collector[];
   accountBalance: number;
+  registrationChartData: { date: string; count: number }[];
 }
 
 const DashboardSection: React.FC<DashboardSectionProps> = ({
@@ -13,8 +15,8 @@ const DashboardSection: React.FC<DashboardSectionProps> = ({
   registrations,
   collectors,
   accountBalance,
+  registrationChartData,
 }) => {
-
   return (
     <div className="space-y-6">
       <h2 className="text-2xl font-bold">Dashboard Overview</h2>
@@ -40,7 +42,18 @@ const DashboardSection: React.FC<DashboardSectionProps> = ({
         </div>
       </div>
 
-      {/* Add more dashboard content as needed */}
+      <div className="bg-white p-4 rounded shadow mt-6">
+        <h3 className="text-xl font-semibold mb-4">Monthly Registrations (Last 12 Months)</h3>
+        <ResponsiveContainer width="100%" height={300}>
+          <BarChart data={registrationChartData}>
+            <CartesianGrid strokeDasharray="3 3" />
+            <XAxis dataKey="date" />
+            <YAxis />
+            <Tooltip />
+            <Bar dataKey="count" fill="#8884d8" />
+          </BarChart>
+        </ResponsiveContainer>
+      </div>
     </div>
   );
 };
