@@ -5,7 +5,7 @@ import { collection, query, getDocs, addDoc, updateDoc, deleteDoc, doc, where, o
 import { db, auth } from '../../config/firebaseConfig';
 import { useAuth } from '../../context/authContext';
 import { useRouter } from 'next/navigation';
-import { Member, Registration, Collector, Note, Payment, Expense } from '../../types';
+import { Member, Registration, Collector, Note, Payment, Expense, GoogleUser } from '../../types';
 import DashboardSection from '../../components/DashboardSection';
 import MembersSection from '../../components/MembersSection';
 import CollectorsSection from '../../components/CollectorsSection';
@@ -27,6 +27,7 @@ const AdminDashboard: React.FC = () => {
   const [payments, setPayments] = useState<Payment[]>([]);
   const [expenses, setExpenses] = useState<Expense[]>([]);
   const [accountBalance, setAccountBalance] = useState(0);
+  const [googleUsers, setGoogleUsers] = useState<GoogleUser[]>([]);
   
   const [activeSection, setActiveSection] = useState('dashboard');
   const [searchTerm, setSearchTerm] = useState('');
@@ -114,6 +115,12 @@ const AdminDashboard: React.FC = () => {
       console.log('Account Balance:', accountBalance);
 
       setAccountBalance(accountBalance);
+
+      // Fetch Google users
+      const googleUsersQuery = query(collection(db, 'users'), where('provider', '==', 'google'));
+      const googleUsersSnapshot = await getDocs(googleUsersQuery);
+      const googleUsersData = googleUsersSnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() } as GoogleUser));
+      setGoogleUsers(googleUsersData);
 
       setLoading(false);
     } catch (error) {
@@ -230,6 +237,7 @@ const AdminDashboard: React.FC = () => {
         return (
           <MembersSection
             members={members}
+            googleUsers={googleUsers}
             searchTerm={searchTerm}
             setSearchTerm={setSearchTerm}
             expandedMembers={expandedMembers}
