@@ -16,6 +16,7 @@ interface MembersSectionProps {
   onAddMember: (member: Omit<MemberWithPayments, 'id'>) => void;
   onUpdateMember: (id: string, member: Partial<MemberWithPayments>) => void;
   onDeleteMember: (id: string) => void;
+  onRevokeMember: (id: string) => void;
   currentUserRole: string;
   onAddPayment: (memberId: string, payment: Omit<Payment, 'id'>) => void;
   onAddNote: (memberId: string, note: string) => void;
@@ -30,6 +31,7 @@ const MembersSection: React.FC<MembersSectionProps> = ({
   onAddMember,
   onUpdateMember,
   onDeleteMember,
+  onRevokeMember,
   currentUserRole,
   onAddPayment,
   onAddNote
@@ -182,6 +184,9 @@ const MembersSection: React.FC<MembersSectionProps> = ({
                   </button>
                   <button onClick={() => handleDeleteMember(member.id)} className="px-2 py-1 bg-red-500 text-white rounded hover:bg-red-600 mr-2">
                     Delete
+                  </button>
+                  <button onClick={() => onRevokeMember(member.id)} className="px-2 py-1 bg-orange-500 text-white rounded hover:bg-orange-600">
+                    Revoke
                   </button>
                 </div>
 
