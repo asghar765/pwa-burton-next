@@ -16,6 +16,9 @@ const FinanceSection: React.FC<FinanceSectionProps> = ({
   onAddExpense,
   currencySymbol,
 }) => {
+  const totalPayments = useMemo(() => payments.reduce((sum, payment) => sum + payment.amount, 0), [payments]);
+  const totalExpenses = useMemo(() => expenses.reduce((sum, expense) => sum + expense.amount, 0), [expenses]);
+  const calculatedBalance = totalPayments - totalExpenses;
   const [newExpenseAmount, setNewExpenseAmount] = useState<string>('');
   const [newExpenseDescription, setNewExpenseDescription] = useState<string>('');
   const [searchTerm, setSearchTerm] = useState<string>('');
@@ -81,7 +84,9 @@ const FinanceSection: React.FC<FinanceSectionProps> = ({
       
       <div className="bg-white p-4 rounded shadow">
         <h3 className="text-xl font-semibold mb-2">Account Balance</h3>
-        <p className="text-2xl font-bold">{currencySymbol}{formatAmount(accountBalance)}</p>
+        <p className="text-2xl font-bold">{currencySymbol}{formatAmount(calculatedBalance)}</p>
+        <p className="text-sm text-gray-600">Total Payments: {currencySymbol}{formatAmount(totalPayments)}</p>
+        <p className="text-sm text-gray-600">Total Expenses: {currencySymbol}{formatAmount(totalExpenses)}</p>
       </div>
 
       <div className="bg-white p-4 rounded shadow">

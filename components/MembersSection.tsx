@@ -146,7 +146,7 @@ const MembersSection: React.FC<MembersSectionProps> = ({
                     <ul className="list-disc list-inside">
                       {member.payments.map((payment, index) => (
                         <li key={index}>
-                          {new Date(payment.date).toLocaleDateString()}: £{payment.amount.toFixed(2)}
+                          {new Date(payment.date).toLocaleDateString()}: £{typeof payment.amount === 'number' ? payment.amount.toFixed(2) : 'N/A'}
                         </li>
                       ))}
                     </ul>
