@@ -147,11 +147,9 @@ const MembersSection: React.FC<MembersSectionProps> = ({
                 {/* Payment History */}
                 <div className="mt-4">
                   <h5 className="font-semibold">Payment History</h5>
-                  {members.some(m => m.memberNumber === member.memberNumber && m.payments && m.payments.length > 0) ? (
+                  {member.payments && member.payments.length > 0 ? (
                     <ul className="list-disc list-inside">
-                      {members
-                        .filter(m => m.memberNumber === member.memberNumber)
-                        .flatMap(m => m.payments || [])
+                      {member.payments
                         .sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime())
                         .map((payment, index) => (
                           <li key={index}>
