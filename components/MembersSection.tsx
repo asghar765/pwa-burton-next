@@ -30,7 +30,7 @@ const MembersSection: React.FC<MembersSectionProps> = ({
   onAddNote
 }) => {
   const [newMember, setNewMember] = useState({ name: '', email: '', role: '' });
-  const [newPayment, setNewPayment] = useState({ amount: '', date: '' });
+  const [newPaymentAmounts, setNewPaymentAmounts] = useState<Record<string, string>>({});
   const [newNote, setNewNote] = useState('');
 
   const filteredMembers = members.filter(member => {
@@ -52,12 +52,17 @@ const MembersSection: React.FC<MembersSectionProps> = ({
 
   const handleAddPayment = (memberId: string) => {
     if (typeof onAddPayment === 'function') {
-      onAddPayment(memberId, {
-        amount: parseFloat(newPayment.amount),
-        date: newPayment.date,
-        memberId: memberId
-      });
-      setNewPayment({ amount: '', date: '' });
+      const amount = parseFloat(newPaymentAmounts[memberId] || '0');
+      if (!isNaN(amount) && amount > 0) {
+        onAddPayment(memberId, {
+          amount: amount,
+          date: new Date().toISOString(),
+          memberId: memberId
+        });
+        setNewPaymentAmounts(prev => ({ ...prev, [memberId]: '' }));
+      } else {
+        console.error('Invalid payment amount');
+      }
     } else {
       console.error('onAddPayment is not a function');
     }
@@ -151,15 +156,9 @@ const MembersSection: React.FC<MembersSectionProps> = ({
                   <h5 className="font-semibold">Add Payment</h5>
                   <input
                     type="number"
-                    value={newPayment.amount}
-                    onChange={(e) => setNewPayment({ ...newPayment, amount: e.target.value })}
+                    value={newPaymentAmounts[member.id] || ''}
+                    onChange={(e) => setNewPaymentAmounts(prev => ({ ...prev, [member.id]: e.target.value }))}
                     placeholder="Amount"
-                    className="p-2 border border-gray-300 rounded mr-2"
-                  />
-                  <input
-                    type="date"
-                    value={newPayment.date}
-                    onChange={(e) => setNewPayment({ ...newPayment, date: e.target.value })}
                     className="p-2 border border-gray-300 rounded mr-2"
                   />
                   <button
@@ -168,6 +167,18 @@ const MembersSection: React.FC<MembersSectionProps> = ({
                   >
                     Add Payment
                   </button>
+                </div>
+
+                {/* Payment History */}
+                <div className="mt-4">
+                  <h5 className="font-semibold">Payment History</h5>
+                  <ul className="list-disc list-inside">
+                    {member.payments?.map((payment, index) => (
+                      <li key={index}>
+                        {new Date(payment.date).toLocaleDateString()}: £{payment.amount.toFixed(2)}
+                      </li>
+                    ))}
+                  </ul>
                 </div>
 
                 {/* Notes Section (Admin Only) */}
