@@ -1,4 +1,5 @@
 import React, { useState, useCallback, useMemo, useEffect } from 'react';
+import Image from 'next/image';
 import { Member, Payment, Note } from '../types';
 import { Dialog } from '@headlessui/react';
 import { MagnifyingGlassIcon, ChevronDownIcon, ChevronUpIcon } from '@heroicons/react/24/solid';
@@ -299,7 +300,7 @@ const MembersSection: React.FC<MembersSectionProps> = ({
               <li key={user.id} className="bg-white rounded shadow p-4">
                 <div className="flex items-center">
                   {user.photoURL && (
-                    <img src={user.photoURL} alt={user.displayName} className="w-10 h-10 rounded-full mr-4" />
+                    <Image src={user.photoURL} alt={user.displayName || 'User'} width={40} height={40} className="rounded-full mr-4" />
                   )}
                   <div>
                     <h4 className="font-bold">{user.displayName}</h4>

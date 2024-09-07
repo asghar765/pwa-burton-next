@@ -29,7 +29,7 @@ const AdminDashboard: React.FC = () => {
   const [loading, setLoading] = useState(true);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
   
-  const [members, setMembers] = useState<Member[]>([]);
+  const [members, setMembers] = useState<MemberWithPayments[]>([]);
   const [registrations, setRegistrations] = useState<Registration[]>([]);
   const [collectors, setCollectors] = useState<Collector[]>([]);
   const [notes, setNotes] = useState<Note[]>([]);
@@ -66,7 +66,7 @@ const AdminDashboard: React.FC = () => {
         getDocs(usersQuery)
       ]);
 
-      setMembers(membersSnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() } as Member)));
+      setMembers(membersSnapshot.docs.map(doc => ({ id: doc.id, ...doc.data(), payments: [] } as MemberWithPayments)));
       setRegistrations(registrationsSnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() } as Registration)));
       setNotes(notesSnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() } as Note)));
       setCollectors(collectorsSnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() } as Collector)));
