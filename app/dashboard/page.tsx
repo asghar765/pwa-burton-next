@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useState, useEffect, useCallback, useRef } from 'react';
-import { collection, query, getDocs, addDoc, updateDoc, deleteDoc, doc, where, orderBy, limit } from 'firebase/firestore';
+import { collection, query, getDocs, addDoc, updateDoc, deleteDoc, doc, where, orderBy, limit, getDoc } from 'firebase/firestore';
 import { db, auth } from '../../config/firebaseConfig';
 import { useAuth } from '../../context/authContext';
 import { useRouter } from 'next/navigation';
@@ -189,6 +189,30 @@ const AdminDashboard: React.FC = () => {
     } catch (error) {
       console.error('Error deleting member:', error);
       setErrorMessage('Failed to delete member. Please try again.');
+    }
+  };
+
+  const handleRevokeMember = async (id: string) => {
+    try {
+      const memberRef = doc(db, 'members', id);
+      const memberDoc = await getDoc(memberRef);
+      if (memberDoc.exists()) {
+        const memberData = memberDoc.data();
+        // Move member data to registrations collection
+        await addDoc(collection(db, 'registrations'), {
+          ...memberData,
+          status: 'revoked',
+          revokedAt: new Date().toISOString()
+        });
+        // Delete member from members collection
+        await deleteDoc(memberRef);
+        fetchData();
+      } else {
+        throw new Error('Member not found');
+      }
+    } catch (error) {
+      console.error('Error revoking member:', error);
+      setErrorMessage('Failed to revoke member. Please try again.');
     }
   };
 
