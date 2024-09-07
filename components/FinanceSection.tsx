@@ -27,9 +27,20 @@ const FinanceSection: React.FC<FinanceSectionProps> = ({
     }
   };
 
-  const formatDate = (dateString: string) => {
-    const date = new Date(dateString);
-    return isNaN(date.getTime()) ? 'Invalid Date' : date.toLocaleDateString();
+  const formatDate = (date: Date | string | number): string => {
+    if (date instanceof Date) {
+      return date.toLocaleDateString();
+    }
+    if (typeof date === 'string' || typeof date === 'number') {
+      const parsedDate = new Date(date);
+      return isNaN(parsedDate.getTime()) ? 'Invalid Date' : parsedDate.toLocaleDateString();
+    }
+    return 'Invalid Date';
+  };
+
+  const formatAmount = (amount: number | string): string => {
+    const parsedAmount = typeof amount === 'string' ? parseFloat(amount) : amount;
+    return isNaN(parsedAmount) ? '0.00' : parsedAmount.toFixed(2);
   };
 
   return (
@@ -38,7 +49,7 @@ const FinanceSection: React.FC<FinanceSectionProps> = ({
       
       <div className="bg-white p-4 rounded shadow">
         <h3 className="text-xl font-semibold mb-2">Account Balance</h3>
-        <p className="text-2xl font-bold">${accountBalance.toFixed(2)}</p>
+        <p className="text-2xl font-bold">${formatAmount(accountBalance)}</p>
       </div>
 
       <div className="bg-white p-4 rounded shadow">
@@ -46,8 +57,8 @@ const FinanceSection: React.FC<FinanceSectionProps> = ({
         <ul className="space-y-2">
           {payments.slice(0, 5).map((payment) => (
             <li key={payment.id} className="flex justify-between items-center">
-              <span>{formatDate(payment.date.toString())}</span>
-              <span className="font-semibold">${parseFloat(payment.amount.toString()).toFixed(2)}</span>
+              <span>{formatDate(payment.date)}</span>
+              <span className="font-semibold">${formatAmount(payment.amount)}</span>
             </li>
           ))}
         </ul>
@@ -58,8 +69,8 @@ const FinanceSection: React.FC<FinanceSectionProps> = ({
         <ul className="space-y-2">
           {expenses.slice(0, 5).map((expense) => (
             <li key={expense.id} className="flex justify-between items-center">
-              <span>{formatDate(expense.date.toString())} - {expense.description}</span>
-              <span className="font-semibold">${parseFloat(expense.amount.toString()).toFixed(2)}</span>
+              <span>{formatDate(expense.date)} - {expense.description}</span>
+              <span className="font-semibold">${formatAmount(expense.amount)}</span>
             </li>
           ))}
         </ul>
