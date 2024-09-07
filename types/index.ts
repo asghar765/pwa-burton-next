@@ -45,3 +45,10 @@ export interface Expense {
   date: string; // ISO date string
   userId: string;
 }
+
+export interface GoogleUser {
+  id: string;
+  name: string;
+  email: string;
+  role: string;
+}
