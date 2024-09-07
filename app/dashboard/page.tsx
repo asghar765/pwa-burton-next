@@ -205,12 +205,14 @@ const AdminDashboard: React.FC = () => {
             payments={payments.map(payment => ({
               ...payment,
               amount: typeof payment.amount === 'number' ? payment.amount : parseFloat(payment.amount) || 0,
-              date: payment.date instanceof Date ? payment.date.toISOString() : new Date(payment.date).toISOString()
+              date: payment.date instanceof Date ? payment.date.toISOString() : 
+                (isNaN(Date.parse(payment.date)) ? new Date().toISOString() : new Date(payment.date).toISOString())
             }))}
             expenses={expenses.map(expense => ({
               ...expense,
               amount: typeof expense.amount === 'number' ? expense.amount : parseFloat(expense.amount) || 0,
-              date: expense.date instanceof Date ? expense.date.toISOString() : new Date(expense.date).toISOString()
+              date: expense.date instanceof Date ? expense.date.toISOString() : 
+                (isNaN(Date.parse(expense.date)) ? new Date().toISOString() : new Date(expense.date).toISOString())
             }))}
             onAddExpense={handleAddExpense}
           />
