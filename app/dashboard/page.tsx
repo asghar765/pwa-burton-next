@@ -206,13 +206,23 @@ const AdminDashboard: React.FC = () => {
               ...payment,
               amount: typeof payment.amount === 'number' ? payment.amount : parseFloat(payment.amount) || 0,
               date: payment.date instanceof Date ? payment.date.toISOString() : 
-                (isNaN(Date.parse(payment.date)) ? new Date().toISOString() : new Date(payment.date).toISOString())
+                (isNaN(Date.parse(payment.date)) ? new Date().toISOString() : new Date(payment.date).toISOString()),
+              // Ensure all properties are primitive values
+              ...Object.entries(payment).reduce((acc, [key, value]) => {
+                acc[key] = typeof value === 'object' ? JSON.stringify(value) : value;
+                return acc;
+              }, {} as Record<string, any>)
             }))}
             expenses={expenses.map(expense => ({
               ...expense,
               amount: typeof expense.amount === 'number' ? expense.amount : parseFloat(expense.amount) || 0,
               date: expense.date instanceof Date ? expense.date.toISOString() : 
-                (isNaN(Date.parse(expense.date)) ? new Date().toISOString() : new Date(expense.date).toISOString())
+                (isNaN(Date.parse(expense.date)) ? new Date().toISOString() : new Date(expense.date).toISOString()),
+              // Ensure all properties are primitive values
+              ...Object.entries(expense).reduce((acc, [key, value]) => {
+                acc[key] = typeof value === 'object' ? JSON.stringify(value) : value;
+                return acc;
+              }, {} as Record<string, any>)
             }))}
             onAddExpense={handleAddExpense}
           />
