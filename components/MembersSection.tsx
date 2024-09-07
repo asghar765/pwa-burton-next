@@ -50,8 +50,8 @@ const MembersSection: React.FC<MembersSectionProps> = ({
     return (
       (member.name && member.name.toLowerCase().includes(search)) ||
       (member.memberNumber && member.memberNumber.toLowerCase().includes(search))
-    );
-  });
+    )
+  }), [members, searchTerm]);
 
   const toggleMemberExpansion = (memberId: string) => {
     setExpandedMembers(prev => ({ ...prev, [memberId]: !prev[memberId] }));
