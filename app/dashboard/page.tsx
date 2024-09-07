@@ -55,7 +55,13 @@ const AdminDashboard: React.FC = () => {
       setRegistrations(registrationsSnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() } as Registration)));
       setNotes(notesSnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() } as Note)));
       setCollectors(collectorsSnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() } as Collector)));
-      setPayments(paymentsSnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() } as Payment)));
+      const paymentsWithMemberNumbers = await Promise.all(paymentsSnapshot.docs.map(async doc => {
+        const payment = { id: doc.id, ...doc.data() } as Payment;
+        const memberDoc = await getDoc(doc(db, 'members', payment.memberId));
+        const memberData = memberDoc.data();
+        return { ...payment, memberNumber: memberData?.memberNumber || 'N/A' };
+      }));
+      setPayments(paymentsWithMemberNumbers);
       setExpenses(expensesSnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() } as Expense)));
 
       const totalPayments = paymentsSnapshot.docs.reduce((sum, doc) => {

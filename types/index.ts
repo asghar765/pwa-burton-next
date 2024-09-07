@@ -32,9 +32,10 @@ export interface Note {
 
 export interface Payment {
   id: string;
-  amount: number; // Changed from string to number
+  amount: number;
   date: string; // ISO date string
   memberId: string;
+  memberNumber?: string;
 }
 
 export interface Expense {
