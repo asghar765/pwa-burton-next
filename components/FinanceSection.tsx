@@ -16,19 +16,16 @@ const FinanceSection: React.FC<FinanceSectionProps> = ({
   onAddExpense,
   currencySymbol,
 }) => {
-  const totalPayments = useMemo(() => payments.reduce((sum, payment) => sum + payment.amount, 0), [payments]);
+  const totalPayments = useMemo(() => payments.reduce((sum, payment) => {
+    const amount = typeof payment.amount === 'number' ? payment.amount : parseFloat(payment.amount);
+    return sum + (isNaN(amount) ? 0 : amount);
+  }, 0), [payments]);
+
   const totalExpenses = useMemo(() => expenses.reduce((sum, expense) => {
-    let expenseAmount;
-    if (typeof expense.amount === 'number') {
-      expenseAmount = expense.amount;
-    } else if (typeof expense.amount === 'string') {
-      expenseAmount = parseFloat(expense.amount);
-    } else {
-      console.warn(`Invalid expense amount for expense ${expense.id}:`, expense.amount);
-      expenseAmount = 0;
-    }
-    return sum + (isNaN(expenseAmount) ? 0 : expenseAmount);
+    const amount = typeof expense.amount === 'number' ? expense.amount : parseFloat(expense.amount);
+    return sum + (isNaN(amount) ? 0 : amount);
   }, 0), [expenses]);
+
   const calculatedBalance = useMemo(() => totalPayments - totalExpenses, [totalPayments, totalExpenses]);
   const [newExpenseAmount, setNewExpenseAmount] = useState<string>('');
   const [newExpenseDescription, setNewExpenseDescription] = useState<string>('');
