@@ -1,4 +1,4 @@
-import React, { useState, useCallback, useMemo, useEffect } from 'react';
+import React, { useState, useCallback, useMemo } from 'react';
 import Image from 'next/image';
 import { Member, Payment, Note } from '../types';
 import { Dialog } from '@headlessui/react';
@@ -33,7 +33,7 @@ interface MembersSectionProps {
   onAddNote: (memberId: string, note: string) => void;
 }
 
-const MembersSection: React.FC<MembersSectionProps> = ({
+const MembersSection: React.FC<MembersSectionProps> = React.memo(({
   members,
   firebaseUsers,
   searchTerm,
