@@ -148,9 +148,9 @@ const FinanceSection: React.FC<FinanceSectionProps> = ({
             className="w-full px-3 py-2 border rounded"
           />
         </div>
-        <div className="h-60 overflow-y-auto">
+        <div className="h-60 overflow-y-auto pr-4" style={{ scrollbarWidth: 'thin', scrollbarColor: '#CBD5E0 #EDF2F7' }}>
           <ul className="space-y-2">
-            {filteredPayments.slice(0, 5).map((payment) => (
+            {filteredPayments.map((payment) => (
               <li key={payment.id} className="flex justify-between items-center">
                 <span>{formatDate(payment.date)} - Member No: {payment.memberNumber || payment.memberId || 'N/A'}</span>
                 <span className="font-semibold">{currencySymbol}{formatAmount(payment.amount)}</span>
@@ -158,8 +158,8 @@ const FinanceSection: React.FC<FinanceSectionProps> = ({
             ))}
           </ul>
         </div>
-        {filteredPayments.length > 5 && (
-          <p className="text-center text-gray-500 mt-2">Scroll to see more payments</p>
+        {filteredPayments.length > 0 && (
+          <p className="text-center text-gray-500 mt-2">Scroll to see all payments</p>
         )}
       </div>
 
@@ -177,9 +177,9 @@ const FinanceSection: React.FC<FinanceSectionProps> = ({
             className="w-full px-3 py-2 border rounded"
           />
         </div>
-        <div className="h-60 overflow-y-auto">
+        <div className="h-60 overflow-y-auto pr-4" style={{ scrollbarWidth: 'thin', scrollbarColor: '#CBD5E0 #EDF2F7' }}>
           <ul className="space-y-2">
-            {filteredExpenses.slice(0, 5).map((expense) => (
+            {paginatedExpenses.map((expense) => (
               <li key={expense.id} className="flex justify-between items-center">
                 <span>{formatDate(expense.date)} - {expense.description}</span>
                 <span className="font-semibold">{currencySymbol}{formatAmount(expense.amount)}</span>
@@ -187,8 +187,8 @@ const FinanceSection: React.FC<FinanceSectionProps> = ({
             ))}
           </ul>
         </div>
-        {filteredExpenses.length > 5 && (
-          <p className="text-center text-gray-500 mt-2">Scroll to see more expenses</p>
+        {filteredExpenses.length > 0 && (
+          <p className="text-center text-gray-500 mt-2">Scroll to see all expenses</p>
         )}
         {filteredExpenses.length === 0 && (
           <p className="text-center text-gray-500 my-4">No expenses found matching your search.</p>
