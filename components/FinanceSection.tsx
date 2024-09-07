@@ -86,8 +86,10 @@ const FinanceSection: React.FC<FinanceSectionProps> = ({
   const filteredPayments = useMemo(() => {
     return payments
       .filter(payment => 
-        payment.memberNumber?.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        payment.memberId?.toLowerCase().includes(searchTerm.toLowerCase())
+        (payment.memberNumber?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        payment.memberId?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        formatDate(payment.date).toLowerCase().includes(searchTerm.toLowerCase()) ||
+        formatAmount(payment.amount).includes(searchTerm))
       )
       .sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime());
   }, [payments, searchTerm]);
@@ -141,17 +143,30 @@ const FinanceSection: React.FC<FinanceSectionProps> = ({
           />
         </div>
         <div className="h-60 overflow-y-auto pr-4" style={{ scrollbarWidth: 'thin', scrollbarColor: '#CBD5E0 #EDF2F7' }}>
-          <ul className="space-y-2">
-            {filteredPayments.map((payment) => (
-              <li key={payment.id} className="flex justify-between items-center">
-                <span>{formatDate(payment.date)} - Member No: {payment.memberNumber || payment.memberId || 'N/A'}</span>
-                <span className="font-semibold">{currencySymbol}{formatAmount(payment.amount)}</span>
-              </li>
-            ))}
-          </ul>
+          <table className="w-full">
+            <thead>
+              <tr>
+                <th className="text-left">Date</th>
+                <th className="text-left">Member No</th>
+                <th className="text-right">Amount</th>
+              </tr>
+            </thead>
+            <tbody>
+              {filteredPayments.map((payment) => (
+                <tr key={payment.id} className="border-b">
+                  <td>{formatDate(payment.date)}</td>
+                  <td>{payment.memberNumber || payment.memberId || 'N/A'}</td>
+                  <td className="text-right font-semibold">{currencySymbol}{formatAmount(payment.amount)}</td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
         </div>
         {filteredPayments.length > 0 && (
           <p className="text-center text-gray-500 mt-2">Scroll to see all payments</p>
+        )}
+        {filteredPayments.length === 0 && (
+          <p className="text-center text-gray-500 my-4">No payments found matching your search.</p>
         )}
       </div>
 
