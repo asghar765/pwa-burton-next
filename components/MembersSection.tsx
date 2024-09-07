@@ -23,8 +23,7 @@ interface GoogleUser {
 
 interface MembersSectionProps {
   members: MemberWithPayments[];
-  googleUsers?: GoogleUser[];  // Make googleUsers optional
-  googleUsers?: GoogleUser[];  // Make googleUsers optional
+  googleUsers: GoogleUser[];  // Make googleUsers required
   searchTerm: string;
   setSearchTerm: (term: string) => void;
   expandedMembers: Record<string, boolean>;
@@ -40,7 +39,7 @@ interface MembersSectionProps {
 
 const MembersSection: React.FC<MembersSectionProps> = ({
   members,
-  googleUsers = [],  // Provide a default empty array
+  googleUsers,
   searchTerm,
   setSearchTerm,
   expandedMembers,
@@ -297,9 +296,9 @@ const MembersSection: React.FC<MembersSectionProps> = ({
       </ul>
 
       {/* Google Login Users Section */}
-      {googleUsers && googleUsers.length > 0 && (
-        <div className="mt-8">
-          <h2 className="text-xl font-semibold mb-4">Google Login Users</h2>
+      <div className="mt-8">
+        <h2 className="text-xl font-semibold mb-4">Google Login Users</h2>
+        {googleUsers.length > 0 ? (
           <ul className="space-y-4">
             {googleUsers.map(user => (
               <li key={user.id} className="bg-white rounded shadow p-4">
@@ -309,24 +308,10 @@ const MembersSection: React.FC<MembersSectionProps> = ({
               </li>
             ))}
           </ul>
-        </div>
-      )}
-
-      {/* Google Login Users Section */}
-      {googleUsers && googleUsers.length > 0 && (
-        <div className="mt-8">
-          <h2 className="text-xl font-semibold mb-4">Google Login Users</h2>
-          <ul className="space-y-4">
-            {googleUsers.map(user => (
-              <li key={user.id} className="bg-white rounded shadow p-4">
-                <h4 className="font-bold">{user.name}</h4>
-                <p>Email: {user.email}</p>
-                <p>Role: {user.role}</p>
-              </li>
-            ))}
-          </ul>
-        </div>
-      )}
+        ) : (
+          <p>No Google login users found.</p>
+        )}
+      </div>
 
       {/* Delete Confirmation Dialog */}
       <Dialog open={!!memberToDelete} onClose={() => setMemberToDelete(null)}>
