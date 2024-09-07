@@ -153,7 +153,7 @@ const MembersSection: React.FC<MembersSectionProps> = ({
                   <p className="mt-2 text-sm text-gray-500">
                     Debug info (member): {JSON.stringify(member)}
                   </p>
-                  {Array.isArray(member.payments) ? (
+                  {member.payments && Array.isArray(member.payments) ? (
                     member.payments.length > 0 ? (
                       <ul className="list-disc list-inside">
                         {member.payments
