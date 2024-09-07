@@ -7,7 +7,7 @@ import { useAuth } from '../../context/authContext';
 import { useRouter } from 'next/navigation';
 import { Member, MemberWithPayments, Registration, Collector, Note, Payment, Expense } from '../../types';
 import DashboardSection from '../../components/DashboardSection';
-import MembersSection, { MembersSectionProps } from '../../components/MembersSection';
+import MembersSection from '../../components/MembersSection';
 import CollectorsSection from '../../components/CollectorsSection';
 import RegistrationsSection from '../../components/RegistrationsSection';
 import DatabaseSection from '../../components/DatabaseSection';

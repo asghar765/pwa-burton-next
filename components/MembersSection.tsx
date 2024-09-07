@@ -22,7 +22,7 @@ interface LoggedUser {
   role: string;
 }
 
-interface MembersSectionProps {
+export interface MembersSectionProps {
   members: MemberWithPayments[];
   searchTerm: string;
   setSearchTerm: (term: string) => void;
