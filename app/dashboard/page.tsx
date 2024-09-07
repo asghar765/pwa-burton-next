@@ -13,6 +13,7 @@ import RegistrationsSection from '../../components/RegistrationsSection';
 import DatabaseSection from '../../components/DatabaseSection';
 import FinanceSection from '../../components/FinanceSection';
 import ErrorBoundary from '../../components/ErrorBoundary';
+import { useMemo } from 'react';
 
 interface FirebaseUser {
   id: string;
@@ -289,6 +290,12 @@ const AdminDashboard: React.FC = () => {
     return <div className="p-8">You do not have permission to access this page.</div>;
   }
 
+  const accountBalance = useMemo(() => {
+    const totalPayments = payments.reduce((sum, payment) => sum + (typeof payment.amount === 'number' ? payment.amount : parseFloat(payment.amount) || 0), 0);
+    const totalExpenses = expenses.reduce((sum, expense) => sum + (typeof expense.amount === 'number' ? expense.amount : parseFloat(expense.amount) || 0), 0);
+    return totalPayments - totalExpenses;
+  }, [payments, expenses]);
+
   const renderActiveSection = () => {
     switch (activeSection) {
       case 'dashboard':
@@ -297,8 +304,7 @@ const AdminDashboard: React.FC = () => {
             members={members}
             registrations={registrations}
             collectors={collectors}
-            totalPayments={payments.reduce((sum, payment) => sum + (typeof payment.amount === 'number' ? payment.amount : parseFloat(payment.amount) || 0), 0)}
-            totalExpenses={expenses.reduce((sum, expense) => sum + (typeof expense.amount === 'number' ? expense.amount : parseFloat(expense.amount) || 0), 0)}
+            accountBalance={accountBalance}
           />
         );
       case 'members':
