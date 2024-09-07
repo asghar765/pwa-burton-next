@@ -296,16 +296,16 @@ const AdminDashboard: React.FC = () => {
     return totalPayments - totalExpenses;
   }, [payments, expenses]);
 
-  const renderDashboardSection = useCallback(() => (
+  const renderDashboardSection = () => (
     <DashboardSection
       members={members}
       registrations={registrations}
       collectors={collectors}
       accountBalance={calculatedAccountBalance}
     />
-  ), [members, registrations, collectors, calculatedAccountBalance]);
+  );
 
-  const renderMembersSection = useCallback(() => (
+  const renderMembersSection = () => (
     <MembersSection
       members={members}
       firebaseUsers={firebaseUsers}
@@ -322,26 +322,26 @@ const AdminDashboard: React.FC = () => {
       onAddNote={handleAddNote}
       onUpdateUserRole={handleUpdateUserRole}
     />
-  ), [members, firebaseUsers, searchTerm, expandedMembers, userRole]);
+  );
 
-  const renderCollectorsSection = useCallback(() => (
+  const renderCollectorsSection = () => (
     <CollectorsSection collectors={collectors} />
-  ), [collectors]);
+  );
 
-  const renderRegistrationsSection = useCallback(() => (
+  const renderRegistrationsSection = () => (
     <RegistrationsSection 
       registrations={registrations}
       revokedMembers={members.filter(member => !member.verified)}
       onApproveRegistration={handleApproveRegistration}
       onReinstateRevokedMember={handleReinstateRevokedMember}
     />
-  ), [registrations, members]);
+  );
 
-  const renderDatabaseSection = useCallback(() => (
+  const renderDatabaseSection = () => (
     <DatabaseSection />
-  ), []);
+  );
 
-  const renderFinanceSection = useCallback(() => (
+  const renderFinanceSection = () => (
     <FinanceSection
       accountBalance={calculatedAccountBalance}
       payments={payments.map(payment => ({
@@ -369,9 +369,9 @@ const AdminDashboard: React.FC = () => {
       onAddExpense={handleAddExpense}
       currencySymbol="£"
     />
-  ), [calculatedAccountBalance, payments, expenses]);
+  );
 
-  const renderActiveSection = useCallback(() => {
+  const renderActiveSection = () => {
     switch (activeSection) {
       case 'dashboard':
         return renderDashboardSection();
@@ -388,7 +388,7 @@ const AdminDashboard: React.FC = () => {
       default:
         return null;
     }
-  }, [activeSection, renderDashboardSection, renderMembersSection, renderCollectorsSection, renderRegistrationsSection, renderDatabaseSection, renderFinanceSection]);
+  };
 
   return (
     <div className="flex">
