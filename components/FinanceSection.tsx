@@ -46,8 +46,8 @@ const FinanceSection: React.FC<FinanceSectionProps> = ({
         <ul className="space-y-2">
           {payments.slice(0, 5).map((payment) => (
             <li key={payment.id} className="flex justify-between items-center">
-              <span>{formatDate(payment.date)}</span>
-              <span className="font-semibold">${Number(payment.amount).toFixed(2)}</span>
+              <span>{formatDate(payment.date.toString())}</span>
+              <span className="font-semibold">${parseFloat(payment.amount.toString()).toFixed(2)}</span>
             </li>
           ))}
         </ul>
@@ -58,8 +58,8 @@ const FinanceSection: React.FC<FinanceSectionProps> = ({
         <ul className="space-y-2">
           {expenses.slice(0, 5).map((expense) => (
             <li key={expense.id} className="flex justify-between items-center">
-              <span>{formatDate(expense.date)} - {expense.description}</span>
-              <span className="font-semibold">${Number(expense.amount).toFixed(2)}</span>
+              <span>{formatDate(expense.date.toString())} - {expense.description}</span>
+              <span className="font-semibold">${parseFloat(expense.amount.toString()).toFixed(2)}</span>
             </li>
           ))}
         </ul>
