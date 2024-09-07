@@ -65,12 +65,34 @@ const AdminDashboard: React.FC = () => {
       setExpenses(expensesSnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() } as Expense)));
 
       const totalPayments = paymentsSnapshot.docs.reduce((sum, doc) => {
-        const amount = doc.data().amount;
-        return sum + (typeof amount === 'number' ? amount : parseFloat(amount) || 0);
+        const paymentData = doc.data();
+        const amount = paymentData.amount;
+        let parsedAmount = 0;
+        if (typeof amount === 'number') {
+          parsedAmount = amount;
+        } else if (typeof amount === 'string') {
+          try {
+            parsedAmount = JSON.parse(amount).amount || parseFloat(amount) || 0;
+          } catch {
+            parsedAmount = parseFloat(amount) || 0;
+          }
+        }
+        return sum + parsedAmount;
       }, 0);
       const totalExpenses = expensesSnapshot.docs.reduce((sum, doc) => {
-        const amount = doc.data().amount;
-        return sum + (typeof amount === 'number' ? amount : parseFloat(amount) || 0);
+        const expenseData = doc.data();
+        const amount = expenseData.amount;
+        let parsedAmount = 0;
+        if (typeof amount === 'number') {
+          parsedAmount = amount;
+        } else if (typeof amount === 'string') {
+          try {
+            parsedAmount = JSON.parse(amount).amount || parseFloat(amount) || 0;
+          } catch {
+            parsedAmount = parseFloat(amount) || 0;
+          }
+        }
+        return sum + parsedAmount;
       }, 0);
       setAccountBalance(totalPayments - totalExpenses);
 
