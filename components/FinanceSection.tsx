@@ -6,6 +6,7 @@ interface FinanceSectionProps {
   payments: Payment[];
   expenses: Expense[];
   onAddExpense: (amount: number, description: string) => Promise<void>;
+  currencySymbol: string;
 }
 
 const FinanceSection: React.FC<FinanceSectionProps> = ({
@@ -13,6 +14,7 @@ const FinanceSection: React.FC<FinanceSectionProps> = ({
   payments,
   expenses,
   onAddExpense,
+  currencySymbol,
 }) => {
   const [newExpenseAmount, setNewExpenseAmount] = useState<string>('');
   const [newExpenseDescription, setNewExpenseDescription] = useState<string>('');
@@ -49,7 +51,7 @@ const FinanceSection: React.FC<FinanceSectionProps> = ({
       
       <div className="bg-white p-4 rounded shadow">
         <h3 className="text-xl font-semibold mb-2">Account Balance</h3>
-        <p className="text-2xl font-bold">${formatAmount(accountBalance)}</p>
+        <p className="text-2xl font-bold">{currencySymbol}{formatAmount(accountBalance)}</p>
       </div>
 
       <div className="bg-white p-4 rounded shadow">
@@ -58,7 +60,7 @@ const FinanceSection: React.FC<FinanceSectionProps> = ({
           {payments.slice(0, 5).map((payment) => (
             <li key={payment.id} className="flex justify-between items-center">
               <span>{formatDate(payment.date)}</span>
-              <span className="font-semibold">${typeof payment.amount === 'number' ? formatAmount(payment.amount) : payment.amount}</span>
+              <span className="font-semibold">{currencySymbol}{typeof payment.amount === 'number' ? formatAmount(payment.amount) : payment.amount}</span>
             </li>
           ))}
         </ul>
@@ -70,7 +72,7 @@ const FinanceSection: React.FC<FinanceSectionProps> = ({
           {expenses.slice(0, 5).map((expense) => (
             <li key={expense.id} className="flex justify-between items-center">
               <span>{formatDate(expense.date)} - {expense.description}</span>
-              <span className="font-semibold">${typeof expense.amount === 'number' ? formatAmount(expense.amount) : expense.amount}</span>
+              <span className="font-semibold">{currencySymbol}{typeof expense.amount === 'number' ? formatAmount(expense.amount) : expense.amount}</span>
             </li>
           ))}
         </ul>
