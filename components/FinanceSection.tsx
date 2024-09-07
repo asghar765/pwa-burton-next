@@ -17,7 +17,10 @@ const FinanceSection: React.FC<FinanceSectionProps> = ({
   currencySymbol,
 }) => {
   const totalPayments = useMemo(() => payments.reduce((sum, payment) => sum + payment.amount, 0), [payments]);
-  const totalExpenses = useMemo(() => expenses.reduce((sum, expense) => sum + expense.amount, 0), [expenses]);
+  const totalExpenses = useMemo(() => expenses.reduce((sum, expense) => {
+    const expenseAmount = typeof expense.amount === 'number' ? expense.amount : parseFloat(expense.amount);
+    return sum + (isNaN(expenseAmount) ? 0 : expenseAmount);
+  }, 0), [expenses]);
   const calculatedBalance = useMemo(() => totalPayments - totalExpenses, [totalPayments, totalExpenses]);
   const [newExpenseAmount, setNewExpenseAmount] = useState<string>('');
   const [newExpenseDescription, setNewExpenseDescription] = useState<string>('');
@@ -96,7 +99,12 @@ const FinanceSection: React.FC<FinanceSectionProps> = ({
         <p className="text-2xl font-bold">Total Payments: {currencySymbol}{formatAmount(totalPayments)}</p>
         <p className="text-lg">Balance after Expenses: {currencySymbol}{formatAmount(calculatedBalance)}</p>
         <p className="text-lg">Total Expenses: {currencySymbol}{formatAmount(totalExpenses)}</p>
-        <p className="text-sm text-gray-600 mt-2">Debug: calculatedBalance = {totalPayments} - {totalExpenses} = {calculatedBalance}</p>
+        <p className="text-sm text-gray-600 mt-2">
+          Debug: calculatedBalance = {totalPayments.toFixed(2)} - {totalExpenses.toFixed(2)} = {calculatedBalance.toFixed(2)}
+        </p>
+        <p className="text-sm text-gray-600">
+          Raw expenses: {JSON.stringify(expenses)}
+        </p>
       </div>
 
       <div className="bg-white p-4 rounded shadow">
