@@ -14,8 +14,16 @@ interface GoogleUser {
   role: string;
 }
 
+interface GoogleUser {
+  id: string;
+  name: string;
+  email: string;
+  role: string;
+}
+
 interface MembersSectionProps {
   members: MemberWithPayments[];
+  googleUsers?: GoogleUser[];  // Make googleUsers optional
   googleUsers?: GoogleUser[];  // Make googleUsers optional
   searchTerm: string;
   setSearchTerm: (term: string) => void;
@@ -287,6 +295,22 @@ const MembersSection: React.FC<MembersSectionProps> = ({
           </li>
         ))}
       </ul>
+
+      {/* Google Login Users Section */}
+      {googleUsers && googleUsers.length > 0 && (
+        <div className="mt-8">
+          <h2 className="text-xl font-semibold mb-4">Google Login Users</h2>
+          <ul className="space-y-4">
+            {googleUsers.map(user => (
+              <li key={user.id} className="bg-white rounded shadow p-4">
+                <h4 className="font-bold">{user.name}</h4>
+                <p>Email: {user.email}</p>
+                <p>Role: {user.role}</p>
+              </li>
+            ))}
+          </ul>
+        </div>
+      )}
 
       {/* Google Login Users Section */}
       {googleUsers && googleUsers.length > 0 && (
