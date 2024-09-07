@@ -291,8 +291,14 @@ const AdminDashboard: React.FC = () => {
   }
 
   const calculateAccountBalance = (payments: Payment[], expenses: Expense[]) => {
-    const totalPayments = payments.reduce((sum, payment) => sum + (typeof payment.amount === 'number' ? payment.amount : parseFloat(payment.amount) || 0), 0);
-    const totalExpenses = expenses.reduce((sum, expense) => sum + (typeof expense.amount === 'number' ? expense.amount : parseFloat(expense.amount) || 0), 0);
+    const totalPayments = payments.reduce((sum, payment) => {
+      const amount = typeof payment.amount === 'number' ? payment.amount : parseFloat(payment.amount) || 0;
+      return sum + (isNaN(amount) ? 0 : amount);
+    }, 0);
+    const totalExpenses = expenses.reduce((sum, expense) => {
+      const amount = typeof expense.amount === 'number' ? expense.amount : parseFloat(expense.amount) || 0;
+      return sum + (isNaN(amount) ? 0 : amount);
+    }, 0);
     return totalPayments - totalExpenses;
   };
 
