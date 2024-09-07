@@ -107,17 +107,7 @@ const FinanceSection: React.FC<FinanceSectionProps> = ({
         <p className="text-2xl font-bold">Total Payments: {currencySymbol}{formatAmount(totalPayments)}</p>
         <p className="text-lg">Balance after Expenses: {currencySymbol}{formatAmount(calculatedBalance)}</p>
         <p className="text-lg">Total Expenses: {currencySymbol}{formatAmount(totalExpenses)}</p>
-        <p className="text-sm text-gray-600 mt-2">
-          Debug: calculatedBalance = {totalPayments.toFixed(2)} - {totalExpenses.toFixed(2)} = {calculatedBalance.toFixed(2)}
-        </p>
-        <details>
-          <summary className="text-sm text-gray-600 cursor-pointer">Expense Details</summary>
-          <pre className="text-xs text-gray-600 mt-2 overflow-auto max-h-40">
-            {expenses.map(expense => 
-              `ID: ${expense.id}, Amount: ${expense.amount}, Type: ${typeof expense.amount}\n`
-            ).join('')}
-          </pre>
-        </details>
+        {/* Debug information and Expense Details removed */}
       </div>
 
       <div className="bg-white p-4 rounded shadow">
