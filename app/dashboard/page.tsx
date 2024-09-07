@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useEffect, useCallback } from 'react';
+import React, { useState, useEffect, useCallback, useRef } from 'react';
 import { collection, query, getDocs, addDoc, updateDoc, deleteDoc, doc, where, orderBy, limit } from 'firebase/firestore';
 import { db, auth } from '../../config/firebaseConfig';
 import { useAuth } from '../../context/authContext';
@@ -32,6 +32,9 @@ const AdminDashboard: React.FC = () => {
   const [activeSection, setActiveSection] = useState('dashboard');
   const [searchTerm, setSearchTerm] = useState('');
   const [expandedMembers, setExpandedMembers] = useState<Record<string, boolean>>({});
+  const [lastRefreshed, setLastRefreshed] = useState<Date | null>(null);
+
+  const intervalRef = useRef<NodeJS.Timeout | null>(null);
 
   const fetchData = useCallback(async () => {
     try {
@@ -42,6 +45,8 @@ const AdminDashboard: React.FC = () => {
       const collectorsQuery = query(collection(db, 'collectors'));
       const paymentsQuery = query(collection(db, 'payments'));
       const expensesQuery = query(collection(db, 'expenses'));
+
+      setLastRefreshed(new Date());
 
       const [membersSnapshot, registrationsSnapshot, notesSnapshot, collectorsSnapshot, paymentsSnapshot, expensesSnapshot] = await Promise.all([
         getDocs(membersQuery),
@@ -133,9 +138,21 @@ const AdminDashboard: React.FC = () => {
   useEffect(() => {
     if (user && userRole === 'admin') {
       fetchData();
+      
+      // Set up auto-refresh interval
+      intervalRef.current = setInterval(() => {
+        fetchData();
+      }, 60000); // Refresh every 60 seconds
     } else {
       setLoading(false);
     }
+
+    // Clean up interval on component unmount
+    return () => {
+      if (intervalRef.current) {
+        clearInterval(intervalRef.current);
+      }
+    };
   }, [user, userRole, fetchData]);
 
   const handleAddExpense = async (amount: number, description: string) => {
@@ -321,9 +338,16 @@ const AdminDashboard: React.FC = () => {
       <main className="flex-1 p-8 bg-gray-100 min-h-screen">
         <div className="flex justify-between items-center mb-4">
           <h1 className="text-3xl font-bold">Admin Dashboard</h1>
-          <button onClick={() => auth.signOut()} className="px-4 py-2 bg-red-500 text-white rounded hover:bg-red-600">
-            Sign Out
-          </button>
+          <div className="flex items-center">
+            {lastRefreshed && (
+              <p className="text-sm text-gray-500 mr-4">
+                Last refreshed: {lastRefreshed.toLocaleTimeString()}
+              </p>
+            )}
+            <button onClick={() => auth.signOut()} className="px-4 py-2 bg-red-500 text-white rounded hover:bg-red-600">
+              Sign Out
+            </button>
+          </div>
         </div>
 
         {errorMessage && (
