@@ -36,6 +36,9 @@ const MembersSection: React.FC<MembersSectionProps> = ({
 }) => {
   useEffect(() => {
     console.log('Members updated:', members);
+    members.forEach(member => {
+      console.log(`Member ${member.id} payments:`, member.payments);
+    });
   }, [members]);
   const [newMember, setNewMember] = useState({ name: '', email: '', role: '' });
   const [newPaymentAmounts, setNewPaymentAmounts] = useState<Record<string, string>>({});
@@ -80,11 +83,19 @@ const MembersSection: React.FC<MembersSectionProps> = ({
       };
       console.log('Adding new payment:', newPayment);
       onAddPayment(memberId, newPayment);
-      setNewPaymentAmounts(prev => ({ ...prev, [memberId]: '' }));
+      console.log('Payment added, updating state');
+      setNewPaymentAmounts(prev => {
+        const updated = { ...prev, [memberId]: '' };
+        console.log('Updated newPaymentAmounts:', updated);
+        return updated;
+      });
+      // Force re-render
+      setExpandedMembers(prev => ({ ...prev }));
     } else {
+      console.log('Invalid payment amount:', amount);
       alert('Please enter a valid payment amount.');
     }
-  }, [newPaymentAmounts, onAddPayment]);
+  }, [newPaymentAmounts, onAddPayment, setExpandedMembers]);
 
   const handleDeleteMember = useCallback((id: string) => {
     setMemberToDelete(id);
@@ -188,10 +199,10 @@ const MembersSection: React.FC<MembersSectionProps> = ({
                       <tbody>
                         {[...member.payments]
                           .sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime())
-                          .map((payment) => (
-                            <tr key={payment.id}>
+                          .map((payment, index) => (
+                            <tr key={payment.id || `payment-${index}`}>
                               <td>{new Date(payment.date).toLocaleDateString()}</td>
-                              <td>£{payment.amount.toFixed(2)}</td>
+                              <td>£{typeof payment.amount === 'number' ? payment.amount.toFixed(2) : payment.amount}</td>
                             </tr>
                           ))}
                       </tbody>
