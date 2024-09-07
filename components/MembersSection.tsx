@@ -83,7 +83,7 @@ const MembersSection: React.FC<MembersSectionProps> = ({
   }, [setExpandedMembers]);
 
   const handleAddMember = useCallback(() => {
-    onAddMember({ ...newMember, memberNumber: '', verified: true });
+    onAddMember({ ...newMember, memberNumber: '', verified: true, payments: [] });
     setNewMember({ name: '', email: '', role: '' });
   }, [newMember, onAddMember]);
 
