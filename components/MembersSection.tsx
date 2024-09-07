@@ -1,12 +1,11 @@
-import React, { useState, useCallback } from 'react';
+import React, { useState, useCallback, useMemo } from 'react';
 import { Member, Payment, Note } from '../types';
 import { Dialog } from '@headlessui/react';
+import { MagnifyingGlassIcon, ChevronDownIcon, ChevronUpIcon } from '@heroicons/react/24/solid';
 
-// Ensure Member interface includes payments
 interface MemberWithPayments extends Member {
   payments: Payment[];
 }
-import { MagnifyingGlassIcon, ChevronDownIcon, ChevronUpIcon } from '@heroicons/react/24/solid';
 
 interface MembersSectionProps {
   members: MemberWithPayments[];
@@ -35,62 +34,63 @@ const MembersSection: React.FC<MembersSectionProps> = ({
   onAddPayment,
   onAddNote
 }) => {
-  // Ensure all members have a payments array
-  const membersWithPayments = members.map(member => ({
-    ...member,
-    payments: member.payments || []
-  }));
   const [newMember, setNewMember] = useState({ name: '', email: '', role: '' });
   const [newPaymentAmounts, setNewPaymentAmounts] = useState<Record<string, string>>({});
   const [newNote, setNewNote] = useState('');
   const [memberToDelete, setMemberToDelete] = useState<string | null>(null);
 
-  const filteredMembers = useCallback(() => members.filter(member => {
-    const search = searchTerm ? searchTerm.toLowerCase() : '';
-    return (
-      (member.name && member.name.toLowerCase().includes(search)) ||
-      (member.memberNumber && member.memberNumber.toLowerCase().includes(search))
-    )
-  }), [members, searchTerm]);
+  const membersWithPayments = useMemo(() => 
+    members.map(member => ({
+      ...member,
+      payments: member.payments || []
+    })),
+    [members]
+  );
 
-  const toggleMemberExpansion = (memberId: string) => {
+  const filteredMembers = useMemo(() => 
+    membersWithPayments.filter(member => {
+      const search = searchTerm.toLowerCase();
+      return (
+        (member.name && member.name.toLowerCase().includes(search)) ||
+        (member.memberNumber && member.memberNumber.toLowerCase().includes(search))
+      );
+    }),
+    [membersWithPayments, searchTerm]
+  );
+
+  const toggleMemberExpansion = useCallback((memberId: string) => {
     setExpandedMembers(prev => ({ ...prev, [memberId]: !prev[memberId] }));
-  };
+  }, [setExpandedMembers]);
 
-  const handleAddMember = () => {
+  const handleAddMember = useCallback(() => {
     onAddMember({ ...newMember, memberNumber: '', verified: true });
     setNewMember({ name: '', email: '', role: '' });
-  };
+  }, [newMember, onAddMember]);
 
-  const handleAddPayment = (memberId: string) => {
-    if (typeof onAddPayment === 'function') {
-      const amount = parseFloat(newPaymentAmounts[memberId] || '0');
-      if (!isNaN(amount) && amount > 0) {
-        onAddPayment(memberId, {
-          amount: amount,
-          date: new Date().toISOString(),
-          memberId: memberId
-        });
-        setNewPaymentAmounts(prev => ({ ...prev, [memberId]: '' }));
-      } else {
-        alert('Please enter a valid payment amount.');
-      }
+  const handleAddPayment = useCallback((memberId: string) => {
+    const amount = parseFloat(newPaymentAmounts[memberId] || '0');
+    if (!isNaN(amount) && amount > 0) {
+      onAddPayment(memberId, {
+        amount: amount,
+        date: new Date().toISOString(),
+        memberId: memberId
+      });
+      setNewPaymentAmounts(prev => ({ ...prev, [memberId]: '' }));
     } else {
-      console.error('onAddPayment is not a function');
-      alert('An error occurred while processing the payment. Please try again.');
+      alert('Please enter a valid payment amount.');
     }
-  };
+  }, [newPaymentAmounts, onAddPayment]);
 
-  const handleDeleteMember = (id: string) => {
+  const handleDeleteMember = useCallback((id: string) => {
     setMemberToDelete(id);
-  };
+  }, []);
 
-  const confirmDeleteMember = () => {
+  const confirmDeleteMember = useCallback(() => {
     if (memberToDelete) {
       onDeleteMember(memberToDelete);
       setMemberToDelete(null);
     }
-  };
+  }, [memberToDelete, onDeleteMember]);
 
   return (
     <div>
@@ -181,11 +181,10 @@ const MembersSection: React.FC<MembersSectionProps> = ({
                         </tr>
                       </thead>
                       <tbody>
-                        {member.payments
-                          .slice()
+                        {[...member.payments]
                           .sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime())
-                          .map((payment, index) => (
-                            <tr key={payment.id || index}>
+                          .map((payment) => (
+                            <tr key={payment.id}>
                               <td>{new Date(payment.date).toLocaleDateString()}</td>
                               <td>£{payment.amount.toFixed(2)}</td>
                             </tr>
@@ -200,19 +199,24 @@ const MembersSection: React.FC<MembersSectionProps> = ({
                 {/* Add Payment */}
                 <div className="mt-4">
                   <h5 className="font-semibold">Add Payment</h5>
-                  <input
-                    type="number"
-                    value={newPaymentAmounts[member.id] || ''}
-                    onChange={(e) => setNewPaymentAmounts(prev => ({ ...prev, [member.id]: e.target.value }))}
-                    placeholder="Amount"
-                    className="p-2 border border-gray-300 rounded mr-2"
-                  />
-                  <button
-                    onClick={() => handleAddPayment(member.id)}
-                    className="px-2 py-1 bg-green-500 text-white rounded hover:bg-green-600"
-                  >
-                    Add Payment
-                  </button>
+                  <div className="flex items-center">
+                    <input
+                      type="number"
+                      value={newPaymentAmounts[member.id] || ''}
+                      onChange={(e) => setNewPaymentAmounts(prev => ({ ...prev, [member.id]: e.target.value }))}
+                      placeholder="Amount"
+                      className="p-2 border border-gray-300 rounded mr-2 flex-grow"
+                      step="0.01"
+                      min="0"
+                    />
+                    <button
+                      onClick={() => handleAddPayment(member.id)}
+                      className="px-4 py-2 bg-green-500 text-white rounded hover:bg-green-600"
+                      disabled={!newPaymentAmounts[member.id] || parseFloat(newPaymentAmounts[member.id]) <= 0}
+                    >
+                      Add Payment
+                    </button>
+                  </div>
                 </div>
 
                 {/* Notes Section (Admin Only) */}
