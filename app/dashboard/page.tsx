@@ -43,6 +43,8 @@ const AdminDashboard: React.FC = () => {
   const [searchTerm, setSearchTerm] = useState('');
   const [expandedMembers, setExpandedMembers] = useState<Record<string, boolean>>({});
   const [lastRefreshed, setLastRefreshed] = useState<Date | null>(null);
+  const [tables, setTables] = useState<{ table_name: string; row_count: string }[]>([]);
+  const [databaseError, setDatabaseError] = useState<string | null>(null);
 
   const fetchData = useCallback(async () => {
     try {
@@ -57,15 +59,33 @@ const AdminDashboard: React.FC = () => {
 
       setLastRefreshed(new Date());
 
-      const [membersSnapshot, registrationsSnapshot, notesSnapshot, collectorsSnapshot, paymentsSnapshot, expensesSnapshot, usersSnapshot] = await Promise.all([
+      const [
+        membersSnapshot,
+        registrationsSnapshot,
+        notesSnapshot,
+        collectorsSnapshot,
+        paymentsSnapshot,
+        expensesSnapshot,
+        usersSnapshot,
+        databaseInfoResponse
+      ] = await Promise.all([
         getDocs(membersQuery),
         getDocs(registrationsQuery),
         getDocs(notesQuery),
         getDocs(collectorsQuery),
         getDocs(paymentsQuery),
         getDocs(expensesQuery),
-        getDocs(usersQuery)
+        getDocs(usersQuery),
+        fetch('/api/database-info')
       ]);
+
+      const databaseInfo = await databaseInfoResponse.json();
+      if (databaseInfoResponse.ok) {
+        setTables(databaseInfo);
+        setDatabaseError(null);
+      } else {
+        setDatabaseError(databaseInfo.error || 'Failed to fetch database information');
+      }
 
       setMembers(membersSnapshot.docs.map(doc => {
         const data = doc.data();
@@ -377,7 +397,7 @@ const AdminDashboard: React.FC = () => {
   );
 
   const renderDatabaseSection = () => (
-    <DatabaseSection tables={tables} error={error} />
+    <DatabaseSection tables={tables} error={databaseError} />
   );
 
   const renderFinanceSection = () => {
