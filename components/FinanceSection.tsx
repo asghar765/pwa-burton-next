@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useMemo } from 'react';
 import { Payment, Expense } from '../types';
 
 interface FinanceSectionProps {
@@ -18,6 +18,7 @@ const FinanceSection: React.FC<FinanceSectionProps> = ({
 }) => {
   const [newExpenseAmount, setNewExpenseAmount] = useState<string>('');
   const [newExpenseDescription, setNewExpenseDescription] = useState<string>('');
+  const [searchTerm, setSearchTerm] = useState<string>('');
 
   const handleAddExpense = (e: React.FormEvent) => {
     e.preventDefault();
@@ -67,6 +68,13 @@ const FinanceSection: React.FC<FinanceSectionProps> = ({
     return isNaN(parsedAmount) ? '0.00' : parsedAmount.toFixed(2);
   };
 
+  const filteredPayments = useMemo(() => {
+    return payments.filter(payment => 
+      payment.memberNumber?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      payment.memberId?.toLowerCase().includes(searchTerm.toLowerCase())
+    );
+  }, [payments, searchTerm]);
+
   return (
     <div className="space-y-6">
       <h2 className="text-2xl font-bold">Finance Section</h2>
@@ -77,9 +85,18 @@ const FinanceSection: React.FC<FinanceSectionProps> = ({
       </div>
 
       <div className="bg-white p-4 rounded shadow">
-        <h3 className="text-xl font-semibold mb-2">Recent Payments</h3>
+        <h3 className="text-xl font-semibold mb-2">Payments</h3>
+        <div className="mb-4">
+          <input
+            type="text"
+            value={searchTerm}
+            onChange={(e) => setSearchTerm(e.target.value)}
+            placeholder="Search by member number or ID"
+            className="w-full px-3 py-2 border rounded"
+          />
+        </div>
         <ul className="space-y-2">
-          {payments.slice(0, 5).map((payment) => (
+          {filteredPayments.map((payment) => (
             <li key={payment.id} className="flex justify-between items-center">
               <span>{formatDate(payment.date)} - Member No: {payment.memberNumber || payment.memberId || 'N/A'}</span>
               <span className="font-semibold">{currencySymbol}{formatAmount(payment.amount)}</span>
