@@ -51,7 +51,7 @@ const MembersSection: React.FC<MembersSectionProps> = React.memo(function Member
   onAddPayment,
   onAddNote,
   onUpdateUserRole
-}) => {
+}) {
   const [firebaseUsers, setFirebaseUsers] = useState<FirebaseUser[]>([]);
   const [userSearchTerm, setUserSearchTerm] = useState('');
 
