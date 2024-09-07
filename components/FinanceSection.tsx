@@ -10,7 +10,6 @@ interface FinanceSectionProps {
 }
 
 const FinanceSection: React.FC<FinanceSectionProps> = ({
-  accountBalance,
   payments,
   expenses,
   onAddExpense,
@@ -26,7 +25,10 @@ const FinanceSection: React.FC<FinanceSectionProps> = ({
     return sum + (isNaN(amount) ? 0 : amount);
   }, 0), [expenses]);
 
-  const calculatedBalance = useMemo(() => totalPayments - totalExpenses, [totalPayments, totalExpenses]);
+  const calculatedBalance = useMemo(() => {
+    const balance = totalPayments - totalExpenses;
+    return isNaN(balance) ? 0 : balance;
+  }, [totalPayments, totalExpenses]);
   const [newExpenseAmount, setNewExpenseAmount] = useState<string>('');
   const [newExpenseDescription, setNewExpenseDescription] = useState<string>('');
   const [searchTerm, setSearchTerm] = useState<string>('');
