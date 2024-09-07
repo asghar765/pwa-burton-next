@@ -9,7 +9,7 @@ export interface Member {
   notes?: Note[];
 }
 
-export interface MemberWithPayments extends Member {
+export interface MemberWithPayments extends Omit<Member, 'payments'> {
   payments: Payment[];
 }
 

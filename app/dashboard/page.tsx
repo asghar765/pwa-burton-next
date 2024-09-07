@@ -66,7 +66,19 @@ const AdminDashboard: React.FC = () => {
         getDocs(usersQuery)
       ]);
 
-      setMembers(membersSnapshot.docs.map(doc => ({ id: doc.id, ...doc.data(), payments: [] } as MemberWithPayments)));
+      setMembers(membersSnapshot.docs.map(doc => {
+        const data = doc.data();
+        return {
+          id: doc.id,
+          name: data.name || '',
+          email: data.email || '',
+          role: data.role || '',
+          memberNumber: data.memberNumber || '',
+          verified: data.verified || false,
+          payments: [],
+          notes: data.notes || []
+        } as MemberWithPayments;
+      }));
       setRegistrations(registrationsSnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() } as Registration)));
       setNotes(notesSnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() } as Note)));
       setCollectors(collectorsSnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() } as Collector)));
