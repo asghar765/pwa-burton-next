@@ -36,6 +36,23 @@ interface MembersSectionProps {
 
 const MembersSection: React.FC<MembersSectionProps> = React.memo(({
   members,
+  loggedUsers = [],
+  searchTerm,
+  setSearchTerm,
+  expandedMembers,
+  setExpandedMembers,
+  onAddMember,
+  onUpdateMember,
+  onDeleteMember,
+  onRevokeMember,
+  currentUserRole,
+  onAddPayment,
+  onAddNote,
+  onUpdateUserRole
+}) => {
+
+const MembersSection: React.FC<MembersSectionProps> = React.memo(({
+  members,
   loggedUsers,
   searchTerm,
   setSearchTerm,
@@ -296,7 +313,7 @@ const MembersSection: React.FC<MembersSectionProps> = React.memo(({
       {/* Logged Users Section */}
       <div className="mt-8">
         <h2 className="text-xl font-semibold mb-4">Logged Users</h2>
-        {loggedUsers.length > 0 ? (
+        {loggedUsers && loggedUsers.length > 0 ? (
           <ul className="space-y-4">
             {loggedUsers.map(user => (
               <li key={user.id} className="bg-white rounded shadow p-4">
