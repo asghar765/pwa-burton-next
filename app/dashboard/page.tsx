@@ -304,12 +304,26 @@ const AdminDashboard: React.FC = () => {
       return `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')}`;
     });
 
-    const chartData = Object.entries(groupedRegistrations).map(([date, regs]) => ({
-      date,
-      count: regs.length,
-    }));
+    let totalMembers = 0;
+    const chartData = Object.entries(groupedRegistrations)
+      .map(([date, regs]) => {
+        totalMembers += regs.length;
+        return {
+          date,
+          registrations: regs.length,
+          totalMembers,
+        };
+      })
+      .sort((a, b) => a.date.localeCompare(b.date))
+      .slice(-12);
 
-    return chartData.sort((a, b) => a.date.localeCompare(b.date)).slice(-12);
+    // Adjust totalMembers to reflect the current total
+    const currentTotal = members.length;
+    const adjustment = currentTotal - totalMembers;
+    return chartData.map(item => ({
+      ...item,
+      totalMembers: item.totalMembers + adjustment,
+    }));
   };
 
   const renderDashboardSection = () => (

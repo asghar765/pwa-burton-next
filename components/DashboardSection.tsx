@@ -1,13 +1,13 @@
 import React from 'react';
 import { Member, Registration, Collector } from '../types';
-import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
+import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, Legend } from 'recharts';
 
 interface DashboardSectionProps {
   members: Member[];
   registrations: Registration[];
   collectors: Collector[];
   accountBalance: number;
-  registrationChartData: { date: string; count: number }[];
+  registrationChartData: { date: string; registrations: number; totalMembers: number }[];
 }
 
 const DashboardSection: React.FC<DashboardSectionProps> = ({
@@ -43,14 +43,17 @@ const DashboardSection: React.FC<DashboardSectionProps> = ({
       </div>
 
       <div className="bg-white p-4 rounded shadow mt-6">
-        <h3 className="text-xl font-semibold mb-4">Monthly Registrations (Last 12 Months)</h3>
+        <h3 className="text-xl font-semibold mb-4">Monthly Registrations and Total Members (Last 12 Months)</h3>
         <ResponsiveContainer width="100%" height={300}>
           <BarChart data={registrationChartData}>
             <CartesianGrid strokeDasharray="3 3" />
             <XAxis dataKey="date" />
-            <YAxis />
+            <YAxis yAxisId="left" />
+            <YAxis yAxisId="right" orientation="right" />
             <Tooltip />
-            <Bar dataKey="count" fill="#8884d8" />
+            <Legend />
+            <Bar yAxisId="left" dataKey="registrations" name="Monthly Registrations" fill="#8884d8" />
+            <Bar yAxisId="right" dataKey="totalMembers" name="Total Members" fill="#82ca9d" />
           </BarChart>
         </ResponsiveContainer>
       </div>
