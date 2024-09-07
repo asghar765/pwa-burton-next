@@ -1,13 +1,12 @@
 'use client';
 
 import React, { useState, ChangeEvent, FormEvent, useEffect } from 'react';
-import { db, auth } from '../config/firebaseConfig';
+import { db } from '../config/firebaseConfig';
 import { addDoc, collection, getDocs, query } from 'firebase/firestore';
 import { useTheme } from '../context/themeContext';
-import { createUserWithEmailAndPassword } from 'firebase/auth';
-import { doc, setDoc } from 'firebase/firestore';
 import { useRouter } from 'next/router';
 import { Alert, AlertDescription, AlertTitle } from '../components/ui/alert';
+
 type FormField = {
   value: string;
   error: string | null;
@@ -230,60 +229,67 @@ export default function RegistrationForm() {
         )}
 
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-          {Object.entries(formState).map(([field, value]) => {
+          {Object.entries(formState).map(([field, fieldState]) => {
             if (field === 'spouses' || field === 'dependants' || field === 'membershipInfo' || field.startsWith('nextOfKin')) return null;
-            if (field === 'gender') {
+
+            if (typeof fieldState === 'object' && 'value' in fieldState) {
+              if (field === 'gender') {
+                return (
+                  <div key={field} className="space-y-2">
+                    <label htmlFor={field} className="block font-medium text-blue-200">Gender</label>
+                    <select
+                      id={field}
+                      value={fieldState.value}
+                      onChange={(e) => handleInputChange(e, field as keyof RegistrationFormState)}
+                      className="w-full p-2 border border-gray-600 rounded bg-gray-800 text-white"
+                    >
+                      <option value="">Select Gender</option>
+                      <option value="Male">Male</option>
+                      <option value="Female">Female</option>
+                      <option value="Other">Other</option>
+                    </select>
+                    {fieldState.error && <span className="text-red-400 text-sm">{fieldState.error}</span>}
+                  </div>
+                );
+              }
+
+              if (field === 'maritalStatus') {
+                return (
+                  <div key={field} className="space-y-2">
+                    <label htmlFor={field} className="block font-medium text-blue-200">Marital Status</label>
+                    <select
+                      id={field}
+                      value={fieldState.value}
+                      onChange={(e) => handleInputChange(e, field as keyof RegistrationFormState)}
+                      className="w-full p-2 border border-gray-600 rounded bg-gray-800 text-white"
+                    >
+                      <option value="">Select Marital Status</option>
+                      <option value="Single">Single</option>
+                      <option value="Married">Married</option>
+                      <option value="Divorced">Divorced</option>
+                      <option value="Widowed">Widowed</option>
+                    </select>
+                    {fieldState.error && <span className="text-red-400 text-sm">{fieldState.error}</span>}
+                  </div>
+                );
+              }
+
               return (
                 <div key={field} className="space-y-2">
-                  <label htmlFor={field} className="block font-medium text-blue-200">Gender</label>
-                  <select
+                  <label htmlFor={field} className="block font-medium text-blue-200">{field.replace(/([A-Z])/g, ' $1').trim()}</label>
+                  <input
+                    type={field.includes('date') ? 'date' : 'text'}
                     id={field}
-                    value={(value as FormField).value}
+                    value={fieldState.value}
                     onChange={(e) => handleInputChange(e, field as keyof RegistrationFormState)}
                     className="w-full p-2 border border-gray-600 rounded bg-gray-800 text-white"
-                  >
-                    <option value="">Select Gender</option>
-                    <option value="Male">Male</option>
-                    <option value="Female">Female</option>
-                    <option value="Other">Other</option>
-                  </select>
-                  {(value as FormField).error && <span className="text-red-400 text-sm">{(value as FormField).error}</span>}
+                  />
+                  {fieldState.error && <span className="text-red-400 text-sm">{fieldState.error}</span>}
                 </div>
               );
             }
-            if (field === 'maritalStatus') {
-              return (
-                <div key={field} className="space-y-2">
-                  <label htmlFor={field} className="block font-medium text-blue-200">Marital Status</label>
-                  <select
-                    id={field}
-                    value={(value as FormField).value}
-                    onChange={(e) => handleInputChange(e, field as keyof RegistrationFormState)}
-                    className="w-full p-2 border border-gray-600 rounded bg-gray-800 text-white"
-                  >
-                    <option value="">Select Marital Status</option>
-                    <option value="Single">Single</option>
-                    <option value="Married">Married</option>
-                    <option value="Divorced">Divorced</option>
-                    <option value="Widowed">Widowed</option>
-                  </select>
-                  {(value as FormField).error && <span className="text-red-400 text-sm">{(value as FormField).error}</span>}
-                </div>
-              );
-            }
-            return (
-              <div key={field} className="space-y-2">
-                <label htmlFor={field} className="block font-medium text-blue-200">{field.replace(/([A-Z])/g, ' $1').trim()}</label>
-                <input
-                  type={field.includes('date') ? 'date' : 'text'}
-                  id={field}
-                  value={(value as FormField).value}
-                  onChange={(e) => handleInputChange(e, field as keyof RegistrationFormState)}
-                  className="w-full p-2 border border-gray-600 rounded bg-gray-800 text-white"
-                />
-                {(value as FormField).error && <span className="text-red-400 text-sm">{(value as FormField).error}</span>}
-              </div>
-            );
+
+            return null;
           })}
         </div>
 
@@ -327,8 +333,8 @@ export default function RegistrationForm() {
           </h3>
           {formState.spouses.map((spouse, index) => (
             <div key={index} className="p-4 border border-gray-600 rounded bg-gray-800">
-     <h4 className="text-lg font-medium mb-2 text-blue-200">Spouse {index + 1}</h4>
-     <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <h4 className="text-lg font-medium mb-2 text-blue-200">Spouse {index + 1}</h4>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 {Object.entries(spouse).map(([field, value]) => (
                   <div key={field} className="space-y-2">
                     <label htmlFor={`spouse-${index}-${field}`} className="block font-medium text-blue-200">{field.replace(/([A-Z])/g, ' $1').trim()}</label>
