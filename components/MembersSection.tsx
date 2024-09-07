@@ -35,7 +35,7 @@ interface MembersSectionProps {
 
 const MembersSection: React.FC<MembersSectionProps> = ({
   members,
-  googleUsers,
+  firebaseUsers,
   searchTerm,
   setSearchTerm,
   expandedMembers,
