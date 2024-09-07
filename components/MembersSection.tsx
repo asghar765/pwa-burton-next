@@ -1,15 +1,20 @@
 import React, { useState } from 'react';
 import { Member, Payment, Note } from '../types';
+
+// Ensure Member interface includes payments
+interface MemberWithPayments extends Member {
+  payments?: Payment[];
+}
 import { MagnifyingGlassIcon, ChevronDownIcon, ChevronUpIcon } from '@heroicons/react/24/solid';
 
 interface MembersSectionProps {
-  members: Member[];
+  members: MemberWithPayments[];
   searchTerm: string;
   setSearchTerm: (term: string) => void;
   expandedMembers: Record<string, boolean>;
   setExpandedMembers: React.Dispatch<React.SetStateAction<Record<string, boolean>>>;
-  onAddMember: (member: Omit<Member, 'id'>) => void;
-  onUpdateMember: (id: string, member: Partial<Member>) => void;
+  onAddMember: (member: Omit<MemberWithPayments, 'id'>) => void;
+  onUpdateMember: (id: string, member: Partial<MemberWithPayments>) => void;
   onDeleteMember: (id: string) => void;
   currentUserRole: string;
   onAddPayment: (memberId: string, payment: Omit<Payment, 'id'>) => void;
@@ -146,7 +151,12 @@ const MembersSection: React.FC<MembersSectionProps> = ({
                     <ul className="list-disc list-inside">
                       {member.payments.map((payment, index) => (
                         <li key={index}>
-                          {new Date(payment.date).toLocaleDateString()}: £{typeof payment.amount === 'number' ? payment.amount.toFixed(2) : 'N/A'}
+                          {new Date(payment.date).toLocaleDateString()}: £
+                          {typeof payment.amount === 'number'
+                            ? payment.amount.toFixed(2)
+                            : typeof payment.amount === 'string'
+                            ? parseFloat(payment.amount).toFixed(2)
+                            : 'N/A'}
                         </li>
                       ))}
                     </ul>
