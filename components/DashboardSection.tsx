@@ -44,28 +44,43 @@ const DashboardSection: React.FC<DashboardSectionProps> = ({
 
       <div className="bg-white p-4 rounded shadow mt-6">
         <h3 className="text-xl font-semibold mb-4">Monthly Registrations and Total Members (Last 12 Months)</h3>
-        <ResponsiveContainer width="100%" height={400} minHeight={300}>
+        <ResponsiveContainer width="100%" height={500} minHeight={400}>
           <BarChart
             data={registrationChartData}
-            margin={{ top: 20, right: 30, left: 20, bottom: 5 }}
+            margin={{ top: 20, right: 30, left: 20, bottom: 70 }}
           >
             <CartesianGrid strokeDasharray="3 3" />
-            <XAxis dataKey="date" angle={-45} textAnchor="end" height={70} />
+            <XAxis 
+              dataKey="date" 
+              angle={-45} 
+              textAnchor="end" 
+              height={80} 
+              tick={{ fontSize: 12 }}
+            />
             <YAxis 
               yAxisId="left" 
-              label={{ value: 'Registrations', angle: -90, position: 'insideLeft' }} 
+              label={{ value: 'Registrations', angle: -90, position: 'insideLeft', offset: -5 }} 
               tickFormatter={(value) => value.toLocaleString()}
+              tick={{ fontSize: 12 }}
             />
             <YAxis 
               yAxisId="right" 
               orientation="right" 
-              label={{ value: 'Total Members', angle: 90, position: 'insideRight' }} 
+              label={{ value: 'Total Members', angle: 90, position: 'insideRight', offset: 5 }} 
               tickFormatter={(value) => value.toLocaleString()}
+              tick={{ fontSize: 12 }}
             />
-            <Tooltip formatter={(value) => value.toLocaleString()} />
-            <Legend wrapperStyle={{ paddingTop: '20px' }} />
-            <Bar yAxisId="left" dataKey="registrations" name="Monthly Registrations" fill="#8884d8" />
-            <Bar yAxisId="right" dataKey="totalMembers" name="Total Members" fill="#82ca9d" />
+            <Tooltip 
+              formatter={(value) => value.toLocaleString()} 
+              contentStyle={{ fontSize: 14 }}
+            />
+            <Legend 
+              wrapperStyle={{ paddingTop: '20px' }} 
+              verticalAlign="bottom" 
+              height={36}
+            />
+            <Bar yAxisId="left" dataKey="registrations" name="Monthly Registrations" fill="#4CAF50" />
+            <Bar yAxisId="right" dataKey="totalMembers" name="Total Members" fill="#2196F3" />
           </BarChart>
         </ResponsiveContainer>
       </div>
