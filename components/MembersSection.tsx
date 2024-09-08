@@ -30,7 +30,6 @@ export interface MembersSectionProps {
   setSearchTerm: (term: string) => void;
   expandedMembers: Record<string, boolean>;
   setExpandedMembers: React.Dispatch<React.SetStateAction<Record<string, boolean>>>;
-  onAddMember: (member: NewMember) => void;
   onUpdateMember: (id: string, member: Partial<MemberWithPayments>) => void;
   onDeleteMember: (id: string) => void;
   onRevokeMember: (id: string) => void;
@@ -105,7 +104,6 @@ const MembersSection: React.FC<MembersSectionProps> = React.memo(function Member
       );
     });
   }, [firebaseUsers, userSearchTerm]);
-  const [newMember, setNewMember] = useState({ name: '', email: '', role: '' });
   const [newPaymentAmounts, setNewPaymentAmounts] = useState<Record<string, string>>({});
   const [newNote, setNewNote] = useState('');
   const [memberToDelete, setMemberToDelete] = useState<string | null>(null);
@@ -134,18 +132,6 @@ const MembersSection: React.FC<MembersSectionProps> = React.memo(function Member
     setExpandedMembers(prev => ({ ...prev, [memberId]: !prev[memberId] }));
   }, [setExpandedMembers]);
 
-  const handleAddMember = useCallback(async () => {
-    try {
-      const memberNumber = generateMemberNumber();
-      const newMemberData = { ...newMember, memberNumber, verified: true };
-      const membersRef = collection(db, 'members');
-      await addDoc(membersRef, newMemberData);
-      onAddMember(newMemberData);
-      setNewMember({ name: '', email: '', role: '' });
-    } catch (error) {
-      console.error("Error adding member:", error);
-    }
-  }, [newMember, onAddMember]);
 
   const handleAddPayment = useCallback((memberNumber: string) => {
     const amount = parseFloat(newPaymentAmounts[memberNumber] || '0');
@@ -194,34 +180,6 @@ const MembersSection: React.FC<MembersSectionProps> = React.memo(function Member
           className="p-2 border border-gray-300 rounded mr-2 flex-grow"
         />
         <MagnifyingGlassIcon className="h-5 w-5 text-gray-400" />
-      </div>
-      <div className="mb-4">
-        <input
-          type="text"
-          value={newMember.name}
-          onChange={(e) => setNewMember({ ...newMember, name: e.target.value })}
-          placeholder="Name"
-          className="p-2 border border-gray-300 rounded mr-2"
-        />
-        <input
-          type="email"
-          value={newMember.email}
-          onChange={(e) => setNewMember({ ...newMember, email: e.target.value })}
-          placeholder="Email"
-          className="p-2 border border-gray-300 rounded mr-2"
-        />
-        <select
-          value={newMember.role}
-          onChange={(e) => setNewMember({ ...newMember, role: e.target.value })}
-          className="p-2 border border-gray-300 rounded mr-2"
-        >
-          <option value="">Select Role</option>
-          <option value="member">Member</option>
-          <option value="admin">Admin</option>
-        </select>
-        <button onClick={handleAddMember} className="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600">
-          Add Member
-        </button>
       </div>
       <ul className="space-y-4">
         {membersWithPayments.filter(member => {
