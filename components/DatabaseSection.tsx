@@ -7,10 +7,10 @@ interface DatabaseSectionProps {
   collections: { name: string; count: number }[];
   onUploadMembers: (members: any[]) => void;
   onDeleteAllUploadedMembers: () => void;
+  uploadedMembers: any[];
 }
 
-const DatabaseSection: React.FC<DatabaseSectionProps> = ({ collections, onUploadMembers, onDeleteAllUploadedMembers }) => {
-  const [uploadedMembers, setUploadedMembers] = useState<any[]>([]);
+const DatabaseSection: React.FC<DatabaseSectionProps> = ({ collections, onUploadMembers, onDeleteAllUploadedMembers, uploadedMembers }) => {
 
   const onDrop = (acceptedFiles: File[]) => {
     const file = acceptedFiles[0];
@@ -23,7 +23,6 @@ const DatabaseSection: React.FC<DatabaseSectionProps> = ({ collections, onUpload
           address: row[3],
           collector: row[4],
         }));
-        setUploadedMembers(members);
         onUploadMembers(members);
       },
       header: true,
