@@ -369,7 +369,7 @@ const AdminDashboard: React.FC = () => {
   };
 
   const renderDashboardSection = () => {
-    const currentUser = userRole === 'member' ? members.find(m => m.id === user?.uid) || null : null;
+    const currentUser = members.find(m => m.id === user?.uid) || null;
     return (
       <DashboardSection
         members={members}

@@ -25,10 +25,11 @@ const DashboardSection: React.FC<DashboardSectionProps> = ({
     <div className="space-y-6">
       <h2 className="text-2xl font-bold">Dashboard Overview</h2>
       
-      {userRole === 'member' && currentUser && (
+      {currentUser && (
         <div className="bg-white p-4 rounded shadow mb-4">
           <h3 className="text-xl font-semibold mb-2">Welcome, {currentUser.name}</h3>
           <p>Member Number: {currentUser.memberNumber}</p>
+          <p>Role: {userRole}</p>
         </div>
       )}
       
