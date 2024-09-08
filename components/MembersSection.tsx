@@ -269,6 +269,13 @@ const MembersSection: React.FC<MembersSectionProps> = React.memo(function Member
                 <p><strong>Place of Birth:</strong> {member.placeOfBirth || 'N/A'}</p>
                 <p><strong>Post Code:</strong> {member.postCode || 'N/A'}</p>
                 <p><strong>Town:</strong> {member.town || 'N/A'}</p>
+                <p><strong>Collector:</strong> {member.collector || 'N/A'}</p>
+                <p><strong>Membership Type:</strong> {member.membershipType || 'N/A'}</p>
+                <p><strong>Membership Status:</strong> {member.membershipStatus || 'N/A'}</p>
+                <p><strong>Membership Start Date:</strong> {member.membershipStartDate || 'N/A'}</p>
+                <p><strong>Membership End Date:</strong> {member.membershipEndDate || 'N/A'}</p>
+                <p><strong>Last Payment Date:</strong> {member.lastPaymentDate || 'N/A'}</p>
+                <p><strong>Total Payments:</strong> {member.totalPayments || 'N/A'}</p>
 
                 <h5 className="font-semibold mt-4">Spouse(s)</h5>
                 {member.spouses && member.spouses.length > 0 ? (
