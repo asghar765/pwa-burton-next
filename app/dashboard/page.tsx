@@ -435,6 +435,10 @@ const AdminDashboard: React.FC = () => {
         <DatabaseSection 
           collections={collections} 
           onBulkAddMembers={handleBulkAddMembers}
+          onBulkDeleteMembers={() => {
+            console.log('Bulk delete members not implemented');
+            // Implement the bulk delete functionality here
+          }}
         />
         {uploadedMembers.length > 0 && (
           <div className="mt-8">
