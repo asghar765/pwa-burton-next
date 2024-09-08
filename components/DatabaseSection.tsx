@@ -6,9 +6,10 @@ import Papa from 'papaparse';
 interface DatabaseSectionProps {
   collections: { name: string; count: number }[];
   onUploadMembers: (members: any[]) => void;
+  onDeleteAllUploadedMembers: () => void;
 }
 
-const DatabaseSection: React.FC<DatabaseSectionProps> = ({ collections, onUploadMembers }) => {
+const DatabaseSection: React.FC<DatabaseSectionProps> = ({ collections, onUploadMembers, onDeleteAllUploadedMembers }) => {
   const [uploadedMembers, setUploadedMembers] = useState<any[]>([]);
 
   const onDrop = (acceptedFiles: File[]) => {
@@ -62,6 +63,12 @@ const DatabaseSection: React.FC<DatabaseSectionProps> = ({ collections, onUpload
         {uploadedMembers.length > 0 && (
           <div className="mt-4">
             <p>{uploadedMembers.length} members uploaded. Please check the approval section to review and approve these members.</p>
+            <button
+              onClick={onDeleteAllUploadedMembers}
+              className="mt-2 px-4 py-2 bg-red-500 text-white rounded hover:bg-red-600"
+            >
+              Delete All Uploaded Members
+            </button>
           </div>
         )}
       </div>

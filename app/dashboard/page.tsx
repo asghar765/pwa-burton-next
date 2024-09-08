@@ -198,6 +198,10 @@ const AdminDashboard: React.FC = () => {
     setUploadedMembers(membersWithUniqueId);
   };
 
+  const handleDeleteAllUploadedMembers = () => {
+    setUploadedMembers([]);
+  };
+
   const handleApproveMember = async (member: any) => {
     try {
       await addDoc(collection(db, 'members'), member);
@@ -422,7 +426,11 @@ const AdminDashboard: React.FC = () => {
     ];
     return (
       <>
-        <DatabaseSection collections={collections} onUploadMembers={handleUploadMembers} />
+        <DatabaseSection 
+          collections={collections} 
+          onUploadMembers={handleUploadMembers} 
+          onDeleteAllUploadedMembers={handleDeleteAllUploadedMembers}
+        />
         {uploadedMembers.length > 0 && (
           <div className="mt-8">
             <h3 className="text-xl font-semibold mb-4">Approve Uploaded Members</h3>
