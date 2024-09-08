@@ -201,7 +201,7 @@ const AdminDashboard: React.FC = () => {
     }
   };
 
-  const handleUploadMembers = (members: any[]) => {
+  const handleBulkAddMembers = (members: any[]) => {
     const membersWithUniqueId = members.map(member => ({
       ...member,
       id: uuidv4(),
@@ -437,7 +437,7 @@ const AdminDashboard: React.FC = () => {
       <>
         <DatabaseSection 
           collections={collections} 
-          onUploadMembers={handleUploadMembers} 
+          onBulkAddMembers={handleBulkAddMembers} 
           onDeleteAllUploadedMembers={handleDeleteAllUploadedMembers}
           uploadedMembers={uploadedMembers}
         />
