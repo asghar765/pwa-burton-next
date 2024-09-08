@@ -444,6 +444,10 @@ const AdminDashboard: React.FC = () => {
       }, {} as Record<string, any>)
     }));
 
+    const memberPayments = userRole === 'member' && user
+      ? formattedPayments.filter(payment => payment.memberId === user.uid)
+      : formattedPayments;
+
     const formattedExpenses = expenses.map(expense => ({
       ...expense,
       amount: typeof expense.amount === 'number' ? expense.amount : parseFloat(expense.amount) || 0,
@@ -458,11 +462,12 @@ const AdminDashboard: React.FC = () => {
 
     return (
       <FinanceSection
-        accountBalance={calculateAccountBalance(formattedPayments, formattedExpenses)}
-        payments={formattedPayments}
-        expenses={formattedExpenses}
-        onAddExpense={handleAddExpense}
+        accountBalance={userRole === 'admin' ? calculateAccountBalance(formattedPayments, formattedExpenses) : undefined}
+        payments={memberPayments}
+        expenses={userRole === 'admin' ? formattedExpenses : []}
+        onAddExpense={userRole === 'admin' ? handleAddExpense : undefined}
         currencySymbol="£"
+        userRole={userRole}
       />
     );
   };
@@ -472,13 +477,13 @@ const AdminDashboard: React.FC = () => {
       case 'dashboard':
         return renderDashboardSection();
       case 'members':
-        return renderMembersSection();
+        return userRole === 'admin' ? renderMembersSection() : null;
       case 'collectors':
-        return renderCollectorsSection();
+        return userRole === 'admin' ? renderCollectorsSection() : null;
       case 'registrations':
-        return renderRegistrationsSection();
+        return userRole === 'admin' ? renderRegistrationsSection() : null;
       case 'database':
-        return renderDatabaseSection();
+        return userRole === 'admin' ? renderDatabaseSection() : null;
       case 'finance':
         return renderFinanceSection();
       default:
@@ -500,7 +505,7 @@ const AdminDashboard: React.FC = () => {
                 className={`block w-full text-left p-2 hover:bg-gray-700 rounded capitalize ${
                   activeSection === section ? 'bg-gray-700' : ''
                 }`}
-                disabled={userRole !== 'admin'}
+                disabled={userRole !== 'admin' && !['dashboard', 'finance'].includes(section)}
               >
                 {section}
               </button>
