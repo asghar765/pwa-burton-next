@@ -312,6 +312,7 @@ const MembersSection: React.FC<MembersSectionProps> = React.memo(function Member
                         <tr>
                           <th className="text-left">Date</th>
                           <th className="text-left">Amount</th>
+                          <th className="text-left">Member No</th>
                         </tr>
                       </thead>
                       <tbody>
@@ -321,6 +322,7 @@ const MembersSection: React.FC<MembersSectionProps> = React.memo(function Member
                             <tr key={payment.id || `payment-${index}`}>
                               <td>{new Date(payment.date).toLocaleDateString()}</td>
                               <td>£{typeof payment.amount === 'number' ? payment.amount.toFixed(2) : payment.amount}</td>
+                              <td>{member.memberNumber || 'N/A'}</td>
                             </tr>
                           ))}
                       </tbody>
