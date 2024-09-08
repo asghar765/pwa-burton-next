@@ -16,15 +16,16 @@ const DatabaseSection: React.FC<DatabaseSectionProps> = ({ collections, onUpload
     const file = acceptedFiles[0];
     Papa.parse(file, {
       complete: (result) => {
-        const members = result.data.slice(1).map((row: any, index: number) => ({
-          memberNo: row[0] || `TMP${index + 1}`,
-          name: row[1] || '',
-          address: row[3] || '',
-          collector: row[4] || '',
+        const members = result.data.map((row: any, index: number) => ({
+          memberNo: row.MemberNo || `TMP${index + 1}`,
+          name: row.Name || '',
+          address: row.Address || '',
+          collector: row.Collector || '',
         }));
         onUploadMembers(members);
       },
       header: true,
+      skipEmptyLines: true,
     });
   };
 
@@ -64,10 +65,10 @@ const DatabaseSection: React.FC<DatabaseSectionProps> = ({ collections, onUpload
             <ul className="mt-2 space-y-2">
               {uploadedMembers.map((member, index) => (
                 <li key={index} className="bg-gray-100 p-2 rounded">
-                  <p><strong>Name:</strong> {member.name || 'N/A'}</p>
-                  <p><strong>Member No:</strong> {member.memberNo || `TMP${index + 1}`}</p>
-                  <p><strong>Address:</strong> {member.address || 'N/A'}</p>
-                  <p><strong>Collector:</strong> {member.collector || 'N/A'}</p>
+                  <p><strong>Name:</strong> {member.name ? member.name : 'N/A'}</p>
+                  <p><strong>Member No:</strong> {member.memberNo ? member.memberNo : `TMP${index + 1}`}</p>
+                  <p><strong>Address:</strong> {member.address ? member.address : 'N/A'}</p>
+                  <p><strong>Collector:</strong> {member.collector ? member.collector : 'N/A'}</p>
                 </li>
               ))}
             </ul>
