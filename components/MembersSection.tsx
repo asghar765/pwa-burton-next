@@ -254,10 +254,15 @@ const MembersSection: React.FC<MembersSectionProps> = React.memo(function Member
             {member.id && expandedMembers[member.id] && (
               <div className="p-4 border-t border-gray-200">
                 <p><strong>Member No:</strong> {member.memberNumber || 'N/A'}</p>
-                <p><strong>Full Name:</strong> {member.fullName || member.name || 'N/A'}</p>
+                <p><strong>Name:</strong> {member.name || 'N/A'}</p>
                 <p><strong>Email:</strong> {member.email || 'N/A'}</p>
                 <p><strong>Role:</strong> {member.role || 'N/A'}</p>
                 <p><strong>Address:</strong> {member.address || 'N/A'}</p>
+                <p><strong>Collector:</strong> {member.collector || 'N/A'}</p>
+                <p><strong>Verified:</strong> {member.verified ? 'Yes' : 'No'}</p>
+
+                {/* Keep existing fields */}
+                <p><strong>Full Name:</strong> {member.fullName || 'N/A'}</p>
                 <p><strong>Date of Birth:</strong> {member.dateOfBirth || 'N/A'}</p>
                 <p><strong>Gender:</strong> {member.gender || 'N/A'}</p>
                 <p><strong>Marital Status:</strong> {member.maritalStatus || 'N/A'}</p>
@@ -269,7 +274,6 @@ const MembersSection: React.FC<MembersSectionProps> = React.memo(function Member
                 <p><strong>Place of Birth:</strong> {member.placeOfBirth || 'N/A'}</p>
                 <p><strong>Post Code:</strong> {member.postCode || 'N/A'}</p>
                 <p><strong>Town:</strong> {member.town || 'N/A'}</p>
-                <p><strong>Collector:</strong> {member.collector || 'N/A'}</p>
                 <p><strong>Membership Type:</strong> {member.membershipType || 'N/A'}</p>
                 <p><strong>Membership Status:</strong> {member.membershipStatus || 'N/A'}</p>
                 <p><strong>Membership Start Date:</strong> {member.membershipStartDate || 'N/A'}</p>
