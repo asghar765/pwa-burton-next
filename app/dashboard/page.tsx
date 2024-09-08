@@ -210,9 +210,6 @@ const AdminDashboard: React.FC = () => {
     setUploadedMembers(membersWithUniqueId);
   };
 
-  const handleDeleteAllUploadedMembers = () => {
-    setUploadedMembers([]);
-  };
 
   const handleApproveMember = async (member: any) => {
     try {
