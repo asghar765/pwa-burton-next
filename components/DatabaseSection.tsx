@@ -64,9 +64,9 @@ const DatabaseSection: React.FC<DatabaseSectionProps> = ({ collections, onUpload
             <ul className="mt-2 space-y-2">
               {uploadedMembers.map((member, index) => (
                 <li key={index} className="bg-gray-100 p-2 rounded">
-                  <p><strong>Name:</strong> {member.name ? member.name : 'N/A'}</p>
-                  <p><strong>Address:</strong> {member.address ? member.address : 'N/A'}</p>
-                  <p><strong>Collector:</strong> {member.collector ? member.collector : 'N/A'}</p>
+                  <p><strong>Name:</strong> {member.name || 'N/A'}</p>
+                  <p><strong>Address:</strong> {member.address || 'N/A'}</p>
+                  <p><strong>Collector:</strong> {member.collector || 'N/A'}</p>
                 </li>
               ))}
             </ul>
