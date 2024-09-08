@@ -46,6 +46,13 @@ export interface MembersSectionProps {
   onUpdateUserRole: (userId: string, newRole: string) => Promise<void>;
 }
 
+export interface DatabaseSectionProps {
+  collections: { name: string; count: number }[];
+  onBulkAddMembers: (members: any[]) => void;
+  onDeleteAllUploadedMembers: () => void;
+  uploadedMembers: any[];
+}
+
 export interface Registration {
   id: string;
   fullName: string;
