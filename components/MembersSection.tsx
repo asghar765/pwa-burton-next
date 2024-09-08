@@ -213,13 +213,14 @@ const MembersSection: React.FC<MembersSectionProps> = ({
                 {member.id && expandedMembers[member.id] && (
                   <tr>
                     <td colSpan={3} className="p-4 bg-gray-50">
-                <p><strong>Member No:</strong> {member.memberNumber || 'N/A'}</p>
-                <p><strong>Name:</strong> {member.name || 'N/A'}</p>
-                <p><strong>Email:</strong> {member.email || 'N/A'}</p>
-                <p><strong>Role:</strong> {member.role || 'N/A'}</p>
-                <p><strong>Address:</strong> {member.address || 'N/A'}</p>
-                <p><strong>Collector:</strong> {member.collector || 'N/A'}</p>
-                <p><strong>Verified:</strong> {member.verified ? 'Yes' : 'No'}</p>
+                      <div>
+                        <p><strong>Member No:</strong> {member.memberNumber || 'N/A'}</p>
+                        <p><strong>Name:</strong> {member.name || 'N/A'}</p>
+                        <p><strong>Email:</strong> {member.email || 'N/A'}</p>
+                        <p><strong>Role:</strong> {member.role || 'N/A'}</p>
+                        <p><strong>Address:</strong> {member.address || 'N/A'}</p>
+                        <p><strong>Collector:</strong> {member.collector || 'N/A'}</p>
+                        <p><strong>Verified:</strong> {member.verified ? 'Yes' : 'No'}</p>
 
                 {/* Keep existing fields */}
                 <p><strong>Full Name:</strong> {member.fullName || 'N/A'}</p>
