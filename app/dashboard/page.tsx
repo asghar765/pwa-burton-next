@@ -496,19 +496,16 @@ const AdminDashboard: React.FC = () => {
 
   const renderProfileSection = () => {
     const currentMember = members.find(m => m.id === user?.uid) || null;
-    const memberPayments = payments.filter(p => p.memberId === user?.uid);
-    const memberExpenses = expenses.filter(e => e.userId === user?.uid);
     const memberNotes = notes.filter(n => n.memberId === user?.uid);
-    const memberAccountBalance = calculateAccountBalance(memberPayments, memberExpenses);
 
     return (
       <ProfileSection
         user={user}
         member={currentMember}
         userRole={userRole}
-        accountBalance={memberAccountBalance}
-        expenses={memberExpenses}
-        payments={memberPayments}
+        accountBalance={0} // Placeholder, remove if not needed
+        expenses={[]} // Placeholder, remove if not needed
+        payments={[]} // Placeholder, remove if not needed
         notes={memberNotes}
       />
     );

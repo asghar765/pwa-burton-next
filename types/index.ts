@@ -1,5 +1,28 @@
 export interface Member {
   id: string;
+  fullName: string;
+  email: string;
+  memberNumber: string;
+  verified: boolean;
+  address: string;
+  postCode: string;
+  town: string;
+  dateOfBirth: string;
+  placeOfBirth: string;
+  gender: string;
+  maritalStatus: string;
+  mobileNo: string;
+  collector: string;
+  nextOfKinName: string;
+  nextOfKinAddress: string;
+  nextOfKinPhone: string;
+  dependants: string[];
+  spouses: Array<{
+    name: { value: string };
+    dateOfBirth: { value: string };
+  }>;
+  membershipInfo: string;
+  id: string;
   name?: string;
   fullName?: string;
   email?: string;

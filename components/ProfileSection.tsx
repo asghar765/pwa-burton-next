@@ -21,7 +21,7 @@ const ProfileSection: React.FC<ProfileSectionProps> = ({
   payments, 
   notes 
 }) => {
-  if (!user) return null;
+  if (!user || !member) return null;
 
   return (
     <div className="bg-white p-6 rounded-lg shadow-md space-y-6">
@@ -29,52 +29,61 @@ const ProfileSection: React.FC<ProfileSectionProps> = ({
       
       <div className="space-y-2">
         <h3 className="text-xl font-semibold">Basic Information</h3>
-        <p><strong>Name:</strong> {user.displayName || 'N/A'}</p>
-        <p><strong>Email:</strong> {user.email || 'N/A'}</p>
+        <p><strong>Full Name:</strong> {member.fullName || 'N/A'}</p>
+        <p><strong>Email:</strong> {member.email || 'N/A'}</p>
         <p><strong>Role:</strong> {userRole || 'N/A'}</p>
-        {member && (
-          <>
-            <p><strong>Member Number:</strong> {member.memberNumber || 'N/A'}</p>
-            <p><strong>Verified:</strong> {member.verified ? 'Yes' : 'No'}</p>
-            <p><strong>Address:</strong> {member.address || 'N/A'}</p>
-            <p><strong>Collector:</strong> {member.collector || 'N/A'}</p>
-          </>
+        <p><strong>Member Number:</strong> {member.memberNumber || 'N/A'}</p>
+        <p><strong>Verified:</strong> {member.verified ? 'Yes' : 'No'}</p>
+        <p><strong>Address:</strong> {member.address || 'N/A'}</p>
+        <p><strong>Post Code:</strong> {member.postCode || 'N/A'}</p>
+        <p><strong>Town:</strong> {member.town || 'N/A'}</p>
+        <p><strong>Date of Birth:</strong> {member.dateOfBirth || 'N/A'}</p>
+        <p><strong>Place of Birth:</strong> {member.placeOfBirth || 'N/A'}</p>
+        <p><strong>Gender:</strong> {member.gender || 'N/A'}</p>
+        <p><strong>Marital Status:</strong> {member.maritalStatus || 'N/A'}</p>
+        <p><strong>Mobile No:</strong> {member.mobileNo || 'N/A'}</p>
+        <p><strong>Collector:</strong> {member.collector || 'N/A'}</p>
+      </div>
+
+      <div className="space-y-2">
+        <h3 className="text-xl font-semibold">Next of Kin Information</h3>
+        <p><strong>Name:</strong> {member.nextOfKinName || 'N/A'}</p>
+        <p><strong>Address:</strong> {member.nextOfKinAddress || 'N/A'}</p>
+        <p><strong>Phone:</strong> {member.nextOfKinPhone || 'N/A'}</p>
+      </div>
+
+      <div className="space-y-2">
+        <h3 className="text-xl font-semibold">Dependants</h3>
+        {member.dependants && member.dependants.length > 0 ? (
+          <ul className="list-disc pl-5">
+            {member.dependants.map((dependant, index) => (
+              <li key={index}>{dependant}</li>
+            ))}
+          </ul>
+        ) : (
+          <p>No dependants recorded.</p>
         )}
       </div>
 
       <div className="space-y-2">
-        <h3 className="text-xl font-semibold">Financial Information</h3>
-        <p><strong>Account Balance:</strong> £{accountBalance.toFixed(2)}</p>
-      </div>
-
-      <div className="space-y-2">
-        <h3 className="text-xl font-semibold">Expenses</h3>
-        {expenses.length > 0 ? (
+        <h3 className="text-xl font-semibold">Spouse Information</h3>
+        {member.spouses && member.spouses.length > 0 ? (
           <ul className="list-disc pl-5">
-            {expenses.map((expense, index) => (
+            {member.spouses.map((spouse, index) => (
               <li key={index}>
-                {expense.description}: £{expense.amount.toFixed(2)} ({new Date(expense.date).toLocaleDateString()})
+                <p><strong>Name:</strong> {spouse.name?.value || 'N/A'}</p>
+                <p><strong>Date of Birth:</strong> {spouse.dateOfBirth?.value || 'N/A'}</p>
               </li>
             ))}
           </ul>
         ) : (
-          <p>No expenses recorded.</p>
+          <p>No spouse information recorded.</p>
         )}
       </div>
 
       <div className="space-y-2">
-        <h3 className="text-xl font-semibold">Payments</h3>
-        {payments.length > 0 ? (
-          <ul className="list-disc pl-5">
-            {payments.map((payment, index) => (
-              <li key={index}>
-                £{payment.amount.toFixed(2)} ({new Date(payment.date).toLocaleDateString()})
-              </li>
-            ))}
-          </ul>
-        ) : (
-          <p>No payments recorded.</p>
-        )}
+        <h3 className="text-xl font-semibold">Membership Information</h3>
+        <p>{member.membershipInfo || 'No additional membership information available.'}</p>
       </div>
 
       <div className="space-y-2">
