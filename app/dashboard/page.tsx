@@ -204,7 +204,14 @@ const AdminDashboard: React.FC = () => {
 
   const handleApproveMember = async (member: any) => {
     try {
-      await addDoc(collection(db, 'members'), member);
+      const memberData = {
+        name: member.name,
+        addressNo: member.addressNo,
+        address: `${member.addressNo} ${member.address}`.trim(),
+        collector: member.collector,
+        verified: true,
+      };
+      await addDoc(collection(db, 'members'), memberData);
       setUploadedMembers(prevMembers => prevMembers.filter(m => m.id !== member.id));
       fetchData();
     } catch (error) {
