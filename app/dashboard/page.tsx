@@ -66,8 +66,7 @@ const AdminDashboard: React.FC = () => {
         collectorsSnapshot,
         paymentsSnapshot,
         expensesSnapshot,
-        usersSnapshot,
-        databaseInfoResponse
+        usersSnapshot
       ] = await Promise.all([
         getDocs(membersQuery),
         getDocs(registrationsQuery),
@@ -75,17 +74,8 @@ const AdminDashboard: React.FC = () => {
         getDocs(collectorsQuery),
         getDocs(paymentsQuery),
         getDocs(expensesQuery),
-        getDocs(usersQuery),
-        fetch('/api/database-info')
+        getDocs(usersQuery)
       ]);
-
-      const databaseInfo = await databaseInfoResponse.json();
-      if (databaseInfoResponse.ok) {
-        setTables(databaseInfo);
-        setDatabaseError(null);
-      } else {
-        setDatabaseError(databaseInfo.error || 'Failed to fetch database information');
-      }
 
       setMembers(membersSnapshot.docs.map(doc => {
         const data = doc.data();
@@ -398,9 +388,18 @@ const AdminDashboard: React.FC = () => {
     />
   );
 
-  const renderDatabaseSection = () => (
-    <DatabaseSection tables={tables} error={databaseError} />
-  );
+  const renderDatabaseSection = () => {
+    const collections = [
+      { name: 'members', count: members.length },
+      { name: 'registrations', count: registrations.length },
+      { name: 'collectors', count: collectors.length },
+      { name: 'notes', count: notes.length },
+      { name: 'payments', count: payments.length },
+      { name: 'expenses', count: expenses.length },
+      { name: 'users', count: firebaseUsers.length },
+    ];
+    return <DatabaseSection collections={collections} />;
+  };
 
   const renderFinanceSection = () => {
     const formattedPayments = payments.map(payment => ({
