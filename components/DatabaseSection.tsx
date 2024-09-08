@@ -1,17 +1,31 @@
      // DatabaseSection.tsx
-import React from 'react';
+import React, { useRef } from 'react';
 
 interface DatabaseSectionProps {
   collections: { name: string; count: number }[];
   onBulkAddMembers: () => void;
   onBulkDeleteMembers: () => void;
+  onUploadCSV: (file: File) => void;
 }
 
 const DatabaseSection: React.FC<DatabaseSectionProps> = ({ 
   collections, 
   onBulkAddMembers,
-  onBulkDeleteMembers
+  onBulkDeleteMembers,
+  onUploadCSV
 }) => {
+  const fileInputRef = useRef<HTMLInputElement>(null);
+
+  const handleFileUpload = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files?.[0];
+    if (file) {
+      onUploadCSV(file);
+    }
+  };
+
+  const triggerFileInput = () => {
+    fileInputRef.current?.click();
+  };
   return (
     <div className="p-4 bg-white shadow rounded-lg">
       <h2 className="text-xl font-semibold mb-4">Database Information</h2>
@@ -45,6 +59,19 @@ const DatabaseSection: React.FC<DatabaseSectionProps> = ({
           >
             Bulk Delete Members
           </button>
+          <button
+            onClick={triggerFileInput}
+            className="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600"
+          >
+            Upload CSV
+          </button>
+          <input
+            type="file"
+            ref={fileInputRef}
+            onChange={handleFileUpload}
+            accept=".csv"
+            className="hidden"
+          />
         </div>
       </div>
     </div>
