@@ -430,6 +430,7 @@ const AdminDashboard: React.FC = () => {
           collections={collections} 
           onUploadMembers={handleUploadMembers} 
           onDeleteAllUploadedMembers={handleDeleteAllUploadedMembers}
+          uploadedMembers={uploadedMembers}
         />
         {uploadedMembers.length > 0 && (
           <div className="mt-8">

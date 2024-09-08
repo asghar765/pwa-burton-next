@@ -62,10 +62,20 @@ const DatabaseSection: React.FC<DatabaseSectionProps> = ({ collections, onUpload
         </div>
         {uploadedMembers.length > 0 && (
           <div className="mt-4">
-            <p>{uploadedMembers.length} members uploaded. Please check the approval section to review and approve these members.</p>
+            <p>{uploadedMembers.length} members uploaded. Please review the details below:</p>
+            <ul className="mt-2 space-y-2">
+              {uploadedMembers.map((member, index) => (
+                <li key={index} className="bg-gray-100 p-2 rounded">
+                  <p><strong>Name:</strong> {member.name}</p>
+                  <p><strong>Member No:</strong> {member.memberNo}</p>
+                  <p><strong>Address:</strong> {member.address}</p>
+                  <p><strong>Collector:</strong> {member.collector}</p>
+                </li>
+              ))}
+            </ul>
             <button
               onClick={onDeleteAllUploadedMembers}
-              className="mt-2 px-4 py-2 bg-red-500 text-white rounded hover:bg-red-600"
+              className="mt-4 px-4 py-2 bg-red-500 text-white rounded hover:bg-red-600"
             >
               Delete All Uploaded Members
             </button>
