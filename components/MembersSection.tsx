@@ -181,31 +181,38 @@ const MembersSection: React.FC<MembersSectionProps> = React.memo(function Member
         />
         <MagnifyingGlassIcon className="h-5 w-5 text-gray-400" />
       </div>
-      <ul className="space-y-4">
-        {membersWithPayments.filter(member => {
-          const search = searchTerm ? searchTerm.toLowerCase() : '';
-          return (
-            (member.name && member.name.toLowerCase().includes(search)) ||
-            (member.memberNumber && member.memberNumber.toLowerCase().includes(search))
-          );
-        }).map(member => (
-          <li key={member.id || 'temp-' + Math.random()} className="bg-white rounded shadow">
-            <div 
-              className="p-4 flex justify-between items-center cursor-pointer"
-              onClick={() => member.id && toggleMemberExpansion(member.id)}
-            >
-              <div>
-                <h4 className="font-bold">{member.name || 'N/A'}</h4>
-                <p>Member No: {member.memberNumber || 'Not assigned'}</p>
-              </div>
-              {member.id && expandedMembers[member.id] ? (
-                <ChevronUpIcon className="h-5 w-5" />
-              ) : (
-                <ChevronDownIcon className="h-5 w-5" />
-              )}
-            </div>
-            {member.id && expandedMembers[member.id] && (
-              <div className="p-4 border-t border-gray-200">
+      <div className="overflow-auto max-h-[400px] border border-gray-200 rounded">
+        <table className="w-full">
+          <thead className="bg-gray-100 sticky top-0">
+            <tr>
+              <th className="p-2 text-left">Name</th>
+              <th className="p-2 text-left">Member No</th>
+              <th className="p-2 text-left">Actions</th>
+            </tr>
+          </thead>
+          <tbody>
+            {membersWithPayments.filter(member => {
+              const search = searchTerm ? searchTerm.toLowerCase() : '';
+              return (
+                (member.name && member.name.toLowerCase().includes(search)) ||
+                (member.memberNumber && member.memberNumber.toLowerCase().includes(search))
+              );
+            }).map(member => (
+              <tr key={member.id || 'temp-' + Math.random()} className="border-b border-gray-200">
+                <td className="p-2">{member.name || 'N/A'}</td>
+                <td className="p-2">{member.memberNumber || 'Not assigned'}</td>
+                <td className="p-2">
+                  <button
+                    onClick={() => member.id && toggleMemberExpansion(member.id)}
+                    className="px-2 py-1 bg-blue-500 text-white rounded hover:bg-blue-600"
+                  >
+                    {member.id && expandedMembers[member.id] ? 'Hide Details' : 'Show Details'}
+                  </button>
+                </td>
+              </tr>
+              {member.id && expandedMembers[member.id] && (
+                <tr>
+                  <td colSpan={3} className="p-4 bg-gray-50">
                 <p><strong>Member No:</strong> {member.memberNumber || 'N/A'}</p>
                 <p><strong>Name:</strong> {member.name || 'N/A'}</p>
                 <p><strong>Email:</strong> {member.email || 'N/A'}</p>
@@ -368,10 +375,13 @@ const MembersSection: React.FC<MembersSectionProps> = React.memo(function Member
                   </div>
                 )}
               </div>
-            )}
-          </li>
-        ))}
-      </ul>
+                  </td>
+                </tr>
+              )}
+            ))}
+          </tbody>
+        </table>
+      </div>
 
       {/* Logged Users Section */}
       <div className="mt-8">
