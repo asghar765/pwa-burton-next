@@ -52,9 +52,11 @@ export interface Note {
 }
 
 export interface Payment {
+  id: string;
   amount: number;
   date: string; // ISO date string
   memberNumber: string;
+  memberId: string;
 }
 
 export interface Expense {
