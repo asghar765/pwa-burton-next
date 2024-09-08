@@ -34,7 +34,7 @@ export interface MembersSectionProps {
   onDeleteMember: (id: string) => void;
   onRevokeMember: (id: string) => void;
   currentUserRole: string;
-  onAddPayment: (memberId: string, payment: Omit<Payment, 'id'>) => void;
+  onAddPayment: (memberNumber: string, payment: Omit<Payment, 'id'>) => void;
   onAddNote: (memberId: string, note: string) => void;
   onUpdateUserRole: (userId: string, newRole: string) => void;
 }
