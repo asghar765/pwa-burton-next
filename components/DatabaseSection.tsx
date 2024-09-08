@@ -6,6 +6,7 @@ interface DatabaseSectionProps {
   collections: { name: string; count: number }[];
   onBulkAddMembers: () => void;
   onBulkDeleteMembers: () => void;
+  onApproveMember: (member: Member) => void;
 }
 
 interface Member {
@@ -18,7 +19,8 @@ interface Member {
 const DatabaseSection: React.FC<DatabaseSectionProps> = ({ 
   collections, 
   onBulkAddMembers,
-  onBulkDeleteMembers
+  onBulkDeleteMembers,
+  onApproveMember
 }) => {
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [parsedData, setParsedData] = useState<Member[]>([]);
@@ -30,8 +32,6 @@ const DatabaseSection: React.FC<DatabaseSectionProps> = ({
         complete: (results) => {
           setParsedData(results.data);
           console.log('Parsed data:', results.data);
-          // Here you would typically call a function to add these members to your database
-          // For example: addMembersToDatabase(results.data);
         },
         header: true,
         skipEmptyLines: true
@@ -41,6 +41,11 @@ const DatabaseSection: React.FC<DatabaseSectionProps> = ({
 
   const triggerFileInput = () => {
     fileInputRef.current?.click();
+  };
+
+  const handleApproveMember = (member: Member) => {
+    onApproveMember(member);
+    setParsedData(prevData => prevData.filter(m => m !== member));
   };
   return (
     <div className="p-4 bg-white shadow rounded-lg">
@@ -92,18 +97,19 @@ const DatabaseSection: React.FC<DatabaseSectionProps> = ({
         {parsedData.length > 0 && (
           <div className="mt-4">
             <h4 className="text-lg font-medium mb-2">Parsed CSV Data</h4>
-            <ul className="list-disc pl-5">
-              {parsedData.slice(0, 5).map((member, index) => (
-                <li key={index}>
-                  {member.Name} - {member.No} - {member.Address} - {member.Collector}
+            <ul className="space-y-2">
+              {parsedData.map((member, index) => (
+                <li key={index} className="flex items-center justify-between bg-gray-100 p-2 rounded">
+                  <span>{member.Name} - {member.No} - {member.Address} - {member.Collector}</span>
+                  <button
+                    onClick={() => handleApproveMember(member)}
+                    className="px-2 py-1 bg-green-500 text-white rounded hover:bg-green-600"
+                  >
+                    Approve
+                  </button>
                 </li>
               ))}
             </ul>
-            {parsedData.length > 5 && (
-              <p className="mt-2 text-sm text-gray-600">
-                ... and {parsedData.length - 5} more members
-              </p>
-            )}
           </div>
         )}
       </div>
