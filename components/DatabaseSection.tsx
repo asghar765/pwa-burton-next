@@ -55,14 +55,19 @@ const DatabaseSection: React.FC<DatabaseSectionProps> = ({
 
   const handleApproveMember = (member: NewMember) => {
     if (onApproveMember) {
-      onApproveMember(member);
+      const approvedMember = { ...member, memberNumber: generateMemberNumber() };
+      onApproveMember(approvedMember);
     }
     setParsedData(prevData => prevData.filter(m => m !== member));
   };
 
   const handleBulkApprove = () => {
     if (onBulkAddMembers) {
-      onBulkAddMembers(parsedData);
+      const approvedMembers = parsedData.map(member => ({
+        ...member,
+        memberNumber: generateMemberNumber()
+      }));
+      onBulkAddMembers(approvedMembers);
       setParsedData([]);
     }
   };
