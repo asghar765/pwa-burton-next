@@ -232,15 +232,6 @@ const AdminDashboard: React.FC = () => {
     }
   };
 
-  const handleAddMember = async (member: Omit<Member, 'id'>) => {
-    try {
-      await addDoc(collection(db, 'members'), member);
-      fetchData();
-    } catch (error) {
-      console.error('Error adding member:', error);
-      setErrorMessage('Failed to add member. Please try again.');
-    }
-  };
 
   const handleUpdateMember = async (id: string, member: Partial<Member>) => {
     try {
@@ -409,7 +400,6 @@ const AdminDashboard: React.FC = () => {
       setSearchTerm={setSearchTerm}
       expandedMembers={expandedMembers}
       setExpandedMembers={setExpandedMembers}
-      onAddMember={handleAddMember}
       onUpdateMember={handleUpdateMember}
       onDeleteMember={handleDeleteMember}
       onRevokeMember={handleRevokeMember}

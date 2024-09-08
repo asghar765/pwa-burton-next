@@ -37,7 +37,6 @@ export interface MembersSectionProps {
   setSearchTerm: React.Dispatch<React.SetStateAction<string>>;
   expandedMembers: Record<string, boolean>;
   setExpandedMembers: React.Dispatch<React.SetStateAction<Record<string, boolean>>>;
-  onAddMember: (member: Omit<Member, 'id'>) => Promise<void>;
   onUpdateMember: (id: string, member: Partial<Member>) => Promise<void>;
   onDeleteMember: (id: string) => Promise<void>;
   onRevokeMember: (id: string) => Promise<void>;
