@@ -1,25 +1,41 @@
      // DatabaseSection.tsx
-import React, { useRef } from 'react';
+import React, { useRef, useState } from 'react';
+import Papa from 'papaparse';
 
 interface DatabaseSectionProps {
   collections: { name: string; count: number }[];
   onBulkAddMembers: () => void;
   onBulkDeleteMembers: () => void;
-  onUploadCSV: (file: File) => void;
+}
+
+interface Member {
+  Name: string;
+  No: string;
+  Address: string;
+  Collector: string;
 }
 
 const DatabaseSection: React.FC<DatabaseSectionProps> = ({ 
   collections, 
   onBulkAddMembers,
-  onBulkDeleteMembers,
-  onUploadCSV
+  onBulkDeleteMembers
 }) => {
   const fileInputRef = useRef<HTMLInputElement>(null);
+  const [parsedData, setParsedData] = useState<Member[]>([]);
 
   const handleFileUpload = (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
     if (file) {
-      onUploadCSV(file);
+      Papa.parse<Member>(file, {
+        complete: (results) => {
+          setParsedData(results.data);
+          console.log('Parsed data:', results.data);
+          // Here you would typically call a function to add these members to your database
+          // For example: addMembersToDatabase(results.data);
+        },
+        header: true,
+        skipEmptyLines: true
+      });
     }
   };
 
@@ -72,6 +88,24 @@ const DatabaseSection: React.FC<DatabaseSectionProps> = ({
             accept=".csv"
             className="hidden"
           />
+        </div>
+        {parsedData.length > 0 && (
+          <div className="mt-4">
+            <h4 className="text-lg font-medium mb-2">Parsed CSV Data</h4>
+            <ul className="list-disc pl-5">
+              {parsedData.slice(0, 5).map((member, index) => (
+                <li key={index}>
+                  {member.Name} - {member.No} - {member.Address} - {member.Collector}
+                </li>
+              ))}
+            </ul>
+            {parsedData.length > 5 && (
+              <p className="mt-2 text-sm text-gray-600">
+                ... and {parsedData.length - 5} more members
+              </p>
+            )}
+          </div>
+        )}
         </div>
       </div>
     </div>
