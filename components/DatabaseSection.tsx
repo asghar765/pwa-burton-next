@@ -106,7 +106,6 @@ const DatabaseSection: React.FC<DatabaseSectionProps> = ({
             )}
           </div>
         )}
-        </div>
       </div>
     </div>
   );
