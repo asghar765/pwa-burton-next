@@ -1,12 +1,25 @@
 export interface Member {
   id: string;
-  name: string;
-  email: string;
-  role: string;
-  memberNumber: string;
-  verified: boolean;
+  name?: string;
+  fullName?: string;
+  email?: string;
+  role?: string;
+  memberNumber?: string;
+  verified?: boolean;
   payments?: Payment[];
   notes?: Note[];
+  address?: string;
+  dateOfBirth?: string;
+  gender?: string;
+  maritalStatus?: string;
+  membershipInfo?: string;
+  mobileNo?: string;
+  nextOfKinName?: string;
+  nextOfKinAddress?: string;
+  nextOfKinPhone?: string;
+  placeOfBirth?: string;
+  postCode?: string;
+  town?: string;
 }
 
 export interface NewMember extends Omit<Member, 'id' | 'memberNumber'> {

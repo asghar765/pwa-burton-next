@@ -120,6 +120,7 @@ const MembersSection: React.FC<MembersSectionProps> = React.memo(function Member
 
   const filteredMembers = useMemo(() => {
     console.log('Recalculating filteredMembers');
+    console.log('All members:', membersWithPayments);
     return membersWithPayments.filter(member => {
       const search = searchTerm.toLowerCase();
       return (
@@ -247,22 +248,22 @@ const MembersSection: React.FC<MembersSectionProps> = React.memo(function Member
             </div>
             {member.id && expandedMembers[member.id] && (
               <div className="p-4 border-t border-gray-200">
-                <p>Member No: {member.memberNumber || 'N/A'}</p>
-                <p>Full Name: {member.fullName || 'N/A'}</p>
-                <p>Email: {member.email || 'N/A'}</p>
-                <p>Role: {member.role || 'N/A'}</p>
-                <p>Address: {member.address || 'N/A'}</p>
-                <p>Date of Birth: {member.dateOfBirth || 'N/A'}</p>
-                <p>Gender: {member.gender || 'N/A'}</p>
-                <p>Marital Status: {member.maritalStatus || 'N/A'}</p>
-                <p>Membership Info: {member.membershipInfo || 'N/A'}</p>
-                <p>Mobile No: {member.mobileNo || 'N/A'}</p>
-                <p>Next of Kin Name: {member.nextOfKinName || 'N/A'}</p>
-                <p>Next of Kin Address: {member.nextOfKinAddress || 'N/A'}</p>
-                <p>Next of Kin Phone: {member.nextOfKinPhone || 'N/A'}</p>
-                <p>Place of Birth: {member.placeOfBirth || 'N/A'}</p>
-                <p>Post Code: {member.postCode || 'N/A'}</p>
-                <p>Town: {member.town || 'N/A'}</p>
+                <p><strong>Member No:</strong> {member.memberNumber || 'N/A'}</p>
+                <p><strong>Full Name:</strong> {member.fullName || member.name || 'N/A'}</p>
+                <p><strong>Email:</strong> {member.email || 'N/A'}</p>
+                <p><strong>Role:</strong> {member.role || 'N/A'}</p>
+                <p><strong>Address:</strong> {member.address || 'N/A'}</p>
+                <p><strong>Date of Birth:</strong> {member.dateOfBirth || 'N/A'}</p>
+                <p><strong>Gender:</strong> {member.gender || 'N/A'}</p>
+                <p><strong>Marital Status:</strong> {member.maritalStatus || 'N/A'}</p>
+                <p><strong>Membership Info:</strong> {member.membershipInfo || 'N/A'}</p>
+                <p><strong>Mobile No:</strong> {member.mobileNo || 'N/A'}</p>
+                <p><strong>Next of Kin Name:</strong> {member.nextOfKinName || 'N/A'}</p>
+                <p><strong>Next of Kin Address:</strong> {member.nextOfKinAddress || 'N/A'}</p>
+                <p><strong>Next of Kin Phone:</strong> {member.nextOfKinPhone || 'N/A'}</p>
+                <p><strong>Place of Birth:</strong> {member.placeOfBirth || 'N/A'}</p>
+                <p><strong>Post Code:</strong> {member.postCode || 'N/A'}</p>
+                <p><strong>Town:</strong> {member.town || 'N/A'}</p>
 
                 {member.spouses && member.spouses.length > 0 && (
                   <div>
