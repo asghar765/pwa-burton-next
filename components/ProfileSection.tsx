@@ -28,6 +28,8 @@ const ProfileSection: React.FC<ProfileSectionProps> = ({
     return null;
   }
 
+  console.log('Rendering ProfileSection with member:', member);
+
   return (
     <div className="bg-white p-6 rounded-lg shadow-md space-y-6">
       <h2 className="text-2xl font-bold mb-4">User Profile</h2>

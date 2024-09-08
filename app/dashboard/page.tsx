@@ -512,6 +512,11 @@ const AdminDashboard: React.FC = () => {
     const memberExpenses = expenses.filter(e => e.userId === user?.uid);
     console.log('Member expenses:', memberExpenses);
 
+    if (!currentMember) {
+      console.log('Current member not found');
+      return null;
+    }
+
     return (
       <ProfileSection
         user={user}
