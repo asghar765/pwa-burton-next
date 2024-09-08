@@ -39,7 +39,7 @@ export interface MembersSectionProps {
   onUpdateUserRole: (userId: string, newRole: string) => void;
 }
 
-const MembersSection: React.FC<MembersSectionProps> = React.memo(function MembersSection({
+const MembersSection: React.FC<MembersSectionProps> = ({
   members,
   searchTerm,
   setSearchTerm,
