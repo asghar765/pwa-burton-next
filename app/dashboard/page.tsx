@@ -434,8 +434,7 @@ const AdminDashboard: React.FC = () => {
       <>
         <DatabaseSection 
           collections={collections} 
-          onBulkAddMembers={handleBulkAddMembers} 
-          uploadedMembers={uploadedMembers}
+          onBulkAddMembers={handleBulkAddMembers}
         />
         {uploadedMembers.length > 0 && (
           <div className="mt-8">
