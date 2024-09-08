@@ -158,7 +158,7 @@ const MembersSection: React.FC<MembersSectionProps> = React.memo(function Member
       const newPayment = {
         amount: amount,
         date: new Date().toISOString(),
-        memberNumber: memberNumber.length <= 8 ? memberNumber : memberId // Use memberId if memberNumber is too long
+        memberNumber: memberNumber // Always use the member's assigned number
       };
       console.log('Adding new payment:', newPayment);
       onAddPayment(memberId, newPayment);
@@ -343,8 +343,6 @@ const MembersSection: React.FC<MembersSectionProps> = React.memo(function Member
                               <td>
                                 {!payment.memberNumber ? (
                                   <span className="text-red-500">Missing Member No</span>
-                                ) : payment.memberNumber.length > 8 ? (
-                                  <span className="text-orange-500">Using Member ID</span>
                                 ) : null}
                               </td>
                             </tr>
