@@ -1,11 +1,12 @@
 import React, { useState } from 'react';
-import { Registration, Member } from '../types';
+import { Registration, Member, NewMember } from '../types';
 import { ChevronDownIcon, ChevronUpIcon } from '@heroicons/react/24/solid';
+import { generateMemberNumber } from '../utils/memberUtils';
 
 interface RegistrationsSectionProps {
   registrations: Registration[];
   revokedMembers: Member[];
-  onApproveRegistration: (registration: Registration) => Promise<void>;
+  onApproveRegistration: (registration: Registration, newMember: NewMember) => Promise<void>;
   onReinstateRevokedMember: (member: Member) => Promise<void>;
 }
 
@@ -29,18 +30,19 @@ const RegistrationsSection: React.FC<RegistrationsSectionProps> = ({
     setProcessing(prev => ({ ...prev, [registration.id]: true }));
     try {
       const memberNumber = generateMemberNumber();
-      await onApproveRegistration({ ...registration, memberNumber });
+      const newMember: NewMember = {
+        name: registration.fullName,
+        email: registration.email,
+        role: 'member',
+        verified: true,
+        memberNumber
+      };
+      await onApproveRegistration(registration, newMember);
     } catch (error) {
       console.error('Error approving registration:', error);
     } finally {
       setProcessing(prev => ({ ...prev, [registration.id]: false }));
     }
-  };
-
-  const generateMemberNumber = () => {
-    const prefix = 'MEM';
-    const randomDigits = Math.floor(10000 + Math.random() * 90000);
-    return `${prefix}${randomDigits}`;
   };
 
   const handleReinstate = async (member: Member) => {

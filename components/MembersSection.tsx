@@ -1,10 +1,11 @@
 import React, { useState, useCallback, useMemo, useEffect } from 'react';
 import Image from 'next/image';
-import { Member, Payment, Note, FirebaseUser } from '../types';
+import { Member, Payment, Note, FirebaseUser, NewMember } from '../types';
 import { Dialog } from '@headlessui/react';
 import { MagnifyingGlassIcon, ChevronDownIcon, ChevronUpIcon } from '@heroicons/react/24/solid';
 import { collection, getDocs, doc, updateDoc } from 'firebase/firestore';
 import { db } from '../config/firebaseConfig';
+import { generateMemberNumber } from '../utils/memberUtils';
 
 interface MemberWithPayments extends Member {
   payments: Payment[];
@@ -29,7 +30,7 @@ export interface MembersSectionProps {
   setSearchTerm: (term: string) => void;
   expandedMembers: Record<string, boolean>;
   setExpandedMembers: React.Dispatch<React.SetStateAction<Record<string, boolean>>>;
-  onAddMember: (member: Omit<MemberWithPayments, 'id'>) => void;
+  onAddMember: (member: NewMember) => void;
   onUpdateMember: (id: string, member: Partial<MemberWithPayments>) => void;
   onDeleteMember: (id: string) => void;
   onRevokeMember: (id: string) => void;
@@ -133,7 +134,8 @@ const MembersSection: React.FC<MembersSectionProps> = React.memo(function Member
   }, [setExpandedMembers]);
 
   const handleAddMember = useCallback(() => {
-    onAddMember({ ...newMember, memberNumber: '', verified: true, payments: [] });
+    const memberNumber = generateMemberNumber();
+    onAddMember({ ...newMember, memberNumber, verified: true });
     setNewMember({ name: '', email: '', role: '' });
   }, [newMember, onAddMember]);
 

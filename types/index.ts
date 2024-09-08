@@ -9,6 +9,10 @@ export interface Member {
   notes?: Note[];
 }
 
+export interface NewMember extends Omit<Member, 'id' | 'memberNumber'> {
+  memberNumber?: string;
+}
+
 export interface MemberWithPayments extends Omit<Member, 'payments'> {
   payments: Payment[];
 }
