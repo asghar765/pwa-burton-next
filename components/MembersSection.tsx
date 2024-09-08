@@ -197,21 +197,22 @@ const MembersSection: React.FC<MembersSectionProps> = ({
                 (member.memberNumber && member.memberNumber.toLowerCase().includes(search))
               );
             }).map(member => (
-              <tr key={member.id || 'temp-' + Math.random()} className="border-b border-gray-200">
-                <td className="p-2">{member.name || 'N/A'}</td>
-                <td className="p-2">{member.memberNumber || 'Not assigned'}</td>
-                <td className="p-2">
-                  <button
-                    onClick={() => member.id && toggleMemberExpansion(member.id)}
-                    className="px-2 py-1 bg-blue-500 text-white rounded hover:bg-blue-600"
-                  >
-                    {member.id && expandedMembers[member.id] ? 'Hide Details' : 'Show Details'}
-                  </button>
-                </td>
-              </tr>
-              {member.id && expandedMembers[member.id] && (
-                <tr>
-                  <td colSpan={3} className="p-4 bg-gray-50">
+              <React.Fragment key={member.id || 'temp-' + Math.random()}>
+                <tr className="border-b border-gray-200">
+                  <td className="p-2">{member.name || 'N/A'}</td>
+                  <td className="p-2">{member.memberNumber || 'Not assigned'}</td>
+                  <td className="p-2">
+                    <button
+                      onClick={() => member.id && toggleMemberExpansion(member.id)}
+                      className="px-2 py-1 bg-blue-500 text-white rounded hover:bg-blue-600"
+                    >
+                      {member.id && expandedMembers[member.id] ? 'Hide Details' : 'Show Details'}
+                    </button>
+                  </td>
+                </tr>
+                {member.id && expandedMembers[member.id] && (
+                  <tr>
+                    <td colSpan={3} className="p-4 bg-gray-50">
                 <p><strong>Member No:</strong> {member.memberNumber || 'N/A'}</p>
                 <p><strong>Name:</strong> {member.name || 'N/A'}</p>
                 <p><strong>Email:</strong> {member.email || 'N/A'}</p>
