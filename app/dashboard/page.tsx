@@ -487,7 +487,7 @@ const AdminDashboard: React.FC = () => {
       case 'finance':
         return renderFinanceSection();
       default:
-        return null;
+        return renderDashboardSection();
     }
   };
 
@@ -534,7 +534,7 @@ const AdminDashboard: React.FC = () => {
         )}
 
         <ErrorBoundary>
-          {userRole === 'admin' ? renderActiveSection() : renderDashboardSection()}
+          {renderActiveSection()}
         </ErrorBoundary>
       </main>
     </div>
