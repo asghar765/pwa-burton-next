@@ -228,7 +228,7 @@ const MembersSection: React.FC<MembersSectionProps> = React.memo(function Member
             >
               <div>
                 <h4 className="font-bold">{member.name || 'N/A'}</h4>
-                <p>Member No: {member.memberNumber || 'N/A'}</p>
+                <p>Member No: {member.memberNumber || 'Not assigned'}</p>
               </div>
               {member.id && expandedMembers[member.id] ? (
                 <ChevronUpIcon className="h-5 w-5" />
