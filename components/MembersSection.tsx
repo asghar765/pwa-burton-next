@@ -265,30 +265,30 @@ const MembersSection: React.FC<MembersSectionProps> = React.memo(function Member
                 <p><strong>Post Code:</strong> {member.postCode || 'N/A'}</p>
                 <p><strong>Town:</strong> {member.town || 'N/A'}</p>
 
-                {member.spouses && member.spouses.length > 0 && (
-                  <div>
-                    <h5 className="font-semibold mt-2">Spouse(s)</h5>
-                    {member.spouses.map((spouse, index) => (
-                      <div key={index}>
-                        <p>Name: {spouse.name?.value || 'N/A'}</p>
-                        <p>Date of Birth: {spouse.dateOfBirth?.value || 'N/A'}</p>
-                      </div>
-                    ))}
-                  </div>
+                <h5 className="font-semibold mt-4">Spouse(s)</h5>
+                {member.spouses && member.spouses.length > 0 ? (
+                  member.spouses.map((spouse, index) => (
+                    <div key={index} className="ml-4">
+                      <p><strong>Name:</strong> {spouse.name?.value || 'N/A'}</p>
+                      <p><strong>Date of Birth:</strong> {spouse.dateOfBirth?.value || 'N/A'}</p>
+                    </div>
+                  ))
+                ) : (
+                  <p className="ml-4">No spouse information available</p>
                 )}
 
-                {member.dependants && member.dependants.length > 0 && (
-                  <div>
-                    <h5 className="font-semibold mt-2">Dependant(s)</h5>
-                    {member.dependants.map((dependant, index) => (
-                      <div key={index}>
-                        <p>Name: {dependant.name || 'N/A'}</p>
-                        <p>Date of Birth: {dependant.dateOfBirth || 'N/A'}</p>
-                        <p>Gender: {dependant.gender || 'N/A'}</p>
-                        <p>Category: {dependant.category || 'N/A'}</p>
-                      </div>
-                    ))}
-                  </div>
+                <h5 className="font-semibold mt-4">Dependant(s)</h5>
+                {member.dependants && member.dependants.length > 0 ? (
+                  member.dependants.map((dependant, index) => (
+                    <div key={index} className="ml-4">
+                      <p><strong>Name:</strong> {dependant.name || 'N/A'}</p>
+                      <p><strong>Date of Birth:</strong> {dependant.dateOfBirth || 'N/A'}</p>
+                      <p><strong>Gender:</strong> {dependant.gender || 'N/A'}</p>
+                      <p><strong>Category:</strong> {dependant.category || 'N/A'}</p>
+                    </div>
+                  ))
+                ) : (
+                  <p className="ml-4">No dependant information available</p>
                 )}
 
                 <div className="mt-2">
