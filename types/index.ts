@@ -49,7 +49,6 @@ export interface MembersSectionProps {
 export interface DatabaseSectionProps {
   collections: { name: string; count: number }[];
   onBulkAddMembers: (members: any[]) => void;
-  onDeleteAllUploadedMembers: () => void;
   uploadedMembers: any[];
 }
 

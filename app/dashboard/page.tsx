@@ -438,7 +438,6 @@ const AdminDashboard: React.FC = () => {
         <DatabaseSection 
           collections={collections} 
           onBulkAddMembers={handleBulkAddMembers} 
-          onDeleteAllUploadedMembers={handleDeleteAllUploadedMembers}
           uploadedMembers={uploadedMembers}
         />
         {uploadedMembers.length > 0 && (
