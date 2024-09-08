@@ -8,9 +8,18 @@ interface DatabaseSectionProps {
   onUploadMembers: (members: any[]) => void;
   onDeleteAllUploadedMembers: () => void;
   uploadedMembers: any[];
+  onBulkAddMembers: () => void;
+  onBulkDeleteMembers: () => void;
 }
 
-const DatabaseSection: React.FC<DatabaseSectionProps> = ({ collections, onUploadMembers, onDeleteAllUploadedMembers, uploadedMembers }) => {
+const DatabaseSection: React.FC<DatabaseSectionProps> = ({ 
+  collections, 
+  onUploadMembers, 
+  onDeleteAllUploadedMembers, 
+  uploadedMembers,
+  onBulkAddMembers,
+  onBulkDeleteMembers
+}) => {
 
   const onDrop = (acceptedFiles: File[]) => {
     const file = acceptedFiles[0];
@@ -72,12 +81,26 @@ const DatabaseSection: React.FC<DatabaseSectionProps> = ({ collections, onUpload
                 </li>
               ))}
             </ul>
-            <button
-              onClick={onDeleteAllUploadedMembers}
-              className="mt-4 px-4 py-2 bg-red-500 text-white rounded hover:bg-red-600"
-            >
-              Delete All Uploaded Members
-            </button>
+            <div className="mt-4 space-x-4">
+              <button
+                onClick={onBulkAddMembers}
+                className="px-4 py-2 bg-green-500 text-white rounded hover:bg-green-600"
+              >
+                Bulk Add Members
+              </button>
+              <button
+                onClick={onDeleteAllUploadedMembers}
+                className="px-4 py-2 bg-red-500 text-white rounded hover:bg-red-600"
+              >
+                Delete All Uploaded Members
+              </button>
+              <button
+                onClick={onBulkDeleteMembers}
+                className="px-4 py-2 bg-yellow-500 text-white rounded hover:bg-yellow-600"
+              >
+                Bulk Delete Members
+              </button>
+            </div>
           </div>
         )}
       </div>
