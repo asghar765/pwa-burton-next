@@ -92,7 +92,7 @@ const DatabaseSection: React.FC<DatabaseSectionProps> = ({
                 onClick={onDeleteAllUploadedMembers}
                 className="px-4 py-2 bg-red-500 text-white rounded hover:bg-red-600"
               >
-                Delete All Uploaded Members
+                Remove All Bulk Upload Members
               </button>
               <button
                 onClick={onBulkDeleteMembers}
