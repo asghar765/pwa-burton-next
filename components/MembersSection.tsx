@@ -374,14 +374,15 @@ const MembersSection: React.FC<MembersSectionProps> = ({
                     </button>
                   </div>
                 )}
-              </div>
-                  </td>
-                </tr>
-              )}
-            ))}
-          </tbody>
-        </table>
-      </div>
+                  </div>
+                </td>
+              </tr>
+            )}
+          </React.Fragment>
+        ))}
+      </tbody>
+    </table>
+  </div>
 
       {/* Logged Users Section */}
       <div className="mt-8">
