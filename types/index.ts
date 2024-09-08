@@ -55,7 +55,6 @@ export interface Payment {
   id: string;
   amount: number;
   date: string; // ISO date string
-  memberId: string;
   memberNumber: string;
 }
 

@@ -147,13 +147,13 @@ const MembersSection: React.FC<MembersSectionProps> = React.memo(function Member
     }
   }, [newMember, onAddMember]);
 
-  const handleAddPayment = useCallback((memberId: string) => {
+  const handleAddPayment = useCallback((memberId: string, memberNumber: string) => {
     const amount = parseFloat(newPaymentAmounts[memberId] || '0');
     if (!isNaN(amount) && amount > 0) {
       const newPayment = {
         amount: amount,
         date: new Date().toISOString(),
-        memberId: memberId
+        memberNumber: memberNumber
       };
       console.log('Adding new payment:', newPayment);
       onAddPayment(memberId, newPayment);
@@ -346,9 +346,9 @@ const MembersSection: React.FC<MembersSectionProps> = React.memo(function Member
                       min="0"
                     />
                     <button
-                      onClick={() => handleAddPayment(member.id)}
+                      onClick={() => handleAddPayment(member.id, member.memberNumber || '')}
                       className="px-4 py-2 bg-green-500 text-white rounded hover:bg-green-600"
-                      disabled={!newPaymentAmounts[member.id] || parseFloat(newPaymentAmounts[member.id]) <= 0}
+                      disabled={!newPaymentAmounts[member.id] || parseFloat(newPaymentAmounts[member.id]) <= 0 || !member.memberNumber}
                     >
                       Add Payment
                     </button>
