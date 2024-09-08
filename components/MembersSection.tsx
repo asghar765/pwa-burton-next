@@ -3,7 +3,7 @@ import Image from 'next/image';
 import { Member, Payment, Note, FirebaseUser, NewMember } from '../types';
 import { Dialog } from '@headlessui/react';
 import { MagnifyingGlassIcon, ChevronDownIcon, ChevronUpIcon } from '@heroicons/react/24/solid';
-import { collection, getDocs, doc, updateDoc } from 'firebase/firestore';
+import { collection, getDocs, doc, updateDoc, addDoc } from 'firebase/firestore';
 import { db } from '../config/firebaseConfig';
 import { generateMemberNumber } from '../utils/memberUtils';
 
@@ -133,10 +133,17 @@ const MembersSection: React.FC<MembersSectionProps> = React.memo(function Member
     setExpandedMembers(prev => ({ ...prev, [memberId]: !prev[memberId] }));
   }, [setExpandedMembers]);
 
-  const handleAddMember = useCallback(() => {
-    const memberNumber = generateMemberNumber();
-    onAddMember({ ...newMember, memberNumber, verified: true });
-    setNewMember({ name: '', email: '', role: '' });
+  const handleAddMember = useCallback(async () => {
+    try {
+      const memberNumber = generateMemberNumber();
+      const newMemberData = { ...newMember, memberNumber, verified: true };
+      const membersRef = collection(db, 'members');
+      await addDoc(membersRef, newMemberData);
+      onAddMember(newMemberData);
+      setNewMember({ name: '', email: '', role: '' });
+    } catch (error) {
+      console.error("Error adding member:", error);
+    }
   }, [newMember, onAddMember]);
 
   const handleAddPayment = useCallback((memberId: string) => {

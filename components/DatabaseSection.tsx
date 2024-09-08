@@ -3,6 +3,8 @@ import React, { useRef, useState } from 'react';
 import Papa from 'papaparse';
 import { NewMember } from '../types';
 import { generateMemberNumber } from '../utils/memberUtils';
+import { db } from '../config/firebaseConfig';
+import { collection, addDoc } from 'firebase/firestore';
 
 interface DatabaseSectionProps {
   collections: { name: string; count: number }[];
@@ -53,22 +55,36 @@ const DatabaseSection: React.FC<DatabaseSectionProps> = ({
     fileInputRef.current?.click();
   };
 
-  const handleApproveMember = (member: NewMember) => {
-    if (onApproveMember) {
+  const handleApproveMember = async (member: NewMember) => {
+    try {
       const approvedMember = { ...member, memberNumber: generateMemberNumber() };
-      onApproveMember(approvedMember);
+      const membersRef = collection(db, 'members');
+      await addDoc(membersRef, approvedMember);
+      if (onApproveMember) {
+        onApproveMember(approvedMember);
+      }
       setParsedData(prevData => prevData.filter(m => m !== member));
+    } catch (error) {
+      console.error("Error approving member:", error);
     }
   };
 
-  const handleBulkApprove = () => {
-    if (onBulkAddMembers) {
+  const handleBulkApprove = async () => {
+    try {
       const approvedMembers = parsedData.map(member => ({
         ...member,
         memberNumber: generateMemberNumber()
       }));
-      onBulkAddMembers(approvedMembers);
+      const membersRef = collection(db, 'members');
+      for (const member of approvedMembers) {
+        await addDoc(membersRef, member);
+      }
+      if (onBulkAddMembers) {
+        onBulkAddMembers(approvedMembers);
+      }
       setParsedData([]);
+    } catch (error) {
+      console.error("Error bulk approving members:", error);
     }
   };
   return (
