@@ -14,6 +14,7 @@ import CollectorsSection from '../../components/CollectorsSection';
 import RegistrationsSection from '../../components/RegistrationsSection';
 import DatabaseSection from '../../components/DatabaseSection';
 import FinanceSection from '../../components/FinanceSection';
+import ProfileSection from '../../components/ProfileSection';
 import ErrorBoundary from '../../components/ErrorBoundary';
 import { v4 as uuidv4 } from 'uuid';
 
@@ -486,9 +487,22 @@ const AdminDashboard: React.FC = () => {
         return userRole === 'admin' ? renderDatabaseSection() : null;
       case 'finance':
         return renderFinanceSection();
+      case 'profile':
+        return renderProfileSection();
       default:
         return renderDashboardSection();
     }
+  };
+
+  const renderProfileSection = () => {
+    const currentMember = members.find(m => m.id === user?.uid) || null;
+    return (
+      <ProfileSection
+        user={user}
+        member={currentMember}
+        userRole={userRole}
+      />
+    );
   };
 
   return (
@@ -498,14 +512,14 @@ const AdminDashboard: React.FC = () => {
         <div className="p-4">
           <h2 className="text-2xl font-bold mb-4">{userRole === 'admin' ? 'Admin Dashboard' : 'Member Dashboard'}</h2>
           <nav className="space-y-2">
-            {['dashboard', 'members', 'collectors', 'registrations', 'database', 'finance'].map((section) => (
+            {['dashboard', 'members', 'collectors', 'registrations', 'database', 'finance', 'profile'].map((section) => (
               <button
                 key={section}
                 onClick={() => setActiveSection(section)}
                 className={`block w-full text-left p-2 hover:bg-gray-700 rounded capitalize ${
                   activeSection === section ? 'bg-gray-700' : ''
                 }`}
-                disabled={userRole !== 'admin' && !['dashboard', 'finance'].includes(section)}
+                disabled={userRole !== 'admin' && !['dashboard', 'finance', 'profile'].includes(section)}
               >
                 {section}
               </button>
