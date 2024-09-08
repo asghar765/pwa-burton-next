@@ -1,11 +1,36 @@
      // DatabaseSection.tsx
-import React from 'react';
+import React, { useState } from 'react';
+import { useDropzone } from 'react-dropzone';
+import Papa from 'papaparse';
 
 interface DatabaseSectionProps {
   collections: { name: string; count: number }[];
+  onUploadMembers: (members: any[]) => void;
 }
 
-const DatabaseSection: React.FC<DatabaseSectionProps> = ({ collections }) => {
+const DatabaseSection: React.FC<DatabaseSectionProps> = ({ collections, onUploadMembers }) => {
+  const [uploadedMembers, setUploadedMembers] = useState<any[]>([]);
+
+  const onDrop = (acceptedFiles: File[]) => {
+    const file = acceptedFiles[0];
+    Papa.parse(file, {
+      complete: (result) => {
+        const members = result.data.slice(1).map((row: any, index: number) => ({
+          memberNo: row[0] || `TMP${index + 1}`,
+          name: row[1],
+          no: row[2],
+          address: row[3],
+          collector: row[4],
+        }));
+        setUploadedMembers(members);
+        onUploadMembers(members);
+      },
+      header: true,
+    });
+  };
+
+  const { getRootProps, getInputProps, isDragActive } = useDropzone({ onDrop });
+
   return (
     <div className="p-4 bg-white shadow rounded-lg">
       <h2 className="text-xl font-semibold mb-4">Database Information</h2>
@@ -22,6 +47,22 @@ const DatabaseSection: React.FC<DatabaseSectionProps> = ({ collections }) => {
           </ul>
         ) : (
           <p>No collections found in the database.</p>
+        )}
+      </div>
+      <div className="mt-8">
+        <h3 className="text-lg font-medium mb-2">Bulk Upload Members</h3>
+        <div {...getRootProps()} className="border-2 border-dashed border-gray-300 rounded-lg p-4 text-center cursor-pointer">
+          <input {...getInputProps()} />
+          {isDragActive ? (
+            <p>Drop the CSV file here ...</p>
+          ) : (
+            <p>Drag 'n' drop a CSV file here, or click to select a file</p>
+          )}
+        </div>
+        {uploadedMembers.length > 0 && (
+          <div className="mt-4">
+            <p>{uploadedMembers.length} members uploaded. Please check the approval section to review and approve these members.</p>
+          </div>
         )}
       </div>
     </div>

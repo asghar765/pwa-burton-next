@@ -14,6 +14,7 @@ import RegistrationsSection from '../../components/RegistrationsSection';
 import DatabaseSection from '../../components/DatabaseSection';
 import FinanceSection from '../../components/FinanceSection';
 import ErrorBoundary from '../../components/ErrorBoundary';
+import { v4 as uuidv4 } from 'uuid';
 
 interface FirebaseUser {
   id: string;
@@ -45,6 +46,7 @@ const AdminDashboard: React.FC = () => {
   const [lastRefreshed, setLastRefreshed] = useState<Date | null>(null);
   const [tables, setTables] = useState<{ table_name: string; row_count: string }[]>([]);
   const [databaseError, setDatabaseError] = useState<string | null>(null);
+  const [uploadedMembers, setUploadedMembers] = useState<any[]>([]);
 
   const fetchData = useCallback(async () => {
     try {
@@ -398,7 +400,32 @@ const AdminDashboard: React.FC = () => {
       { name: 'expenses', count: expenses.length },
       { name: 'users', count: firebaseUsers.length },
     ];
-    return <DatabaseSection collections={collections} />;
+    return (
+      <>
+        <DatabaseSection collections={collections} onUploadMembers={handleUploadMembers} />
+        {uploadedMembers.length > 0 && (
+          <div className="mt-8">
+            <h3 className="text-xl font-semibold mb-4">Approve Uploaded Members</h3>
+            <ul className="space-y-4">
+              {uploadedMembers.map(member => (
+                <li key={member.id} className="bg-white rounded shadow p-4">
+                  <h4 className="font-bold">{member.name}</h4>
+                  <p>Member No: {member.memberNo}</p>
+                  <p>Address: {member.address}</p>
+                  <p>Collector: {member.collector}</p>
+                  <button
+                    onClick={() => handleApproveMember(member)}
+                    className="mt-2 px-4 py-2 bg-green-500 text-white rounded hover:bg-green-600"
+                  >
+                    Approve
+                  </button>
+                </li>
+              ))}
+            </ul>
+          </div>
+        )}
+      </>
+    );
   };
 
   const renderFinanceSection = () => {
