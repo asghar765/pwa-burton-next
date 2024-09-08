@@ -368,15 +368,20 @@ const AdminDashboard: React.FC = () => {
     }));
   };
 
-  const renderDashboardSection = () => (
-    <DashboardSection
-      members={members}
-      registrations={registrations}
-      collectors={collectors}
-      accountBalance={calculatedAccountBalance}
-      registrationChartData={processRegistrationData()}
-    />
-  );
+  const renderDashboardSection = () => {
+    const currentUser = userRole === 'member' ? members.find(m => m.id === user?.uid) || null : null;
+    return (
+      <DashboardSection
+        members={members}
+        registrations={registrations}
+        collectors={collectors}
+        accountBalance={calculatedAccountBalance}
+        registrationChartData={processRegistrationData()}
+        currentUser={currentUser}
+        userRole={userRole}
+      />
+    );
+  };
 
   const renderMembersSection = () => (
     <MembersSection
