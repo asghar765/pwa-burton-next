@@ -30,11 +30,28 @@ export interface MemberWithPayments extends Omit<Member, 'payments'> {
   payments: Payment[];
 }
 
+export interface MembersSectionProps {
+  members: MemberWithPayments[];
+  firebaseUsers: FirebaseUser[];
+  searchTerm: string;
+  setSearchTerm: React.Dispatch<React.SetStateAction<string>>;
+  expandedMembers: Record<string, boolean>;
+  setExpandedMembers: React.Dispatch<React.SetStateAction<Record<string, boolean>>>;
+  onAddMember: (member: Omit<Member, 'id'>) => Promise<void>;
+  onUpdateMember: (id: string, member: Partial<Member>) => Promise<void>;
+  onDeleteMember: (id: string) => Promise<void>;
+  onRevokeMember: (id: string) => Promise<void>;
+  currentUserRole: string;
+  onAddPayment: (memberId: string, payment: Omit<Payment, 'id'>) => Promise<void>;
+  onAddNote: (memberId: string, note: string) => Promise<void>;
+  onUpdateUserRole: (userId: string, newRole: string) => Promise<void>;
+}
+
 export interface Registration {
   id: string;
   fullName: string;
   email: string;
-  createdAt: string; // Add this line
+  createdAt: string;
   // ... other registration fields
 }
 
