@@ -459,6 +459,6 @@ const MembersSection: React.FC<MembersSectionProps> = React.memo(function Member
       </Dialog>
     </div>
   );
-});
+};
 
 export default MembersSection;
