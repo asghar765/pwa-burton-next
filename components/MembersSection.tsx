@@ -331,12 +331,12 @@ const MembersSection: React.FC<MembersSectionProps> = React.memo(function Member
                         {[...member.payments]
                           .sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime())
                           .map((payment, index) => (
-                            <tr key={payment.id || `payment-${index}`}>
+                            <tr key={`${member.memberNumber}-${payment.date}-${index}`}>
                               <td>{new Date(payment.date).toLocaleDateString()}</td>
                               <td>£{typeof payment.amount === 'number' ? payment.amount.toFixed(2) : payment.amount}</td>
-                              <td>{payment.memberNumber || 'N/A'}</td>
+                              <td>{member.memberNumber || 'N/A'}</td>
                               <td>
-                                {!payment.memberNumber ? (
+                                {!member.memberNumber ? (
                                   <span className="text-red-500">Missing Member No</span>
                                 ) : null}
                               </td>
