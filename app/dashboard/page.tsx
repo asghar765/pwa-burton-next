@@ -189,6 +189,26 @@ const AdminDashboard: React.FC = () => {
     }
   };
 
+  const handleUploadMembers = (members: any[]) => {
+    const membersWithUniqueId = members.map(member => ({
+      ...member,
+      id: uuidv4(),
+      verified: false,
+    }));
+    setUploadedMembers(membersWithUniqueId);
+  };
+
+  const handleApproveMember = async (member: any) => {
+    try {
+      await addDoc(collection(db, 'members'), member);
+      setUploadedMembers(prevMembers => prevMembers.filter(m => m.id !== member.id));
+      fetchData();
+    } catch (error) {
+      console.error('Error approving member:', error);
+      setErrorMessage('Failed to approve member. Please try again.');
+    }
+  };
+
   const handleAddMember = async (member: Omit<Member, 'id'>) => {
     try {
       await addDoc(collection(db, 'members'), member);
