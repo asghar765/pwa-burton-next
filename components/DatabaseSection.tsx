@@ -18,10 +18,9 @@ const DatabaseSection: React.FC<DatabaseSectionProps> = ({ collections, onUpload
       complete: (result) => {
         const members = result.data.slice(1).map((row: any, index: number) => ({
           memberNo: row[0] || `TMP${index + 1}`,
-          name: row[1],
-          no: row[2],
-          address: row[3],
-          collector: row[4],
+          name: row[1] || '',
+          address: row[3] || '',
+          collector: row[4] || '',
         }));
         onUploadMembers(members);
       },
@@ -65,10 +64,10 @@ const DatabaseSection: React.FC<DatabaseSectionProps> = ({ collections, onUpload
             <ul className="mt-2 space-y-2">
               {uploadedMembers.map((member, index) => (
                 <li key={index} className="bg-gray-100 p-2 rounded">
-                  <p><strong>Name:</strong> {member.name}</p>
-                  <p><strong>Member No:</strong> {member.memberNo}</p>
-                  <p><strong>Address:</strong> {member.address}</p>
-                  <p><strong>Collector:</strong> {member.collector}</p>
+                  <p><strong>Name:</strong> {member.name || 'N/A'}</p>
+                  <p><strong>Member No:</strong> {member.memberNo || `TMP${index + 1}`}</p>
+                  <p><strong>Address:</strong> {member.address || 'N/A'}</p>
+                  <p><strong>Collector:</strong> {member.collector || 'N/A'}</p>
                 </li>
               ))}
             </ul>
