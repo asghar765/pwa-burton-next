@@ -94,7 +94,42 @@ const ProfileSection: React.FC<ProfileSectionProps> = ({
 
       <div className="space-y-2">
         <h3 className="text-xl font-semibold">Membership Information</h3>
-        <p>{member.membershipInfo || 'No additional membership information available.'}</p>
+        {renderField('Membership Info', member.membershipInfo)}
+      </div>
+
+      <div className="space-y-2">
+        <h3 className="text-xl font-semibold">Account Information</h3>
+        {renderField('Account Balance', `£${accountBalance.toFixed(2)}`)}
+      </div>
+
+      <div className="space-y-2">
+        <h3 className="text-xl font-semibold">Payments</h3>
+        {payments.length > 0 ? (
+          <ul className="list-disc pl-5">
+            {payments.map((payment, index) => (
+              <li key={index}>
+                {`£${payment.amount.toFixed(2)} on ${new Date(payment.date).toLocaleDateString()}`}
+              </li>
+            ))}
+          </ul>
+        ) : (
+          <p>No payments recorded.</p>
+        )}
+      </div>
+
+      <div className="space-y-2">
+        <h3 className="text-xl font-semibold">Expenses</h3>
+        {expenses.length > 0 ? (
+          <ul className="list-disc pl-5">
+            {expenses.map((expense, index) => (
+              <li key={index}>
+                {`£${expense.amount.toFixed(2)} for ${expense.description} on ${new Date(expense.date).toLocaleDateString()}`}
+              </li>
+            ))}
+          </ul>
+        ) : (
+          <p>No expenses recorded.</p>
+        )}
       </div>
 
       <div className="space-y-2">
