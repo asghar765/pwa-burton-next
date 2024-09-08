@@ -71,16 +71,8 @@ const DatabaseSection: React.FC<DatabaseSectionProps> = ({
 
   const handleBulkApprove = async () => {
     try {
-      const approvedMembers = parsedData.map(member => ({
-        ...member,
-        memberNumber: generateMemberNumber()
-      }));
-      const membersRef = collection(db, 'members');
-      for (const member of approvedMembers) {
-        await addDoc(membersRef, member);
-      }
-      if (onBulkAddMembers) {
-        onBulkAddMembers(approvedMembers);
+      for (const member of parsedData) {
+        await handleApproveMember(member);
       }
       setParsedData([]);
     } catch (error) {
@@ -109,7 +101,7 @@ const DatabaseSection: React.FC<DatabaseSectionProps> = ({
         <h3 className="text-lg font-medium mb-2">Bulk Operations</h3>
         <div className="mt-4 space-x-4">
           <button
-            onClick={onBulkAddMembers}
+            onClick={handleBulkApprove}
             className="px-4 py-2 bg-green-500 text-white rounded hover:bg-green-600"
           >
             Bulk Add Members
