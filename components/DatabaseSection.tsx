@@ -71,9 +71,8 @@ const DatabaseSection: React.FC<DatabaseSectionProps> = ({
 
   const handleBulkApprove = async () => {
     try {
-      for (const member of parsedData) {
-        await handleApproveMember(member);
-      }
+      const approvedMembers = await Promise.all(parsedData.map(handleApproveMember));
+      console.log(`Bulk approved ${approvedMembers.length} members`);
       setParsedData([]);
     } catch (error) {
       console.error("Error bulk approving members:", error);
