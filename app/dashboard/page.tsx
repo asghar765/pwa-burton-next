@@ -467,7 +467,7 @@ const AdminDashboard: React.FC = () => {
       {/* Sidebar */}
       <aside className="w-64 bg-gray-800 text-white min-h-screen">
         <div className="p-4">
-          <h2 className="text-2xl font-bold mb-4">Admin Dashboard</h2>
+          <h2 className="text-2xl font-bold mb-4">{userRole === 'admin' ? 'Admin Dashboard' : 'Member Dashboard'}</h2>
           <nav className="space-y-2">
             {['dashboard', 'members', 'collectors', 'registrations', 'database', 'finance'].map((section) => (
               <button
@@ -476,6 +476,7 @@ const AdminDashboard: React.FC = () => {
                 className={`block w-full text-left p-2 hover:bg-gray-700 rounded capitalize ${
                   activeSection === section ? 'bg-gray-700' : ''
                 }`}
+                disabled={userRole !== 'admin'}
               >
                 {section}
               </button>
@@ -486,7 +487,7 @@ const AdminDashboard: React.FC = () => {
 
       <main className="flex-1 p-8 bg-gray-100 min-h-screen">
         <div className="flex justify-between items-center mb-4">
-          <h1 className="text-3xl font-bold">Admin Dashboard</h1>
+          <h1 className="text-3xl font-bold">{userRole === 'admin' ? 'Admin Dashboard' : 'Member Dashboard'}</h1>
           <div className="flex items-center">
             {lastRefreshed && (
               <p className="text-sm text-gray-500 mr-4">
@@ -504,7 +505,7 @@ const AdminDashboard: React.FC = () => {
         )}
 
         <ErrorBoundary>
-          {renderActiveSection()}
+          {userRole === 'admin' ? renderActiveSection() : renderDashboardSection()}
         </ErrorBoundary>
       </main>
     </div>
