@@ -149,7 +149,7 @@ const MembersSection: React.FC<MembersSectionProps> = React.memo(function Member
 
   const handleAddPayment = useCallback((memberId: string, memberNumber: string) => {
     const amount = parseFloat(newPaymentAmounts[memberId] || '0');
-    if (!isNaN(amount) && amount > 0) {
+    if (!isNaN(amount) && amount > 0 && memberNumber) {
       const newPayment = {
         amount: amount,
         date: new Date().toISOString(),
@@ -166,8 +166,8 @@ const MembersSection: React.FC<MembersSectionProps> = React.memo(function Member
       // Force re-render
       setExpandedMembers(prev => ({ ...prev }));
     } else {
-      console.log('Invalid payment amount:', amount);
-      alert('Please enter a valid payment amount.');
+      console.log('Invalid payment amount or missing member number:', amount, memberNumber);
+      alert('Please enter a valid payment amount and ensure the member has a member number.');
     }
   }, [newPaymentAmounts, onAddPayment, setExpandedMembers]);
 
@@ -322,7 +322,7 @@ const MembersSection: React.FC<MembersSectionProps> = React.memo(function Member
                             <tr key={payment.id || `payment-${index}`}>
                               <td>{new Date(payment.date).toLocaleDateString()}</td>
                               <td>£{typeof payment.amount === 'number' ? payment.amount.toFixed(2) : payment.amount}</td>
-                              <td>{member.memberNumber || 'N/A'}</td>
+                              <td>{payment.memberNumber || 'N/A'}</td>
                             </tr>
                           ))}
                       </tbody>
