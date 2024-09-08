@@ -1,17 +1,18 @@
      // DatabaseSection.tsx
 import React, { useRef, useState } from 'react';
 import Papa from 'papaparse';
+import { NewMember } from '../types';
+import { generateMemberNumber } from '../utils/memberUtils';
 
 interface DatabaseSectionProps {
   collections: { name: string; count: number }[];
-  onBulkAddMembers: () => void;
+  onBulkAddMembers: (members: NewMember[]) => void;
   onBulkDeleteMembers: () => void;
-  onApproveMember?: (member: Member) => void;
+  onApproveMember?: (member: NewMember) => void;
 }
 
-interface Member {
+interface CsvMember {
   Name: string;
-  No: string;
   Address: string;
   Collector: string;
 }
@@ -23,15 +24,24 @@ const DatabaseSection: React.FC<DatabaseSectionProps> = ({
   onApproveMember
 }) => {
   const fileInputRef = useRef<HTMLInputElement>(null);
-  const [parsedData, setParsedData] = useState<Member[]>([]);
+  const [parsedData, setParsedData] = useState<NewMember[]>([]);
 
   const handleFileUpload = (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
     if (file) {
-      Papa.parse<Member>(file, {
+      Papa.parse<CsvMember>(file, {
         complete: (results) => {
-          setParsedData(results.data);
-          console.log('Parsed data:', results.data);
+          const newMembers: NewMember[] = results.data.map((csvMember) => ({
+            name: csvMember.Name,
+            email: '',
+            role: 'member',
+            memberNumber: generateMemberNumber(),
+            verified: true,
+            address: csvMember.Address,
+            collector: csvMember.Collector,
+          }));
+          setParsedData(newMembers);
+          console.log('Parsed data:', newMembers);
         },
         header: true,
         skipEmptyLines: true
@@ -43,11 +53,18 @@ const DatabaseSection: React.FC<DatabaseSectionProps> = ({
     fileInputRef.current?.click();
   };
 
-  const handleApproveMember = (member: Member) => {
+  const handleApproveMember = (member: NewMember) => {
     if (onApproveMember) {
       onApproveMember(member);
     }
     setParsedData(prevData => prevData.filter(m => m !== member));
+  };
+
+  const handleBulkApprove = () => {
+    if (onBulkAddMembers) {
+      onBulkAddMembers(parsedData);
+      setParsedData([]);
+    }
   };
   return (
     <div className="p-4 bg-white shadow rounded-lg">
@@ -99,19 +116,29 @@ const DatabaseSection: React.FC<DatabaseSectionProps> = ({
         {parsedData.length > 0 && (
           <div className="mt-4">
             <h4 className="text-lg font-medium mb-2">Parsed CSV Data</h4>
-            <ul className="space-y-2">
-              {parsedData.map((member, index) => (
-                <li key={index} className="flex items-center justify-between bg-gray-100 p-2 rounded">
-                  <span>{member.Name} - {member.No} - {member.Address} - {member.Collector}</span>
-                  <button
-                    onClick={() => handleApproveMember(member)}
-                    className="px-2 py-1 bg-green-500 text-white rounded hover:bg-green-600"
-                  >
-                    Approve
-                  </button>
-                </li>
-              ))}
-            </ul>
+            <div>
+              <ul className="space-y-2">
+                {parsedData.map((member, index) => (
+                  <li key={index} className="flex items-center justify-between bg-gray-100 p-2 rounded">
+                    <span>{member.name} - {member.memberNumber} - {member.address} - {member.collector}</span>
+                    <button
+                      onClick={() => handleApproveMember(member)}
+                      className="px-2 py-1 bg-green-500 text-white rounded hover:bg-green-600"
+                    >
+                      Approve
+                    </button>
+                  </li>
+                ))}
+              </ul>
+              {parsedData.length > 0 && (
+                <button
+                  onClick={handleBulkApprove}
+                  className="mt-4 px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600"
+                >
+                  Bulk Approve All
+                </button>
+              )}
+            </div>
           </div>
         )}
       </div>
