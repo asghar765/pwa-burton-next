@@ -34,6 +34,7 @@ export interface Registration {
   id: string;
   fullName: string;
   email: string;
+  createdAt: string; // Add this line
   // ... other registration fields
 }
 
