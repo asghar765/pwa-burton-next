@@ -47,8 +47,6 @@ const AdminDashboard: React.FC = () => {
   const [lastRefreshed, setLastRefreshed] = useState<Date | null>(null);
   const [tables, setTables] = useState<{ table_name: string; row_count: string }[]>([]);
   const [databaseError, setDatabaseError] = useState<string | null>(null);
-  const [uploadedMembers, setUploadedMembers] = useState<any[]>([]);
-
   const fetchData = useCallback(async () => {
     try {
       setLoading(true);
@@ -198,34 +196,6 @@ const AdminDashboard: React.FC = () => {
     } catch (error) {
       console.error('Error adding expense:', error);
       setErrorMessage('Failed to add expense. Please try again.');
-    }
-  };
-
-  const handleBulkAddMembers = (members: any[]) => {
-    const membersWithUniqueId = members.map(member => ({
-      ...member,
-      id: uuidv4(),
-      verified: false,
-    }));
-    setUploadedMembers(membersWithUniqueId);
-  };
-
-
-  const handleApproveMember = async (member: any) => {
-    try {
-      const memberData = {
-        name: member.name,
-        addressNo: member.addressNo,
-        address: `${member.addressNo} ${member.address}`.trim(),
-        collector: member.collector,
-        verified: true,
-      };
-      await addDoc(collection(db, 'members'), memberData);
-      setUploadedMembers(prevMembers => prevMembers.filter(m => m.id !== member.id));
-      fetchData();
-    } catch (error) {
-      console.error('Error approving member:', error);
-      setErrorMessage('Failed to approve member. Please try again.');
     }
   };
 
@@ -431,37 +401,9 @@ const AdminDashboard: React.FC = () => {
       { name: 'users', count: firebaseUsers.length },
     ];
     return (
-      <>
-        <DatabaseSection 
-          collections={collections} 
-          onBulkAddMembers={handleBulkAddMembers}
-          onBulkDeleteMembers={() => {
-            console.log('Bulk delete members not implemented');
-            // Implement the bulk delete functionality here
-          }}
-        />
-        {uploadedMembers.length > 0 && (
-          <div className="mt-8">
-            <h3 className="text-xl font-semibold mb-4">Approve Uploaded Members</h3>
-            <ul className="space-y-4">
-              {uploadedMembers.map(member => (
-                <li key={member.id} className="bg-white rounded shadow p-4">
-                  <h4 className="font-bold">{member.name}</h4>
-                  <p>Member No: {member.memberNo}</p>
-                  <p>Address: {member.address}</p>
-                  <p>Collector: {member.collector}</p>
-                  <button
-                    onClick={() => handleApproveMember(member)}
-                    className="mt-2 px-4 py-2 bg-green-500 text-white rounded hover:bg-green-600"
-                  >
-                    Approve
-                  </button>
-                </li>
-              ))}
-            </ul>
-          </div>
-        )}
-      </>
+      <DatabaseSection 
+        collections={collections}
+      />
     );
   };
 
