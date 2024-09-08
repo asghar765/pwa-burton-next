@@ -96,12 +96,23 @@ const AdminDashboard: React.FC = () => {
       setNotes(notesSnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() } as Note)));
       setCollectors(collectorsSnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() } as Collector)));
       const paymentsWithMemberNumbers = await Promise.all(paymentsSnapshot.docs.map(async doc => {
-        const payment = { id: doc.id, ...doc.data() } as Payment;
-        const memberDoc = await getDocs(query(collection(db, 'members'), where('id', '==', payment.memberId)));
-        const memberData = memberDoc.docs[0]?.data();
-        return { ...payment, memberNumber: memberData?.memberNumber || payment.memberId };
+        const data = doc.data();
+        if ('amount' in data && 'date' in data && 'memberId' in data) {
+          const payment: Payment = {
+            id: doc.id,
+            amount: data.amount,
+            date: data.date,
+            memberNumber: '', // We'll set this below
+            memberId: data.memberId
+          };
+          const memberDoc = await getDocs(query(collection(db, 'members'), where('id', '==', payment.memberId)));
+          const memberData = memberDoc.docs[0]?.data();
+          payment.memberNumber = memberData?.memberNumber || payment.memberId;
+          return payment;
+        }
+        return null;
       }));
-      setPayments(paymentsWithMemberNumbers);
+      setPayments(paymentsWithMemberNumbers.filter((payment): payment is Payment => payment !== null));
       setExpenses(expensesSnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() } as Expense)));
       setFirebaseUsers(usersSnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() } as FirebaseUser)));
 
