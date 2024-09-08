@@ -45,7 +45,6 @@ const MembersSection: React.FC<MembersSectionProps> = ({
   setSearchTerm,
   expandedMembers,
   setExpandedMembers,
-  onAddMember,
   onUpdateMember,
   onDeleteMember,
   onRevokeMember,
