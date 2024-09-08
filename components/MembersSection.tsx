@@ -358,12 +358,16 @@ const MembersSection: React.FC<MembersSectionProps> = React.memo(function Member
                   <div className="mt-4">
                     <h5 className="font-semibold">Admin Notes</h5>
                     <ul className="list-disc list-inside">
-                      {member.notes?.map((note: Note, index: number) => (
-                        <li key={index}>
-                          <span className="font-medium">{new Date(note.date).toLocaleDateString()}: </span>
-                          {note.content}
-                        </li>
-                      ))}
+                      {member.notes && member.notes.length > 0 ? (
+                        member.notes.map((note: Note, index: number) => (
+                          <li key={index}>
+                            <span className="font-medium">{new Date(note.date).toLocaleDateString()}: </span>
+                            {note.content}
+                          </li>
+                        ))
+                      ) : (
+                        <li>No notes available</li>
+                      )}
                     </ul>
                     <textarea
                       value={newNote}
