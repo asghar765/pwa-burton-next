@@ -474,6 +474,7 @@ const AdminDashboard: React.FC = () => {
   };
 
   const renderActiveSection = () => {
+    console.log('Rendering active section:', activeSection);
     switch (activeSection) {
       case 'dashboard':
         return renderDashboardSection();
@@ -495,17 +496,30 @@ const AdminDashboard: React.FC = () => {
   };
 
   const renderProfileSection = () => {
+    console.log('Rendering ProfileSection');
+    console.log('Current user:', user);
+    console.log('All members:', members);
+
     const currentMember = members.find(m => m.id === user?.uid) || null;
+    console.log('Current member:', currentMember);
+
     const memberNotes = notes.filter(n => n.memberId === user?.uid);
+    console.log('Member notes:', memberNotes);
+
+    const memberPayments = payments.filter(p => p.memberId === user?.uid);
+    console.log('Member payments:', memberPayments);
+
+    const memberExpenses = expenses.filter(e => e.userId === user?.uid);
+    console.log('Member expenses:', memberExpenses);
 
     return (
       <ProfileSection
         user={user}
         member={currentMember}
         userRole={userRole}
-        accountBalance={0} // Placeholder, remove if not needed
-        expenses={[]} // Placeholder, remove if not needed
-        payments={[]} // Placeholder, remove if not needed
+        accountBalance={calculatedAccountBalance}
+        expenses={memberExpenses}
+        payments={memberPayments}
         notes={memberNotes}
       />
     );

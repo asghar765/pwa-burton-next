@@ -21,7 +21,12 @@ const ProfileSection: React.FC<ProfileSectionProps> = ({
   payments, 
   notes 
 }) => {
-  if (!user || !member) return null;
+  console.log('ProfileSection props:', { user, member, userRole, accountBalance, expenses, payments, notes });
+
+  if (!user || !member) {
+    console.log('User or member is null, returning null');
+    return null;
+  }
 
   return (
     <div className="bg-white p-6 rounded-lg shadow-md space-y-6">
