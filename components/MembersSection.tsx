@@ -147,24 +147,19 @@ const MembersSection: React.FC<MembersSectionProps> = React.memo(function Member
     }
   }, [newMember, onAddMember]);
 
-  const handleAddPayment = useCallback((memberId: string, memberNumber: string) => {
-    const amount = parseFloat(newPaymentAmounts[memberId] || '0');
+  const handleAddPayment = useCallback((memberNumber: string) => {
+    const amount = parseFloat(newPaymentAmounts[memberNumber] || '0');
     if (!isNaN(amount) && amount > 0) {
-      if (!memberNumber) {
-        console.error('Missing member number for member:', memberId);
-        alert('This member does not have a member number assigned. Please assign a member number before adding a payment.');
-        return;
-      }
       const newPayment = {
         amount: amount,
         date: new Date().toISOString(),
-        memberNumber: memberNumber // Always use the member's assigned number
+        memberNumber: memberNumber
       };
       console.log('Adding new payment:', newPayment);
-      onAddPayment(memberId, newPayment);
+      onAddPayment(memberNumber, newPayment);
       console.log('Payment added, updating state');
       setNewPaymentAmounts(prev => {
-        const updated = { ...prev, [memberId]: '' };
+        const updated = { ...prev, [memberNumber]: '' };
         console.log('Updated newPaymentAmounts:', updated);
         return updated;
       });
@@ -360,17 +355,17 @@ const MembersSection: React.FC<MembersSectionProps> = React.memo(function Member
                   <div className="flex items-center">
                     <input
                       type="number"
-                      value={newPaymentAmounts[member.id] || ''}
-                      onChange={(e) => setNewPaymentAmounts(prev => ({ ...prev, [member.id]: e.target.value }))}
+                      value={newPaymentAmounts[member.memberNumber || ''] || ''}
+                      onChange={(e) => setNewPaymentAmounts(prev => ({ ...prev, [member.memberNumber || '']: e.target.value }))}
                       placeholder="Amount"
                       className="p-2 border border-gray-300 rounded mr-2 flex-grow"
                       step="0.01"
                       min="0"
                     />
                     <button
-                      onClick={() => handleAddPayment(member.id, member.memberNumber || '')}
+                      onClick={() => handleAddPayment(member.memberNumber || '')}
                       className="px-4 py-2 bg-green-500 text-white rounded hover:bg-green-600"
-                      disabled={!newPaymentAmounts[member.id] || parseFloat(newPaymentAmounts[member.id]) <= 0 || !member.memberNumber}
+                      disabled={!newPaymentAmounts[member.memberNumber || ''] || parseFloat(newPaymentAmounts[member.memberNumber || '']) <= 0 || !member.memberNumber}
                     >
                       Add Payment
                     </button>
