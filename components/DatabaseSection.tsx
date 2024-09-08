@@ -6,7 +6,7 @@ interface DatabaseSectionProps {
   collections: { name: string; count: number }[];
   onBulkAddMembers: () => void;
   onBulkDeleteMembers: () => void;
-  onApproveMember: (member: Member) => void;
+  onApproveMember?: (member: Member) => void;
 }
 
 interface Member {
@@ -44,7 +44,9 @@ const DatabaseSection: React.FC<DatabaseSectionProps> = ({
   };
 
   const handleApproveMember = (member: Member) => {
-    onApproveMember(member);
+    if (onApproveMember) {
+      onApproveMember(member);
+    }
     setParsedData(prevData => prevData.filter(m => m !== member));
   };
   return (
