@@ -16,7 +16,12 @@ export interface Member {
   nextOfKinName: string;
   nextOfKinAddress: string;
   nextOfKinPhone: string;
-  dependants: string[];
+  dependants: Array<{
+    name: string;
+    dateOfBirth: string;
+    gender: string;
+    category: string;
+  }>;
   spouses: Array<{
     name: { value: string };
     dateOfBirth: { value: string };
