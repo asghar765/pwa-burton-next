@@ -138,7 +138,8 @@ const MembersSection: React.FC<MembersSectionProps> = ({
       const newPayment = {
         amount: amount,
         date: new Date().toISOString(),
-        memberNumber: memberNumber
+        memberNumber: memberNumber,
+        memberId: memberNumber // Assuming memberId is the same as memberNumber
       };
       console.log('Adding new payment:', newPayment);
       onAddPayment(memberNumber, newPayment);
