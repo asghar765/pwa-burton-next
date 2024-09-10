@@ -68,7 +68,9 @@ const ProfileSection: React.FC<ProfileSectionProps> = ({
         {member.dependants && member.dependants.length > 0 ? (
           <ul className="list-disc pl-5">
             {member.dependants.map((dependant, index) => (
-              <li key={index}>{dependant}</li>
+              <li key={index}>
+                {dependant.name} (DoB: {dependant.dateOfBirth}, Gender: {dependant.gender}, Category: {dependant.category})
+              </li>
             ))}
           </ul>
         ) : (
