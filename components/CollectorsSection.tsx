@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { Collector, Member } from '../types';
 import { collection, query, where, getDocs, onSnapshot } from 'firebase/firestore';
-import { db } from '../firebase/clientApp';
+import { db } from '@/firebase/clientApp';
 
 interface CollectorsSectionProps {
   collectors: Collector[];
