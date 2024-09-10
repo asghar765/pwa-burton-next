@@ -31,11 +31,26 @@ const RegistrationsSection: React.FC<RegistrationsSectionProps> = ({
     try {
       const memberNumber = generateMemberNumber();
       const newMember: NewMember = {
-        name: registration.fullName,
+        fullName: registration.fullName,
         email: registration.email,
         role: 'member',
         verified: true,
-        memberNumber
+        memberNumber,
+        address: registration.address || '',
+        postCode: registration.postCode || '',
+        town: registration.town || '',
+        dateOfBirth: registration.dateOfBirth || '',
+        placeOfBirth: registration.placeOfBirth || '',
+        gender: registration.gender || '',
+        maritalStatus: registration.maritalStatus || '',
+        mobileNo: registration.mobileNo || '',
+        collector: registration.collector || '',
+        nextOfKinName: registration.nextOfKinName || '',
+        nextOfKinAddress: registration.nextOfKinAddress || '',
+        nextOfKinPhone: registration.nextOfKinPhone || '',
+        membershipInfo: registration.membershipInfo || '',
+        dependants: registration.dependants || [],
+        spouses: registration.spouses || []
       };
       await onApproveRegistration(registration, newMember);
     } catch (error) {
