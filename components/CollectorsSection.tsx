@@ -1,9 +1,53 @@
-import React, { useMemo } from 'react';
+import React, { useMemo, useState } from 'react';
 import { Member } from '../types';
 
 interface CollectorsSectionProps {
   members: Member[];
 }
+
+const CollectorsSectionItem: React.FC<{ collector: { name: string; members: Member[] } }> = ({ collector }) => {
+  const [isExpanded, setIsExpanded] = useState(false);
+  const [visibleMembers, setVisibleMembers] = useState(10);
+
+  const handleShowMore = () => {
+    setVisibleMembers(prev => Math.min(prev + 10, collector.members.length));
+  };
+
+  return (
+    <li className="border-b pb-6 last:border-b-0">
+      <div className="flex justify-between items-center cursor-pointer" onClick={() => setIsExpanded(!isExpanded)}>
+        <h3 className="text-xl font-bold">{collector.name}</h3>
+        <span className="text-sm text-gray-500">Members: {collector.members.length}</span>
+        <button className="text-blue-500">{isExpanded ? '▲' : '▼'}</button>
+      </div>
+      {isExpanded && (
+        <div className="mt-4">
+          {collector.members.length > 0 ? (
+            <div className="max-h-60 overflow-y-auto pr-4">
+              <ul className="list-disc list-inside">
+                {collector.members.slice(0, visibleMembers).map(member => (
+                  <li key={member.id} className="mb-1">
+                    {member.name || member.fullName} ({member.email})
+                  </li>
+                ))}
+              </ul>
+              {visibleMembers < collector.members.length && (
+                <button 
+                  className="mt-2 text-blue-500 hover:underline"
+                  onClick={handleShowMore}
+                >
+                  Show more
+                </button>
+              )}
+            </div>
+          ) : (
+            <p className="text-gray-500 italic">No members found</p>
+          )}
+        </div>
+      )}
+    </li>
+  );
+};
 
 const CollectorsSection: React.FC<CollectorsSectionProps> = ({ members }) => {
   const collectorsWithMembers = useMemo(() => {
@@ -30,23 +74,7 @@ const CollectorsSection: React.FC<CollectorsSectionProps> = ({ members }) => {
       ) : (
         <ul className="space-y-8">
           {collectorsWithMembers.map(collector => (
-            <li key={collector.name} className="border-b pb-6 last:border-b-0">
-              <h3 className="text-xl font-bold mb-2">{collector.name}</h3>
-              <h4 className="font-semibold mb-2">
-                Members: {collector.members.length}
-              </h4>
-              {collector.members.length > 0 ? (
-                <ul className="list-disc list-inside pl-4">
-                  {collector.members.map(member => (
-                    <li key={member.id} className="mb-1">
-                      {member.name || member.fullName} ({member.email})
-                    </li>
-                  ))}
-                </ul>
-              ) : (
-                <p className="text-gray-500 italic">No members found</p>
-              )}
-            </li>
+            <CollectorsSectionItem key={collector.name} collector={collector} />
           ))}
         </ul>
       )}
