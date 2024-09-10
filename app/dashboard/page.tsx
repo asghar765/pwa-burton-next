@@ -83,17 +83,29 @@ const AdminDashboard: React.FC = () => {
         const data = doc.data();
         return {
           id: doc.id,
-          name: data.name || '',
           fullName: data.fullName || data.name || '',
           email: data.email || '',
-          role: data.role || '',
           memberNumber: data.memberNumber || '',
           verified: data.verified || false,
-          payments: [],
-          notes: data.notes || [],
-          collector: data.collector || null,
+          address: data.address || '',
+          postCode: data.postCode || '',
+          town: data.town || '',
+          dateOfBirth: data.dateOfBirth || '',
+          placeOfBirth: data.placeOfBirth || '',
+          gender: data.gender || '',
+          maritalStatus: data.maritalStatus || '',
+          mobileNo: data.mobileNo || '',
+          collector: data.collector || '',
+          nextOfKinName: data.nextOfKinName || '',
+          nextOfKinAddress: data.nextOfKinAddress || '',
+          nextOfKinPhone: data.nextOfKinPhone || '',
           dependants: data.dependants || [],
-          spouses: data.spouses || []
+          spouses: data.spouses || [],
+          membershipInfo: data.membershipInfo || '',
+          name: data.name || '',
+          role: data.role || '',
+          payments: [],
+          notes: data.notes || []
         } as MemberWithPayments;
       }));
       setRegistrations(registrationsSnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() } as Registration)));
