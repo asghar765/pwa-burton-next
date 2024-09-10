@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { Collector, Member } from '../types';
-import { collection, query, getDocs } from 'firebase/firestore';
+import { collection, getDocs } from 'firebase/firestore';
 import { db } from '@/firebase/clientApp';
 
 interface CollectorsSectionProps {
@@ -9,47 +9,69 @@ interface CollectorsSectionProps {
 
 const CollectorsSection: React.FC<CollectorsSectionProps> = ({ collectors }) => {
   const [collectorsWithMembers, setCollectorsWithMembers] = useState<Collector[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
     const fetchMembersForCollectors = async () => {
-      const membersRef = collection(db, 'members');
-      const membersSnapshot = await getDocs(membersRef);
-      const allMembers = membersSnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() } as Member));
+      try {
+        setIsLoading(true);
+        const membersRef = collection(db, 'members');
+        const membersSnapshot = await getDocs(membersRef);
+        const allMembers = membersSnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() } as Member));
 
-      const updatedCollectors = collectors.map(collector => ({
-        ...collector,
-        members: allMembers.filter(member => member.collector === collector.id)
-      }));
+        const updatedCollectors = collectors.map(collector => ({
+          ...collector,
+          members: allMembers.filter(member => member.collector === collector.id)
+        }));
 
-      setCollectorsWithMembers(updatedCollectors);
+        setCollectorsWithMembers(updatedCollectors);
+        setIsLoading(false);
+      } catch (err) {
+        console.error("Error fetching members:", err);
+        setError("Failed to load members. Please try again later.");
+        setIsLoading(false);
+      }
     };
 
     fetchMembersForCollectors();
   }, [collectors]);
 
+  if (isLoading) {
+    return <div>Loading collectors and members...</div>;
+  }
+
+  if (error) {
+    return <div className="text-red-500">{error}</div>;
+  }
+
   return (
-    <div>
-      <h2 className="text-xl font-semibold mb-4">Collectors</h2>
-      <ul className="space-y-6">
-        {collectorsWithMembers.map(collector => (
-          <li key={collector.id} className="bg-white rounded shadow p-4">
-            <h4 className="font-bold text-lg">{collector.name || 'N/A'}</h4>
-            <p className="mb-2">Email: {collector.email || 'N/A'}</p>
-            <h5 className="font-semibold mt-4 mb-2">Members:</h5>
-            <ul className="list-disc list-inside">
+    <div className="bg-white shadow-md rounded-lg p-6">
+      <h2 className="text-2xl font-semibold mb-6">Collectors</h2>
+      {collectorsWithMembers.length === 0 ? (
+        <p>No collectors found.</p>
+      ) : (
+        <ul className="space-y-8">
+          {collectorsWithMembers.map(collector => (
+            <li key={collector.id} className="border-b pb-6 last:border-b-0">
+              <h3 className="text-xl font-bold mb-2">{collector.name || 'N/A'}</h3>
+              <p className="mb-4">Email: {collector.email || 'N/A'}</p>
+              <h4 className="font-semibold mb-2">Members:</h4>
               {collector.members && collector.members.length > 0 ? (
-                collector.members.map(member => (
-                  <li key={member.id} className="ml-4">
-                    {member.fullName} ({member.email})
-                  </li>
-                ))
+                <ul className="list-disc list-inside pl-4">
+                  {collector.members.map(member => (
+                    <li key={member.id} className="mb-1">
+                      {member.fullName} ({member.email})
+                    </li>
+                  ))}
+                </ul>
               ) : (
-                <li className="ml-4 text-gray-500">No members found</li>
+                <p className="text-gray-500 italic">No members found</p>
               )}
-            </ul>
-          </li>
-        ))}
-      </ul>
+            </li>
+          ))}
+        </ul>
+      )}
     </div>
   );
 };
