@@ -15,6 +15,10 @@ const CollectorsSectionItem: React.FC<{ collector: { name: string; members: Memb
     );
   }, [collector.members, searchTerm]);
 
+  if (filteredMembers.length === 0) {
+    return null;
+  }
+
   return (
     <li className="border-b pb-6 last:border-b-0">
       <div className="flex justify-between items-center cursor-pointer" onClick={() => setIsExpanded(!isExpanded)}>
@@ -24,19 +28,15 @@ const CollectorsSectionItem: React.FC<{ collector: { name: string; members: Memb
       </div>
       {isExpanded && (
         <div className="mt-4">
-          {filteredMembers.length > 0 ? (
-            <div className="max-h-60 overflow-y-auto pr-4">
-              <ul className="list-disc list-inside">
-                {filteredMembers.map(member => (
-                  <li key={member.id} className="mb-1">
-                    {member.name || member.fullName} - {member.memberNumber} ({member.email}) - Collector: {collector.name}
-                  </li>
-                ))}
-              </ul>
-            </div>
-          ) : (
-            <p className="text-gray-500 italic">No members found</p>
-          )}
+          <div className="max-h-60 overflow-y-auto pr-4">
+            <ul className="list-disc list-inside">
+              {filteredMembers.map(member => (
+                <li key={member.id} className="mb-1">
+                  {member.name || member.fullName} - {member.memberNumber} ({member.email})
+                </li>
+              ))}
+            </ul>
+          </div>
         </div>
       )}
     </li>
@@ -62,6 +62,18 @@ const CollectorsSection: React.FC<CollectorsSectionProps> = ({ members }) => {
       .sort((a, b) => b.members.length - a.members.length);
   }, [members]);
 
+  const filteredCollectors = useMemo(() => {
+    if (searchTerm === '') {
+      return collectorsWithMembers;
+    }
+    return collectorsWithMembers.filter(collector => 
+      collector.members.some(member => 
+        member.memberNumber.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        (member.name || member.fullName).toLowerCase().includes(searchTerm.toLowerCase())
+      )
+    );
+  }, [collectorsWithMembers, searchTerm]);
+
   return (
     <div className="bg-white shadow-md rounded-lg p-6">
       <h2 className="text-2xl font-semibold mb-6">Collectors</h2>
@@ -74,11 +86,11 @@ const CollectorsSection: React.FC<CollectorsSectionProps> = ({ members }) => {
           className="w-full px-3 py-2 border rounded-md"
         />
       </div>
-      {collectorsWithMembers.length === 0 ? (
-        <p>No collectors found.</p>
+      {filteredCollectors.length === 0 ? (
+        <p>No collectors or members found matching the search criteria.</p>
       ) : (
         <ul className="space-y-8">
-          {collectorsWithMembers.map(collector => (
+          {filteredCollectors.map(collector => (
             <CollectorsSectionItem key={collector.name} collector={collector} searchTerm={searchTerm} />
           ))}
         </ul>
