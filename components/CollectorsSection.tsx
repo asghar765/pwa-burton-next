@@ -27,7 +27,7 @@ const CollectorsSectionItem: React.FC<{ collector: { name: string; members: Memb
               <ul className="list-disc list-inside">
                 {collector.members.slice(0, visibleMembers).map(member => (
                   <li key={member.id} className="mb-1">
-                    {member.name || member.fullName} ({member.email})
+                    {member.name || member.fullName} - {member.memberNumber} ({member.email})
                   </li>
                 ))}
               </ul>
