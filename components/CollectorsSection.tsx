@@ -7,11 +7,6 @@ interface CollectorsSectionProps {
 
 const CollectorsSectionItem: React.FC<{ collector: { name: string; members: Member[] } }> = ({ collector }) => {
   const [isExpanded, setIsExpanded] = useState(false);
-  const [visibleMembers, setVisibleMembers] = useState(10);
-
-  const handleShowMore = () => {
-    setVisibleMembers(prev => Math.min(prev + 10, collector.members.length));
-  };
 
   return (
     <li className="border-b pb-6 last:border-b-0">
@@ -25,20 +20,12 @@ const CollectorsSectionItem: React.FC<{ collector: { name: string; members: Memb
           {collector.members.length > 0 ? (
             <div className="max-h-60 overflow-y-auto pr-4">
               <ul className="list-disc list-inside">
-                {collector.members.slice(0, visibleMembers).map(member => (
+                {collector.members.map(member => (
                   <li key={member.id} className="mb-1">
                     {member.name || member.fullName} - {member.memberNumber} ({member.email})
                   </li>
                 ))}
               </ul>
-              {visibleMembers < collector.members.length && (
-                <button 
-                  className="mt-2 text-blue-500 hover:underline"
-                  onClick={handleShowMore}
-                >
-                  Show more
-                </button>
-              )}
             </div>
           ) : (
             <p className="text-gray-500 italic">No members found</p>
