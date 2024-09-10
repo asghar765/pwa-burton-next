@@ -89,7 +89,10 @@ const AdminDashboard: React.FC = () => {
           memberNumber: data.memberNumber || '',
           verified: data.verified || false,
           payments: [],
-          notes: data.notes || []
+          notes: data.notes || [],
+          collector: data.collector || null,
+          dependants: data.dependants || [],
+          spouses: data.spouses || []
         } as MemberWithPayments;
       }));
       setRegistrations(registrationsSnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() } as Registration)));
