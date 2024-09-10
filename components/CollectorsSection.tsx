@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { Collector, Member } from '../types';
-import { collection, query, where, getDocs } from 'firebase/firestore';
+import { collection, query, where, getDocs, onSnapshot } from 'firebase/firestore';
 import { db } from '../firebase/clientApp';
 
 interface CollectorsSectionProps {
@@ -11,20 +11,22 @@ const CollectorsSection: React.FC<CollectorsSectionProps> = ({ collectors }) => 
   const [collectorMembers, setCollectorMembers] = useState<{ [key: string]: Member[] }>({});
 
   useEffect(() => {
-    const fetchMembers = async () => {
+    const unsubscribes = collectors.map(collector => {
       const membersRef = collection(db, 'members');
-      const membersData: { [key: string]: Member[] } = {};
+      const q = query(membersRef, where('collectorId', '==', collector.id));
 
-      for (const collector of collectors) {
-        const q = query(membersRef, where('collectorId', '==', collector.id));
-        const querySnapshot = await getDocs(q);
-        membersData[collector.id] = querySnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() } as Member));
-      }
+      return onSnapshot(q, (querySnapshot) => {
+        const members = querySnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() } as Member));
+        setCollectorMembers(prev => ({
+          ...prev,
+          [collector.id]: members
+        }));
+      });
+    });
 
-      setCollectorMembers(membersData);
+    return () => {
+      unsubscribes.forEach(unsubscribe => unsubscribe());
     };
-
-    fetchMembers();
   }, [collectors]);
 
   return (
@@ -37,11 +39,15 @@ const CollectorsSection: React.FC<CollectorsSectionProps> = ({ collectors }) => 
             <p className="mb-2">Email: {collector.email || 'N/A'}</p>
             <h5 className="font-semibold mt-4 mb-2">Members:</h5>
             <ul className="list-disc list-inside">
-              {collectorMembers[collector.id]?.map(member => (
-                <li key={member.id} className="ml-4">
-                  {member.name} ({member.email})
-                </li>
-              )) || <li className="ml-4 text-gray-500">No members found</li>}
+              {collectorMembers[collector.id]?.length > 0 ? (
+                collectorMembers[collector.id].map(member => (
+                  <li key={member.id} className="ml-4">
+                    {member.name} ({member.email})
+                  </li>
+                ))
+              ) : (
+                <li className="ml-4 text-gray-500">No members found</li>
+              )}
             </ul>
           </li>
         ))}
