@@ -419,8 +419,8 @@ const AdminDashboard: React.FC = () => {
   );
 
   const renderCollectorsSection = () => {
-    console.log('Rendering CollectorsSection with collectors:', collectors);
-    return <CollectorsSection collectors={collectors} />;
+    console.log('Rendering CollectorsSection with members:', members);
+    return <CollectorsSection members={members} />;
   };
 
   const renderRegistrationsSection = () => (
