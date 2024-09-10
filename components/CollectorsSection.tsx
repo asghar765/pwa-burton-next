@@ -25,7 +25,12 @@ const CollectorsSection: React.FC<CollectorsSectionProps> = ({ collectors }) => 
           members: allMembers.filter(member => member.collector === collector.id)
         }));
 
-        setCollectorsWithMembers(updatedCollectors);
+        // Sort collectors by number of members (descending order)
+        const sortedCollectors = updatedCollectors.sort((a, b) => 
+          (b.members?.length || 0) - (a.members?.length || 0)
+        );
+
+        setCollectorsWithMembers(sortedCollectors);
         setIsLoading(false);
       } catch (err) {
         console.error("Error fetching members:", err);
@@ -56,7 +61,9 @@ const CollectorsSection: React.FC<CollectorsSectionProps> = ({ collectors }) => 
             <li key={collector.id} className="border-b pb-6 last:border-b-0">
               <h3 className="text-xl font-bold mb-2">{collector.name || 'N/A'}</h3>
               <p className="mb-4">Email: {collector.email || 'N/A'}</p>
-              <h4 className="font-semibold mb-2">Members:</h4>
+              <h4 className="font-semibold mb-2">
+                Members: {collector.members?.length || 0}
+              </h4>
               {collector.members && collector.members.length > 0 ? (
                 <ul className="list-disc list-inside pl-4">
                   {collector.members.map(member => (
