@@ -26,6 +26,12 @@ export interface Member {
   role?: string;
   payments?: Payment[];
   notes?: Note[];
+  membershipType?: string;
+  membershipStatus?: string;
+  membershipStartDate?: string;
+  membershipEndDate?: string;
+  lastPaymentDate?: string;
+  totalPayments?: number;
 }
 
 export interface NewMember extends Omit<Member, 'id' | 'memberNumber'> {
