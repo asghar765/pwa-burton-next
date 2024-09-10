@@ -40,7 +40,7 @@ const FinanceSection: React.FC<FinanceSectionProps> = ({
   const handleAddExpense = (e: React.FormEvent) => {
     e.preventDefault();
     const amount = parseFloat(newExpenseAmount);
-    if (!isNaN(amount) && newExpenseDescription) {
+    if (!isNaN(amount) && newExpenseDescription && onAddExpense) {
       onAddExpense(amount, newExpenseDescription);
       setNewExpenseAmount('');
       setNewExpenseDescription('');
