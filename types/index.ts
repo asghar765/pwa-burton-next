@@ -79,7 +79,7 @@ export interface Collector {
   id: string;
   name: string;
   email: string;
-  // ... other collector fields
+  members?: Member[];
 }
 
 export interface Note {

@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { Collector, Member } from '../types';
-import { collection, query, where, getDocs, onSnapshot } from 'firebase/firestore';
+import { collection, query, getDocs } from 'firebase/firestore';
 import { db } from '@/firebase/clientApp';
 
 interface CollectorsSectionProps {
@@ -8,41 +8,39 @@ interface CollectorsSectionProps {
 }
 
 const CollectorsSection: React.FC<CollectorsSectionProps> = ({ collectors }) => {
-  const [collectorMembers, setCollectorMembers] = useState<{ [key: string]: Member[] }>({});
+  const [collectorsWithMembers, setCollectorsWithMembers] = useState<Collector[]>([]);
 
   useEffect(() => {
-    const unsubscribes = collectors.map(collector => {
+    const fetchMembersForCollectors = async () => {
       const membersRef = collection(db, 'members');
-      const q = query(membersRef, where('collectorId', '==', collector.id));
+      const membersSnapshot = await getDocs(membersRef);
+      const allMembers = membersSnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() } as Member));
 
-      return onSnapshot(q, (querySnapshot) => {
-        const members = querySnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() } as Member));
-        setCollectorMembers(prev => ({
-          ...prev,
-          [collector.id]: members
-        }));
-      });
-    });
+      const updatedCollectors = collectors.map(collector => ({
+        ...collector,
+        members: allMembers.filter(member => member.collector === collector.id)
+      }));
 
-    return () => {
-      unsubscribes.forEach(unsubscribe => unsubscribe());
+      setCollectorsWithMembers(updatedCollectors);
     };
+
+    fetchMembersForCollectors();
   }, [collectors]);
 
   return (
     <div>
       <h2 className="text-xl font-semibold mb-4">Collectors</h2>
       <ul className="space-y-6">
-        {collectors.map(collector => (
+        {collectorsWithMembers.map(collector => (
           <li key={collector.id} className="bg-white rounded shadow p-4">
             <h4 className="font-bold text-lg">{collector.name || 'N/A'}</h4>
             <p className="mb-2">Email: {collector.email || 'N/A'}</p>
             <h5 className="font-semibold mt-4 mb-2">Members:</h5>
             <ul className="list-disc list-inside">
-              {collectorMembers[collector.id]?.length > 0 ? (
-                collectorMembers[collector.id].map(member => (
+              {collector.members && collector.members.length > 0 ? (
+                collector.members.map(member => (
                   <li key={member.id} className="ml-4">
-                    {member.name} ({member.email})
+                    {member.fullName} ({member.email})
                   </li>
                 ))
               ) : (
