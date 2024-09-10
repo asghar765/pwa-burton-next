@@ -84,6 +84,7 @@ const AdminDashboard: React.FC = () => {
         return {
           id: doc.id,
           name: data.name || '',
+          fullName: data.fullName || data.name || '',
           email: data.email || '',
           role: data.role || '',
           memberNumber: data.memberNumber || '',
