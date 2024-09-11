@@ -55,6 +55,9 @@ const MembersSection: React.FC<MembersSectionProps> = ({
 }) => {
   const [firebaseUsers, setFirebaseUsers] = useState<FirebaseUser[]>([]);
   const [userSearchTerm, setUserSearchTerm] = useState('');
+  const [newPaymentAmounts, setNewPaymentAmounts] = useState<Record<string, string>>({});
+  const [newNote, setNewNote] = useState('');
+  const [memberToDelete, setMemberToDelete] = useState<string | null>(null);
 
   useEffect(() => {
     const fetchFirebaseUsers = async () => {
@@ -67,19 +70,11 @@ const MembersSection: React.FC<MembersSectionProps> = ({
     fetchFirebaseUsers();
   }, []);
 
-  useEffect(() => {
-    console.log('Members updated:', members);
-    members.forEach(member => {
-      console.log(`Member ${member.id} payments:`, member.payments);
-    });
-  }, [members]);
-
   const handleUpdateUserRole = async (userId: string, newRole: string) => {
     try {
       const userRef = doc(db, 'users', userId);
       await updateDoc(userRef, { role: newRole });
       
-      // Update local state
       setFirebaseUsers(prevUsers =>
         prevUsers.map(user =>
           user.id === userId ? { ...user, role: newRole } : user
@@ -93,44 +88,19 @@ const MembersSection: React.FC<MembersSectionProps> = ({
     }
   };
 
-  const filteredFirebaseUsers = useMemo(() => {
-    return firebaseUsers.filter(user => {
-      const search = userSearchTerm.toLowerCase();
-      return (
-        user.displayName?.toLowerCase().includes(search) ||
-        user.email?.toLowerCase().includes(search) ||
-        user.role?.toLowerCase().includes(search)
-      );
-    });
-  }, [firebaseUsers, userSearchTerm]);
-  const [newPaymentAmounts, setNewPaymentAmounts] = useState<Record<string, string>>({});
-  const [newNote, setNewNote] = useState('');
-  const [memberToDelete, setMemberToDelete] = useState<string | null>(null);
-
-  const membersWithPayments = useMemo(() => {
-    console.log('Recalculating membersWithPayments');
-    return members.map(member => ({
-      ...member,
-      payments: member.payments || []
-    }));
-  }, [members]);
-
   const filteredMembers = useMemo(() => {
-    console.log('Recalculating filteredMembers');
-    console.log('All members:', membersWithPayments);
-    return membersWithPayments.filter(member => {
+    return members.filter(member => {
       const search = searchTerm.toLowerCase();
       return (
         (member.name && member.name.toLowerCase().includes(search)) ||
         (member.memberNumber && member.memberNumber.toLowerCase().includes(search))
       );
     });
-  }, [membersWithPayments, searchTerm]);
+  }, [members, searchTerm]);
 
   const toggleMemberExpansion = useCallback((memberId: string) => {
     setExpandedMembers(prev => ({ ...prev, [memberId]: !prev[memberId] }));
   }, [setExpandedMembers]);
-
 
   const handleAddPayment = useCallback((memberNumber: string) => {
     const amount = parseFloat(newPaymentAmounts[memberNumber] || '0');
@@ -139,23 +109,14 @@ const MembersSection: React.FC<MembersSectionProps> = ({
         amount: amount,
         date: new Date().toISOString(),
         memberNumber: memberNumber,
-        memberId: memberNumber // Assuming memberId is the same as memberNumber
+        memberId: memberNumber
       };
-      console.log('Adding new payment:', newPayment);
       onAddPayment(memberNumber, newPayment);
-      console.log('Payment added, updating state');
-      setNewPaymentAmounts(prev => {
-        const updated = { ...prev, [memberNumber]: '' };
-        console.log('Updated newPaymentAmounts:', updated);
-        return updated;
-      });
-      // Force re-render
-      setExpandedMembers(prev => ({ ...prev }));
+      setNewPaymentAmounts(prev => ({ ...prev, [memberNumber]: '' }));
     } else {
-      console.log('Invalid payment amount:', amount);
       alert('Please enter a valid payment amount.');
     }
-  }, [newPaymentAmounts, onAddPayment, setExpandedMembers]);
+  }, [newPaymentAmounts, onAddPayment]);
 
   const handleDeleteMember = useCallback((id: string) => {
     setMemberToDelete(id);
@@ -169,8 +130,8 @@ const MembersSection: React.FC<MembersSectionProps> = ({
   }, [memberToDelete, onDeleteMember]);
 
   return (
-    <div>
-      <h2 className="text-xl font-semibold mb-4">Members</h2>
+    <div className="container mx-auto px-4">
+      <h2 className="text-2xl font-bold mb-4">Members</h2>
       <div className="mb-4 flex items-center">
         <input
           type="text"
@@ -181,267 +142,176 @@ const MembersSection: React.FC<MembersSectionProps> = ({
         />
         <MagnifyingGlassIcon className="h-5 w-5 text-gray-400" />
       </div>
-      <div className="overflow-auto max-h-[400px] border border-gray-200 rounded">
-        <ul className="space-y-4">
-          {membersWithPayments.filter(member => {
-            const search = searchTerm ? searchTerm.toLowerCase() : '';
-            return (
-              (member.name && member.name.toLowerCase().includes(search)) ||
-              (member.memberNumber && member.memberNumber.toLowerCase().includes(search))
-            );
-          }).map(member => (
-            <li key={member.id || 'temp-' + Math.random()} className="bg-white shadow-md rounded-lg p-4">
-              <div 
-                className="flex justify-between items-center cursor-pointer" 
-                onClick={() => member.id && toggleMemberExpansion(member.id)}
-              >
-                <div>
-                  <h3 className="text-xl font-bold">{member.name || 'N/A'}</h3>
-                  <p className="text-sm text-gray-500">Member No: {member.memberNumber || 'Not assigned'}</p>
-                </div>
-                <button className="text-blue-500 focus:outline-none">
-                  {member.id && expandedMembers[member.id] ? '▲' : '▼'}
-                </button>
-              </div>
-              {member.id && expandedMembers[member.id] && (
-                <div className="mt-4">
-                  <div className="grid grid-cols-2 gap-4">
-                    <div>
-                      <p><strong>Email:</strong> {member.email || 'N/A'}</p>
-                      <p><strong>Mobile No:</strong> {member.mobileNo || 'N/A'}</p>
-                      <p><strong>Address:</strong> {`${member.address || ''}, ${member.town || ''}, ${member.postCode || ''}`}</p>
-                      <p><strong>Collector:</strong> {member.collector || 'N/A'}</p>
+      <div className="overflow-x-auto">
+        <table className="min-w-full bg-white">
+          <thead>
+            <tr className="bg-gray-200 text-gray-600 uppercase text-sm leading-normal">
+              <th className="py-3 px-6 text-left">Name</th>
+              <th className="py-3 px-6 text-left">Member No</th>
+              <th className="py-3 px-6 text-left">Address</th>
+              <th className="py-3 px-6 text-left">Contact</th>
+              <th className="py-3 px-6 text-left">Collector</th>
+              <th className="py-3 px-6 text-center">Actions</th>
+            </tr>
+          </thead>
+          <tbody className="text-gray-600 text-sm font-light">
+            {filteredMembers.map(member => (
+              <React.Fragment key={member.id}>
+                <tr className="border-b border-gray-200 hover:bg-gray-100">
+                  <td className="py-3 px-6 text-left whitespace-nowrap">
+                    <div className="flex items-center">
+                      <span className="font-medium">{member.name || 'N/A'}</span>
                     </div>
-                    <div>
-                      <p><strong>Role:</strong> {member.role || 'N/A'}</p>
-                      <p><strong>Verified:</strong> {member.verified ? 'Yes' : 'No'}</p>
-                      <p><strong>Date of Birth:</strong> {member.dateOfBirth || 'N/A'}</p>
-                      <p><strong>Gender:</strong> {member.gender || 'N/A'}</p>
+                  </td>
+                  <td className="py-3 px-6 text-left">
+                    <span>{member.memberNumber || 'Not assigned'}</span>
+                  </td>
+                  <td className="py-3 px-6 text-left">
+                    <span>{`${member.address || ''}, ${member.town || ''}, ${member.postCode || ''}`}</span>
+                  </td>
+                  <td className="py-3 px-6 text-left">
+                    <span>{member.mobileNo || member.email || 'N/A'}</span>
+                  </td>
+                  <td className="py-3 px-6 text-left">
+                    <span>{member.collector || 'N/A'}</span>
+                  </td>
+                  <td className="py-3 px-6 text-center">
+                    <div className="flex item-center justify-center">
+                      <button
+                        onClick={() => toggleMemberExpansion(member.id)}
+                        className="w-4 mr-2 transform hover:text-purple-500 hover:scale-110"
+                      >
+                        {expandedMembers[member.id] ? <ChevronUpIcon /> : <ChevronDownIcon />}
+                      </button>
+                      <button
+                        onClick={() => onUpdateMember(member.id, { ...member, name: member.name + ' (updated)' })}
+                        className="w-4 mr-2 transform hover:text-yellow-500 hover:scale-110"
+                      >
+                        <span className="text-yellow-500">Edit</span>
+                      </button>
+                      <button
+                        onClick={() => handleDeleteMember(member.id)}
+                        className="w-4 mr-2 transform hover:text-red-500 hover:scale-110"
+                      >
+                        <span className="text-red-500">Delete</span>
+                      </button>
+                      <button
+                        onClick={() => onRevokeMember(member.id)}
+                        className="w-4 mr-2 transform hover:text-orange-500 hover:scale-110"
+                      >
+                        <span className="text-orange-500">Revoke</span>
+                      </button>
                     </div>
-                  </div>
-
-                  <div className="mt-4 grid grid-cols-2 gap-4">
-                    <div>
-                      <h5 className="font-semibold">Personal Information</h5>
-                      <p><strong>Full Name:</strong> {member.fullName || 'N/A'}</p>
-                      <p><strong>Date of Birth:</strong> {member.dateOfBirth || 'N/A'}</p>
-                      <p><strong>Gender:</strong> {member.gender || 'N/A'}</p>
-                      <p><strong>Marital Status:</strong> {member.maritalStatus || 'N/A'}</p>
-                      <p><strong>Place of Birth:</strong> {member.placeOfBirth || 'N/A'}</p>
-                    </div>
-                    <div>
-                      <h5 className="font-semibold">Membership Information</h5>
-                      <p><strong>Membership Info:</strong> {member.membershipInfo || 'N/A'}</p>
-                      <p><strong>Membership Type:</strong> {member.membershipType || 'N/A'}</p>
-                      <p><strong>Membership Status:</strong> {member.membershipStatus || 'N/A'}</p>
-                      <p><strong>Membership Start Date:</strong> {member.membershipStartDate || 'N/A'}</p>
-                      <p><strong>Membership End Date:</strong> {member.membershipEndDate || 'N/A'}</p>
-                    </div>
-                  </div>
-
-                  <div className="mt-4">
-                    <h5 className="font-semibold">Next of Kin</h5>
-                    <p><strong>Name:</strong> {member.nextOfKinName || 'N/A'}</p>
-                    <p><strong>Address:</strong> {member.nextOfKinAddress || 'N/A'}</p>
-                    <p><strong>Phone:</strong> {member.nextOfKinPhone || 'N/A'}</p>
-                  </div>
-
-                  <div className="mt-4">
-                    <h5 className="font-semibold">Spouse(s)</h5>
-                    {member.spouses && member.spouses.length > 0 ? (
-                      member.spouses.map((spouse, index) => (
-                        <div key={index} className="ml-4">
-                          <p><strong>Name:</strong> {spouse.name?.value || 'N/A'}</p>
-                          <p><strong>Date of Birth:</strong> {spouse.dateOfBirth?.value || 'N/A'}</p>
+                  </td>
+                </tr>
+                {expandedMembers[member.id] && (
+                  <tr>
+                    <td colSpan={6}>
+                      <div className="p-4 bg-gray-50">
+                        <h4 className="font-semibold mb-2">Member Details</h4>
+                        <div className="grid grid-cols-2 gap-4">
+                          <div>
+                            <p><strong>Full Name:</strong> {member.fullName || 'N/A'}</p>
+                            <p><strong>Date of Birth:</strong> {member.dateOfBirth || 'N/A'}</p>
+                            <p><strong>Gender:</strong> {member.gender || 'N/A'}</p>
+                            <p><strong>Marital Status:</strong> {member.maritalStatus || 'N/A'}</p>
+                          </div>
+                          <div>
+                            <p><strong>Membership Type:</strong> {member.membershipType || 'N/A'}</p>
+                            <p><strong>Membership Status:</strong> {member.membershipStatus || 'N/A'}</p>
+                            <p><strong>Membership Start Date:</strong> {member.membershipStartDate || 'N/A'}</p>
+                            <p><strong>Membership End Date:</strong> {member.membershipEndDate || 'N/A'}</p>
+                          </div>
                         </div>
-                      ))
-                    ) : (
-                      <p className="ml-4">No spouse information available</p>
-                    )}
-                  </div>
-
-                  <div className="mt-4">
-                    <h5 className="font-semibold">Dependant(s)</h5>
-                    {member.dependants && member.dependants.length > 0 ? (
-                      member.dependants.map((dependant, index) => (
-                        <div key={index} className="ml-4">
-                          <p><strong>Name:</strong> {dependant.name || 'N/A'}</p>
-                          <p><strong>Date of Birth:</strong> {dependant.dateOfBirth || 'N/A'}</p>
-                          <p><strong>Gender:</strong> {dependant.gender || 'N/A'}</p>
-                          <p><strong>Category:</strong> {dependant.category || 'N/A'}</p>
-                        </div>
-                      ))
-                    ) : (
-                      <p className="ml-4">No dependant information available</p>
-                    )}
-                  </div>
-
-                  <div className="mt-4">
-                    <h5 className="font-semibold">Financial Information</h5>
-                    <p><strong>Last Payment Date:</strong> {member.lastPaymentDate || 'N/A'}</p>
-                    <p><strong>Total Payments:</strong> {member.totalPayments !== undefined ? `£${member.totalPayments.toFixed(2)}` : 'N/A'}</p>
-                  </div>
-
-                  <div className="mt-4 flex space-x-2">
-                    <button onClick={() => onUpdateMember(member.id, { ...member, name: member.name + ' (updated)' })} className="px-2 py-1 bg-yellow-500 text-white rounded hover:bg-yellow-600">
-                      Edit
-                    </button>
-                    <button onClick={() => handleDeleteMember(member.id)} className="px-2 py-1 bg-red-500 text-white rounded hover:bg-red-600">
-                      Delete
-                    </button>
-                    <button onClick={() => onRevokeMember(member.id)} className="px-2 py-1 bg-orange-500 text-white rounded hover:bg-orange-600">
-                      Revoke
-                    </button>
-                  </div>
-
-                  <div className="mt-4">
-                    <h5 className="font-semibold">Payment History</h5>
-                    {member.payments && member.payments.length > 0 ? (
-                      <div className="overflow-x-auto">
-                        <table className="w-full mt-2">
-                          <thead>
-                            <tr className="bg-gray-100">
-                              <th className="text-left p-2">Date</th>
-                              <th className="text-left p-2">Amount</th>
-                              <th className="text-left p-2">Member No</th>
-                              <th className="text-left p-2">Status</th>
-                            </tr>
-                          </thead>
-                          <tbody>
-                            {[...member.payments]
-                              .sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime())
-                              .map((payment, index) => (
-                                <tr key={`${member.memberNumber}-${payment.date}-${index}`} className="border-b">
-                                  <td className="p-2">{new Date(payment.date).toLocaleDateString()}</td>
-                                  <td className="p-2">£{typeof payment.amount === 'number' ? payment.amount.toFixed(2) : payment.amount}</td>
-                                  <td className="p-2">{member.memberNumber || 'N/A'}</td>
-                                  <td className="p-2">
-                                    {!member.memberNumber ? (
-                                      <span className="text-red-500">Missing Member No</span>
-                                    ) : null}
-                                  </td>
+                        
+                        <h4 className="font-semibold mt-4 mb-2">Payment History</h4>
+                        {member.payments && member.payments.length > 0 ? (
+                          <table className="min-w-full">
+                            <thead>
+                              <tr className="bg-gray-200">
+                                <th className="py-2 px-4 text-left">Date</th>
+                                <th className="py-2 px-4 text-left">Amount</th>
+                              </tr>
+                            </thead>
+                            <tbody>
+                              {member.payments.map((payment, index) => (
+                                <tr key={index} className="border-b">
+                                  <td className="py-2 px-4">{new Date(payment.date).toLocaleDateString()}</td>
+                                  <td className="py-2 px-4">£{payment.amount.toFixed(2)}</td>
                                 </tr>
                               ))}
-                          </tbody>
-                        </table>
-                      </div>
-                    ) : (
-                      <p>No payments recorded for this member.</p>
-                    )}
-                  </div>
-
-                  <div className="mt-4">
-                    <h5 className="font-semibold">Add Payment</h5>
-                    <div className="flex items-center mt-2">
-                      <input
-                        type="number"
-                        value={newPaymentAmounts[member.memberNumber || ''] || ''}
-                        onChange={(e) => setNewPaymentAmounts(prev => ({ ...prev, [member.memberNumber || '']: e.target.value }))}
-                        placeholder="Amount"
-                        className="p-2 border border-gray-300 rounded mr-2 flex-grow"
-                        step="0.01"
-                        min="0"
-                      />
-                      <button
-                        onClick={() => handleAddPayment(member.memberNumber || '')}
-                        className="px-4 py-2 bg-green-500 text-white rounded hover:bg-green-600"
-                        disabled={!newPaymentAmounts[member.memberNumber || ''] || parseFloat(newPaymentAmounts[member.memberNumber || '']) <= 0 || !member.memberNumber}
-                      >
-                        Add Payment
-                      </button>
-                    </div>
-                  </div>
-
-                  {currentUserRole === 'admin' && (
-                    <div className="mt-4">
-                      <h5 className="font-semibold">Admin Notes</h5>
-                      <ul className="list-disc list-inside mt-2">
-                        {member.notes && member.notes.length > 0 ? (
-                          member.notes.map((note: Note, index: number) => (
-                            <li key={index}>
-                              <span className="font-medium">{new Date(note.date).toLocaleDateString()}: </span>
-                              {note.content}
-                            </li>
-                          ))
+                            </tbody>
+                          </table>
                         ) : (
-                          <li>No notes available</li>
+                          <p>No payments recorded for this member.</p>
                         )}
-                      </ul>
-                      <textarea
-                        value={newNote}
-                        onChange={(e) => setNewNote(e.target.value)}
-                        placeholder="Add a note"
-                        className="p-2 border border-gray-300 rounded w-full mt-2"
-                      />
-                      <button
-                        onClick={() => {
-                          if (newNote.trim()) {
-                            onAddNote(member.id, newNote);
-                            setNewNote('');
-                          } else {
-                            alert('Please enter a note before adding.');
-                          }
-                        }}
-                        className="px-2 py-1 bg-purple-500 text-white rounded hover:bg-purple-600 mt-2"
-                      >
-                        Add Note
-                      </button>
-                    </div>
-                  )}
-                </div>
-              )}
-            </li>
-          ))}
-        </ul>
 
-      {/* Logged Users Section */}
-      <div className="mt-8">
-        <h2 className="text-xl font-semibold mb-4">Logged Users</h2>
-        <div className="mb-4 flex items-center">
-          <input
-            type="text"
-            value={userSearchTerm}
-            onChange={(e) => setUserSearchTerm(e.target.value)}
-            placeholder="Search logged users"
-            className="p-2 border border-gray-300 rounded mr-2 flex-grow"
-          />
-          <MagnifyingGlassIcon className="h-5 w-5 text-gray-400" />
-        </div>
-        {filteredFirebaseUsers.length > 0 ? (
-          <ul className="space-y-4">
-            {filteredFirebaseUsers.map(user => (
-              <li key={user.id} className="bg-white rounded shadow p-4">
-                <div className="flex items-center justify-between">
-                  <div className="flex items-center">
-                    {user.photoURL && (
-                      <Image src={user.photoURL} alt={user.displayName || 'User'} width={40} height={40} className="rounded-full mr-4" />
-                    )}
-                    <div>
-                      <h4 className="font-bold">{user.displayName || 'N/A'}</h4>
-                      <p>Email: {user.email || 'N/A'}</p>
-                      <p>Role: {user.role || 'N/A'}</p>
-                      <p>Created: {user.createdAt ? new Date(user.createdAt).toLocaleDateString() : 'N/A'}</p>
-                    </div>
-                  </div>
-                  <div>
-                    <select
-                      value={user.role || ''}
-                      onChange={(e) => handleUpdateUserRole(user.id, e.target.value)}
-                      className="p-2 border border-gray-300 rounded"
-                    >
-                      <option value="">Select Role</option>
-                      <option value="member">Member</option>
-                      <option value="collector">Collector</option>
-                      <option value="admin">Admin</option>
-                    </select>
-                  </div>
-                </div>
-              </li>
+                        <div className="mt-4">
+                          <h4 className="font-semibold mb-2">Add Payment</h4>
+                          <div className="flex items-center">
+                            <input
+                              type="number"
+                              value={newPaymentAmounts[member.memberNumber || ''] || ''}
+                              onChange={(e) => setNewPaymentAmounts(prev => ({ ...prev, [member.memberNumber || '']: e.target.value }))}
+                              placeholder="Amount"
+                              className="p-2 border border-gray-300 rounded mr-2 flex-grow"
+                              step="0.01"
+                              min="0"
+                            />
+                            <button
+                              onClick={() => handleAddPayment(member.memberNumber || '')}
+                              className="px-4 py-2 bg-green-500 text-white rounded hover:bg-green-600"
+                              disabled={!newPaymentAmounts[member.memberNumber || ''] || parseFloat(newPaymentAmounts[member.memberNumber || '']) <= 0 || !member.memberNumber}
+                            >
+                              Add Payment
+                            </button>
+                          </div>
+                        </div>
+
+                        {currentUserRole === 'admin' && (
+                          <div className="mt-4">
+                            <h4 className="font-semibold mb-2">Admin Notes</h4>
+                            <ul className="list-disc list-inside">
+                              {member.notes && member.notes.length > 0 ? (
+                                member.notes.map((note: Note, index: number) => (
+                                  <li key={index}>
+                                    <span className="font-medium">{new Date(note.date).toLocaleDateString()}: </span>
+                                    {note.content}
+                                  </li>
+                                ))
+                              ) : (
+                                <li>No notes available</li>
+                              )}
+                            </ul>
+                            <textarea
+                              value={newNote}
+                              onChange={(e) => setNewNote(e.target.value)}
+                              placeholder="Add a note"
+                              className="p-2 border border-gray-300 rounded w-full mt-2"
+                            />
+                            <button
+                              onClick={() => {
+                                if (newNote.trim()) {
+                                  onAddNote(member.id, newNote);
+                                  setNewNote('');
+                                } else {
+                                  alert('Please enter a note before adding.');
+                                }
+                              }}
+                              className="px-4 py-2 bg-purple-500 text-white rounded hover:bg-purple-600 mt-2"
+                            >
+                              Add Note
+                            </button>
+                          </div>
+                        )}
+                      </div>
+                    </td>
+                  </tr>
+                )}
+              </React.Fragment>
             ))}
-          </ul>
-        ) : (
-          <p>No logged users found.</p>
-        )}
+          </tbody>
+        </table>
       </div>
 
       {/* Delete Confirmation Dialog */}
