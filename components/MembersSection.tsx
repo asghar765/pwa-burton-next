@@ -472,4 +472,4 @@ const MembersSection: React.FC<MembersSectionProps> = ({
   );
 };
 
-export { MembersSection, CollectorsSection };
+export { MembersSection, CollectorsSection, SettingsSection };
