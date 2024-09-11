@@ -176,30 +176,43 @@ const MembersSection: React.FC<MembersSectionProps> = ({
                     <span>{member.collector || 'N/A'}</span>
                   </td>
                   <td className="py-3 px-6 text-center">
-                    <div className="flex item-center justify-center">
+                    <div className="flex items-center justify-center space-x-2">
                       <button
                         onClick={() => toggleMemberExpansion(member.id)}
-                        className="w-4 mr-2 transform hover:text-purple-500 hover:scale-110"
+                        className="p-1 bg-blue-100 text-blue-600 rounded hover:bg-blue-200 transition-colors duration-200"
                       >
-                        {expandedMembers[member.id] ? <ChevronUpIcon /> : <ChevronDownIcon />}
+                        {expandedMembers[member.id] ? (
+                          <ChevronUpIcon className="h-5 w-5" />
+                        ) : (
+                          <ChevronDownIcon className="h-5 w-5" />
+                        )}
                       </button>
                       <button
                         onClick={() => onUpdateMember(member.id, { ...member, name: member.name + ' (updated)' })}
-                        className="w-4 mr-2 transform hover:text-yellow-500 hover:scale-110"
+                        className="p-1 bg-yellow-100 text-yellow-600 rounded hover:bg-yellow-200 transition-colors duration-200"
                       >
-                        <span className="text-yellow-500">Edit</span>
+                        <span className="sr-only">Edit</span>
+                        <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+                          <path d="M13.586 3.586a2 2 0 112.828 2.828l-.793.793-2.828-2.828.793-.793zM11.379 5.793L3 14.172V17h2.828l8.38-8.379-2.83-2.828z" />
+                        </svg>
                       </button>
                       <button
                         onClick={() => handleDeleteMember(member.id)}
-                        className="w-4 mr-2 transform hover:text-red-500 hover:scale-110"
+                        className="p-1 bg-red-100 text-red-600 rounded hover:bg-red-200 transition-colors duration-200"
                       >
-                        <span className="text-red-500">Delete</span>
+                        <span className="sr-only">Delete</span>
+                        <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+                          <path fillRule="evenodd" d="M9 2a1 1 0 00-.894.553L7.382 4H4a1 1 0 000 2v10a2 2 0 002 2h8a2 2 0 002-2V6a1 1 0 100-2h-3.382l-.724-1.447A1 1 0 0011 2H9zM7 8a1 1 0 012 0v6a1 1 0 11-2 0V8zm5-1a1 1 0 00-1 1v6a1 1 0 102 0V8a1 1 0 00-1-1z" clipRule="evenodd" />
+                        </svg>
                       </button>
                       <button
                         onClick={() => onRevokeMember(member.id)}
-                        className="w-4 mr-2 transform hover:text-orange-500 hover:scale-110"
+                        className="p-1 bg-orange-100 text-orange-600 rounded hover:bg-orange-200 transition-colors duration-200"
                       >
-                        <span className="text-orange-500">Revoke</span>
+                        <span className="sr-only">Revoke</span>
+                        <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+                          <path fillRule="evenodd" d="M13.477 14.89A6 6 0 015.11 6.524l8.367 8.368zm1.414-1.414L6.524 5.11a6 6 0 018.367 8.367zM18 10a8 8 0 11-16 0 8 8 0 0116 0z" clipRule="evenodd" />
+                        </svg>
                       </button>
                     </div>
                   </td>
