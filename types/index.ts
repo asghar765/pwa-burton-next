@@ -113,6 +113,34 @@ export interface FirebaseUser {
   email: string;
   photoURL: string;
   role: string;
+  providerData?: {
+    providerId: string;
+    uid: string;
+    displayName: string;
+    email: string;
+    phoneNumber: string | null;
+    photoURL: string;
+  }[];
+}
+
+export interface LoggedUser {
+  id: string;
+  createdAt: {
+    seconds: number;
+    nanoseconds: number;
+  };
+  displayName: string;
+  email: string;
+  photoURL: string;
+  role: string;
+  providerData?: {
+    providerId: string;
+    uid: string;
+    displayName: string;
+    email: string;
+    phoneNumber: string | null;
+    photoURL: string;
+  }[];
 }
 
 export interface Collector {

@@ -18,17 +18,10 @@ import ProfileSection from '../../components/ProfileSection';
 import ErrorBoundary from '../../components/ErrorBoundary';
 import { v4 as uuidv4 } from 'uuid';
 
-interface FirebaseUser {
-  id: string;
-  createdAt: string;
-  displayName: string;
-  email: string;
-  photoURL: string;
-  role: string;
-}
+import { FirebaseUser, LoggedUser } from '../../types';
 
 const AdminDashboard: React.FC = () => {
-  const { user, userRole } = useAuth();
+  const { user, userRole } = useAuth() as { user: LoggedUser | null; userRole: string | null };
   const router = useRouter();
   const [loading, setLoading] = useState(true);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
