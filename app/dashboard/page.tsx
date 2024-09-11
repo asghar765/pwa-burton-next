@@ -8,7 +8,7 @@ import { useAuth } from '../../context/authContext';
 import { Member, MemberWithPayments, Registration, Collector, Note, Payment, Expense } from '../../types';
 import DashboardSection from '../../components/DashboardSection';
 import { groupBy } from 'lodash';
-import MembersSection from '../../components/MembersSection';
+import { MembersSection } from '../../components/MembersSection';
 import { MembersSectionProps } from '../../types';
 import CollectorsSection from '../../components/CollectorsSection';
 import RegistrationsSection from '../../components/RegistrationsSection';
