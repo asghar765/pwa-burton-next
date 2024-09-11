@@ -1,6 +1,6 @@
 import React, { useState, useCallback, useMemo, useEffect } from 'react';
 import Image from 'next/image';
-import { Member, Payment, Note, FirebaseUser, NewMember } from '../types';
+import { Member, Payment, Note, FirebaseUser, NewMember, Collector } from '../types';
 import { Dialog } from '@headlessui/react';
 import { MagnifyingGlassIcon, ChevronDownIcon, ChevronUpIcon } from '@heroicons/react/24/solid';
 import { collection, getDocs, doc, updateDoc, addDoc } from 'firebase/firestore';
@@ -38,6 +38,123 @@ export interface MembersSectionProps {
   onAddNote: (memberId: string, note: string) => void;
   onUpdateUserRole: (userId: string, newRole: string) => void;
 }
+
+export interface CollectorsSectionProps {
+  collectors: Collector[];
+  searchTerm: string;
+  setSearchTerm: (term: string) => void;
+  expandedCollectors: Record<string, boolean>;
+  setExpandedCollectors: React.Dispatch<React.SetStateAction<Record<string, boolean>>>;
+}
+
+const CollectorsSection: React.FC<CollectorsSectionProps> = ({
+  collectors,
+  searchTerm,
+  setSearchTerm,
+  expandedCollectors,
+  setExpandedCollectors,
+}) => {
+  const filteredCollectors = useMemo(() => {
+    return collectors.filter(collector => {
+      const search = searchTerm.toLowerCase();
+      return (
+        (collector.name && collector.name.toLowerCase().includes(search)) ||
+        (collector.id && collector.id.toLowerCase().includes(search))
+      );
+    });
+  }, [collectors, searchTerm]);
+
+  const toggleCollectorExpansion = useCallback((collectorId: string) => {
+    setExpandedCollectors(prev => ({ ...prev, [collectorId]: !prev[collectorId] }));
+  }, [setExpandedCollectors]);
+
+  return (
+    <div className="container mx-auto px-4">
+      <h2 className="text-2xl font-bold mb-4">Collectors</h2>
+      <div className="mb-4 flex items-center">
+        <input
+          type="text"
+          value={searchTerm}
+          onChange={(e) => setSearchTerm(e.target.value)}
+          placeholder="Search by member ID or name"
+          className="p-2 border border-gray-300 rounded mr-2 flex-grow"
+        />
+        <MagnifyingGlassIcon className="h-5 w-5 text-gray-400" />
+      </div>
+      <div className="overflow-x-auto">
+        <table className="min-w-full bg-white">
+          <thead>
+            <tr className="bg-gray-200 text-gray-600 uppercase text-sm leading-normal">
+              <th className="py-3 px-6 text-left">Name</th>
+              <th className="py-3 px-6 text-left">Member ID</th>
+              <th className="py-3 px-6 text-left">Email</th>
+              <th className="py-3 px-6 text-left">Contact Number</th>
+              <th className="py-3 px-6 text-left">Address</th>
+              <th className="py-3 px-6 text-center">Actions</th>
+            </tr>
+          </thead>
+          <tbody className="text-gray-600 text-sm font-light">
+            {filteredCollectors.map(collector => (
+              <React.Fragment key={collector.id}>
+                <tr className="border-b border-gray-200 hover:bg-gray-100">
+                  <td className="py-3 px-6 text-left whitespace-nowrap">
+                    <div className="flex items-center">
+                      <span className="font-medium">{collector.name || 'N/A'}</span>
+                    </div>
+                  </td>
+                  <td className="py-3 px-6 text-left">
+                    <span>{collector.id || 'Not assigned'}</span>
+                  </td>
+                  <td className="py-3 px-6 text-left">
+                    <span>{collector.email || 'N/A'}</span>
+                  </td>
+                  <td className="py-3 px-6 text-left">
+                    <span>{collector.contactNumber || 'N/A'}</span>
+                  </td>
+                  <td className="py-3 px-6 text-left">
+                    <span>{collector.address || 'N/A'}</span>
+                  </td>
+                  <td className="py-3 px-6 text-center">
+                    <div className="flex items-center justify-center">
+                      <button
+                        onClick={() => toggleCollectorExpansion(collector.id)}
+                        className="p-1 bg-blue-100 text-blue-600 rounded hover:bg-blue-200 transition-colors duration-200"
+                      >
+                        {expandedCollectors[collector.id] ? (
+                          <ChevronUpIcon className="h-5 w-5" />
+                        ) : (
+                          <ChevronDownIcon className="h-5 w-5" />
+                        )}
+                      </button>
+                    </div>
+                  </td>
+                </tr>
+                {expandedCollectors[collector.id] && (
+                  <tr>
+                    <td colSpan={6}>
+                      <div className="p-4 bg-gray-50">
+                        <h4 className="font-semibold mb-2">Assigned Members</h4>
+                        {collector.members && collector.members.length > 0 ? (
+                          <ul className="list-disc list-inside">
+                            {collector.members.map((member, index) => (
+                              <li key={index}>{member.name} (ID: {member.id})</li>
+                            ))}
+                          </ul>
+                        ) : (
+                          <p>No members assigned to this collector.</p>
+                        )}
+                      </div>
+                    </td>
+                  </tr>
+                )}
+              </React.Fragment>
+            ))}
+          </tbody>
+        </table>
+      </div>
+    </div>
+  );
+};
 
 const MembersSection: React.FC<MembersSectionProps> = ({
   members,
@@ -355,4 +472,4 @@ const MembersSection: React.FC<MembersSectionProps> = ({
   );
 };
 
-export default MembersSection;
+export { MembersSection, CollectorsSection };

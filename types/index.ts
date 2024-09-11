@@ -114,3 +114,12 @@ export interface FirebaseUser {
   photoURL: string;
   role: string;
 }
+
+export interface Collector {
+  id: string;
+  name: string;
+  email: string;
+  contactNumber?: string;
+  address?: string;
+  members?: Member[];
+}
