@@ -264,8 +264,8 @@ const MembersSection: React.FC<MembersSectionProps> = ({
       </div>
       <div className="overflow-x-auto">
         <table className="min-w-full bg-white">
-          <thead>
-            <tr className="bg-gray-200 text-gray-600 uppercase text-sm leading-normal">
+          <thead className="sticky top-0 bg-gray-200">
+            <tr className="text-gray-600 uppercase text-sm leading-normal">
               <th className="py-3 px-6 text-left">Name</th>
               <th className="py-3 px-6 text-left">Member No</th>
               <th className="py-3 px-6 text-left">Address</th>
@@ -275,7 +275,7 @@ const MembersSection: React.FC<MembersSectionProps> = ({
             </tr>
           </thead>
           <tbody className="text-gray-600 text-sm font-light">
-            {filteredMembers.slice(0, 5).map(member => (
+            {filteredMembers.map(member => (
               <React.Fragment key={member.id}>
                 <tr className="border-b border-gray-200 hover:bg-gray-100">
                   <td className="py-3 px-6 text-left whitespace-nowrap">
