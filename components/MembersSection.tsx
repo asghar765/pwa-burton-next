@@ -182,209 +182,217 @@ const MembersSection: React.FC<MembersSectionProps> = ({
         <MagnifyingGlassIcon className="h-5 w-5 text-gray-400" />
       </div>
       <div className="overflow-auto max-h-[400px] border border-gray-200 rounded">
-        <table className="w-full">
-          <thead className="bg-gray-100 sticky top-0">
-            <tr>
-              <th className="p-2 text-left">Name</th>
-              <th className="p-2 text-left">Member No</th>
-              <th className="p-2 text-left">Actions</th>
-            </tr>
-          </thead>
-          <tbody>
-            {membersWithPayments.filter(member => {
-              const search = searchTerm ? searchTerm.toLowerCase() : '';
-              return (
-                (member.name && member.name.toLowerCase().includes(search)) ||
-                (member.memberNumber && member.memberNumber.toLowerCase().includes(search))
-              );
-            }).map(member => (
-              <React.Fragment key={member.id || 'temp-' + Math.random()}>
-                <tr className="border-b border-gray-200">
-                  <td className="p-2">{member.name || 'N/A'}</td>
-                  <td className="p-2">{member.memberNumber || 'Not assigned'}</td>
-                  <td className="p-2">
-                    <button
-                      onClick={() => member.id && toggleMemberExpansion(member.id)}
-                      className="px-2 py-1 bg-blue-500 text-white rounded hover:bg-blue-600"
-                    >
-                      {member.id && expandedMembers[member.id] ? 'Hide Details' : 'Show Details'}
-                    </button>
-                  </td>
-                </tr>
-                {member.id && expandedMembers[member.id] && (
-                  <tr>
-                    <td colSpan={3} className="p-4 bg-gray-50">
-                      <div>
-                        <p><strong>Member No:</strong> {member.memberNumber || 'N/A'}</p>
-                        <p><strong>Name:</strong> {member.name || 'N/A'}</p>
-                        <p><strong>Email:</strong> {member.email || 'N/A'}</p>
-                        <p><strong>Role:</strong> {member.role || 'N/A'}</p>
-                        <p><strong>Address:</strong> {member.address || 'N/A'}</p>
-                        <p><strong>Collector:</strong> {member.collector || 'N/A'}</p>
-                        <p><strong>Verified:</strong> {member.verified ? 'Yes' : 'No'}</p>
-
-                {/* Keep existing fields */}
-                <p><strong>Full Name:</strong> {member.fullName || 'N/A'}</p>
-                <p><strong>Date of Birth:</strong> {member.dateOfBirth || 'N/A'}</p>
-                <p><strong>Gender:</strong> {member.gender || 'N/A'}</p>
-                <p><strong>Marital Status:</strong> {member.maritalStatus || 'N/A'}</p>
-                <p><strong>Membership Info:</strong> {member.membershipInfo || 'N/A'}</p>
-                <p><strong>Mobile No:</strong> {member.mobileNo || 'N/A'}</p>
-                <p><strong>Next of Kin Name:</strong> {member.nextOfKinName || 'N/A'}</p>
-                <p><strong>Next of Kin Address:</strong> {member.nextOfKinAddress || 'N/A'}</p>
-                <p><strong>Next of Kin Phone:</strong> {member.nextOfKinPhone || 'N/A'}</p>
-                <p><strong>Place of Birth:</strong> {member.placeOfBirth || 'N/A'}</p>
-                <p><strong>Post Code:</strong> {member.postCode || 'N/A'}</p>
-                <p><strong>Town:</strong> {member.town || 'N/A'}</p>
-                <p><strong>Membership Type:</strong> {member.membershipType || 'N/A'}</p>
-                <p><strong>Membership Status:</strong> {member.membershipStatus || 'N/A'}</p>
-                <p><strong>Membership Start Date:</strong> {member.membershipStartDate || 'N/A'}</p>
-                <p><strong>Membership End Date:</strong> {member.membershipEndDate || 'N/A'}</p>
-                <p><strong>Last Payment Date:</strong> {member.lastPaymentDate || 'N/A'}</p>
-                <p><strong>Total Payments:</strong> {member.totalPayments !== undefined ? `£${member.totalPayments.toFixed(2)}` : 'N/A'}</p>
-
-                <h5 className="font-semibold mt-4">Spouse(s)</h5>
-                {member.spouses && member.spouses.length > 0 ? (
-                  member.spouses.map((spouse, index) => (
-                    <div key={index} className="ml-4">
-                      <p><strong>Name:</strong> {spouse.name?.value || 'N/A'}</p>
-                      <p><strong>Date of Birth:</strong> {spouse.dateOfBirth?.value || 'N/A'}</p>
-                    </div>
-                  ))
-                ) : (
-                  <p className="ml-4">No spouse information available</p>
-                )}
-
-                <h5 className="font-semibold mt-4">Dependant(s)</h5>
-                {member.dependants && member.dependants.length > 0 ? (
-                  member.dependants.map((dependant, index) => (
-                    <div key={index} className="ml-4">
-                      <p><strong>Name:</strong> {dependant.name || 'N/A'}</p>
-                      <p><strong>Date of Birth:</strong> {dependant.dateOfBirth || 'N/A'}</p>
-                      <p><strong>Gender:</strong> {dependant.gender || 'N/A'}</p>
-                      <p><strong>Category:</strong> {dependant.category || 'N/A'}</p>
-                    </div>
-                  ))
-                ) : (
-                  <p className="ml-4">No dependant information available</p>
-                )}
-
-                <div className="mt-2">
-                  <button onClick={() => onUpdateMember(member.id, { ...member, name: member.name + ' (updated)' })} className="px-2 py-1 bg-yellow-500 text-white rounded hover:bg-yellow-600 mr-2">
-                    Edit
-                  </button>
-                  <button onClick={() => handleDeleteMember(member.id)} className="px-2 py-1 bg-red-500 text-white rounded hover:bg-red-600 mr-2">
-                    Delete
-                  </button>
-                  <button onClick={() => onRevokeMember(member.id)} className="px-2 py-1 bg-orange-500 text-white rounded hover:bg-orange-600">
-                    Revoke
-                  </button>
+        <ul className="space-y-4">
+          {membersWithPayments.filter(member => {
+            const search = searchTerm ? searchTerm.toLowerCase() : '';
+            return (
+              (member.name && member.name.toLowerCase().includes(search)) ||
+              (member.memberNumber && member.memberNumber.toLowerCase().includes(search))
+            );
+          }).map(member => (
+            <li key={member.id || 'temp-' + Math.random()} className="bg-white shadow-md rounded-lg p-4">
+              <div 
+                className="flex justify-between items-center cursor-pointer" 
+                onClick={() => member.id && toggleMemberExpansion(member.id)}
+              >
+                <div>
+                  <h3 className="text-xl font-bold">{member.name || 'N/A'}</h3>
+                  <p className="text-sm text-gray-500">Member No: {member.memberNumber || 'Not assigned'}</p>
                 </div>
-
-                {/* Payment History */}
+                <button className="text-blue-500 focus:outline-none">
+                  {member.id && expandedMembers[member.id] ? '▲' : '▼'}
+                </button>
+              </div>
+              {member.id && expandedMembers[member.id] && (
                 <div className="mt-4">
-                  <h5 className="font-semibold">Payment History</h5>
-                  {member.payments && member.payments.length > 0 ? (
-                    <table className="w-full mt-2">
-                      <thead>
-                        <tr>
-                          <th className="text-left">Date</th>
-                          <th className="text-left">Amount</th>
-                          <th className="text-left">Member No</th>
-                          <th className="text-left">Status</th>
-                        </tr>
-                      </thead>
-                      <tbody>
-                        {[...member.payments]
-                          .sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime())
-                          .map((payment, index) => (
-                            <tr key={`${member.memberNumber}-${payment.date}-${index}`}>
-                              <td>{new Date(payment.date).toLocaleDateString()}</td>
-                              <td>£{typeof payment.amount === 'number' ? payment.amount.toFixed(2) : payment.amount}</td>
-                              <td>{member.memberNumber || 'N/A'}</td>
-                              <td>
-                                {!member.memberNumber ? (
-                                  <span className="text-red-500">Missing Member No</span>
-                                ) : null}
-                              </td>
+                  <div className="grid grid-cols-2 gap-4">
+                    <div>
+                      <p><strong>Email:</strong> {member.email || 'N/A'}</p>
+                      <p><strong>Mobile No:</strong> {member.mobileNo || 'N/A'}</p>
+                      <p><strong>Address:</strong> {`${member.address || ''}, ${member.town || ''}, ${member.postCode || ''}`}</p>
+                      <p><strong>Collector:</strong> {member.collector || 'N/A'}</p>
+                    </div>
+                    <div>
+                      <p><strong>Role:</strong> {member.role || 'N/A'}</p>
+                      <p><strong>Verified:</strong> {member.verified ? 'Yes' : 'No'}</p>
+                      <p><strong>Date of Birth:</strong> {member.dateOfBirth || 'N/A'}</p>
+                      <p><strong>Gender:</strong> {member.gender || 'N/A'}</p>
+                    </div>
+                  </div>
+
+                  <div className="mt-4 grid grid-cols-2 gap-4">
+                    <div>
+                      <h5 className="font-semibold">Personal Information</h5>
+                      <p><strong>Full Name:</strong> {member.fullName || 'N/A'}</p>
+                      <p><strong>Date of Birth:</strong> {member.dateOfBirth || 'N/A'}</p>
+                      <p><strong>Gender:</strong> {member.gender || 'N/A'}</p>
+                      <p><strong>Marital Status:</strong> {member.maritalStatus || 'N/A'}</p>
+                      <p><strong>Place of Birth:</strong> {member.placeOfBirth || 'N/A'}</p>
+                    </div>
+                    <div>
+                      <h5 className="font-semibold">Membership Information</h5>
+                      <p><strong>Membership Info:</strong> {member.membershipInfo || 'N/A'}</p>
+                      <p><strong>Membership Type:</strong> {member.membershipType || 'N/A'}</p>
+                      <p><strong>Membership Status:</strong> {member.membershipStatus || 'N/A'}</p>
+                      <p><strong>Membership Start Date:</strong> {member.membershipStartDate || 'N/A'}</p>
+                      <p><strong>Membership End Date:</strong> {member.membershipEndDate || 'N/A'}</p>
+                    </div>
+                  </div>
+
+                  <div className="mt-4">
+                    <h5 className="font-semibold">Next of Kin</h5>
+                    <p><strong>Name:</strong> {member.nextOfKinName || 'N/A'}</p>
+                    <p><strong>Address:</strong> {member.nextOfKinAddress || 'N/A'}</p>
+                    <p><strong>Phone:</strong> {member.nextOfKinPhone || 'N/A'}</p>
+                  </div>
+
+                  <div className="mt-4">
+                    <h5 className="font-semibold">Spouse(s)</h5>
+                    {member.spouses && member.spouses.length > 0 ? (
+                      member.spouses.map((spouse, index) => (
+                        <div key={index} className="ml-4">
+                          <p><strong>Name:</strong> {spouse.name?.value || 'N/A'}</p>
+                          <p><strong>Date of Birth:</strong> {spouse.dateOfBirth?.value || 'N/A'}</p>
+                        </div>
+                      ))
+                    ) : (
+                      <p className="ml-4">No spouse information available</p>
+                    )}
+                  </div>
+
+                  <div className="mt-4">
+                    <h5 className="font-semibold">Dependant(s)</h5>
+                    {member.dependants && member.dependants.length > 0 ? (
+                      member.dependants.map((dependant, index) => (
+                        <div key={index} className="ml-4">
+                          <p><strong>Name:</strong> {dependant.name || 'N/A'}</p>
+                          <p><strong>Date of Birth:</strong> {dependant.dateOfBirth || 'N/A'}</p>
+                          <p><strong>Gender:</strong> {dependant.gender || 'N/A'}</p>
+                          <p><strong>Category:</strong> {dependant.category || 'N/A'}</p>
+                        </div>
+                      ))
+                    ) : (
+                      <p className="ml-4">No dependant information available</p>
+                    )}
+                  </div>
+
+                  <div className="mt-4">
+                    <h5 className="font-semibold">Financial Information</h5>
+                    <p><strong>Last Payment Date:</strong> {member.lastPaymentDate || 'N/A'}</p>
+                    <p><strong>Total Payments:</strong> {member.totalPayments !== undefined ? `£${member.totalPayments.toFixed(2)}` : 'N/A'}</p>
+                  </div>
+
+                  <div className="mt-4 flex space-x-2">
+                    <button onClick={() => onUpdateMember(member.id, { ...member, name: member.name + ' (updated)' })} className="px-2 py-1 bg-yellow-500 text-white rounded hover:bg-yellow-600">
+                      Edit
+                    </button>
+                    <button onClick={() => handleDeleteMember(member.id)} className="px-2 py-1 bg-red-500 text-white rounded hover:bg-red-600">
+                      Delete
+                    </button>
+                    <button onClick={() => onRevokeMember(member.id)} className="px-2 py-1 bg-orange-500 text-white rounded hover:bg-orange-600">
+                      Revoke
+                    </button>
+                  </div>
+
+                  <div className="mt-4">
+                    <h5 className="font-semibold">Payment History</h5>
+                    {member.payments && member.payments.length > 0 ? (
+                      <div className="overflow-x-auto">
+                        <table className="w-full mt-2">
+                          <thead>
+                            <tr className="bg-gray-100">
+                              <th className="text-left p-2">Date</th>
+                              <th className="text-left p-2">Amount</th>
+                              <th className="text-left p-2">Member No</th>
+                              <th className="text-left p-2">Status</th>
                             </tr>
-                          ))}
-                      </tbody>
-                    </table>
-                  ) : (
-                    <p>No payments recorded for this member.</p>
+                          </thead>
+                          <tbody>
+                            {[...member.payments]
+                              .sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime())
+                              .map((payment, index) => (
+                                <tr key={`${member.memberNumber}-${payment.date}-${index}`} className="border-b">
+                                  <td className="p-2">{new Date(payment.date).toLocaleDateString()}</td>
+                                  <td className="p-2">£{typeof payment.amount === 'number' ? payment.amount.toFixed(2) : payment.amount}</td>
+                                  <td className="p-2">{member.memberNumber || 'N/A'}</td>
+                                  <td className="p-2">
+                                    {!member.memberNumber ? (
+                                      <span className="text-red-500">Missing Member No</span>
+                                    ) : null}
+                                  </td>
+                                </tr>
+                              ))}
+                          </tbody>
+                        </table>
+                      </div>
+                    ) : (
+                      <p>No payments recorded for this member.</p>
+                    )}
+                  </div>
+
+                  <div className="mt-4">
+                    <h5 className="font-semibold">Add Payment</h5>
+                    <div className="flex items-center mt-2">
+                      <input
+                        type="number"
+                        value={newPaymentAmounts[member.memberNumber || ''] || ''}
+                        onChange={(e) => setNewPaymentAmounts(prev => ({ ...prev, [member.memberNumber || '']: e.target.value }))}
+                        placeholder="Amount"
+                        className="p-2 border border-gray-300 rounded mr-2 flex-grow"
+                        step="0.01"
+                        min="0"
+                      />
+                      <button
+                        onClick={() => handleAddPayment(member.memberNumber || '')}
+                        className="px-4 py-2 bg-green-500 text-white rounded hover:bg-green-600"
+                        disabled={!newPaymentAmounts[member.memberNumber || ''] || parseFloat(newPaymentAmounts[member.memberNumber || '']) <= 0 || !member.memberNumber}
+                      >
+                        Add Payment
+                      </button>
+                    </div>
+                  </div>
+
+                  {currentUserRole === 'admin' && (
+                    <div className="mt-4">
+                      <h5 className="font-semibold">Admin Notes</h5>
+                      <ul className="list-disc list-inside mt-2">
+                        {member.notes && member.notes.length > 0 ? (
+                          member.notes.map((note: Note, index: number) => (
+                            <li key={index}>
+                              <span className="font-medium">{new Date(note.date).toLocaleDateString()}: </span>
+                              {note.content}
+                            </li>
+                          ))
+                        ) : (
+                          <li>No notes available</li>
+                        )}
+                      </ul>
+                      <textarea
+                        value={newNote}
+                        onChange={(e) => setNewNote(e.target.value)}
+                        placeholder="Add a note"
+                        className="p-2 border border-gray-300 rounded w-full mt-2"
+                      />
+                      <button
+                        onClick={() => {
+                          if (newNote.trim()) {
+                            onAddNote(member.id, newNote);
+                            setNewNote('');
+                          } else {
+                            alert('Please enter a note before adding.');
+                          }
+                        }}
+                        className="px-2 py-1 bg-purple-500 text-white rounded hover:bg-purple-600 mt-2"
+                      >
+                        Add Note
+                      </button>
+                    </div>
                   )}
                 </div>
-
-                {/* Add Payment */}
-                <div className="mt-4">
-                  <h5 className="font-semibold">Add Payment</h5>
-                  <div className="flex items-center">
-                    <input
-                      type="number"
-                      value={newPaymentAmounts[member.memberNumber || ''] || ''}
-                      onChange={(e) => setNewPaymentAmounts(prev => ({ ...prev, [member.memberNumber || '']: e.target.value }))}
-                      placeholder="Amount"
-                      className="p-2 border border-gray-300 rounded mr-2 flex-grow"
-                      step="0.01"
-                      min="0"
-                    />
-                    <button
-                      onClick={() => handleAddPayment(member.memberNumber || '')}
-                      className="px-4 py-2 bg-green-500 text-white rounded hover:bg-green-600"
-                      disabled={!newPaymentAmounts[member.memberNumber || ''] || parseFloat(newPaymentAmounts[member.memberNumber || '']) <= 0 || !member.memberNumber}
-                    >
-                      Add Payment
-                    </button>
-                  </div>
-                </div>
-
-                {/* Notes Section (Admin Only) */}
-                {currentUserRole === 'admin' && (
-                  <div className="mt-4">
-                    <h5 className="font-semibold">Admin Notes</h5>
-                    <ul className="list-disc list-inside">
-                      {member.notes && member.notes.length > 0 ? (
-                        member.notes.map((note: Note, index: number) => (
-                          <li key={index}>
-                            <span className="font-medium">{new Date(note.date).toLocaleDateString()}: </span>
-                            {note.content}
-                          </li>
-                        ))
-                      ) : (
-                        <li>No notes available</li>
-                      )}
-                    </ul>
-                    <textarea
-                      value={newNote}
-                      onChange={(e) => setNewNote(e.target.value)}
-                      placeholder="Add a note"
-                      className="p-2 border border-gray-300 rounded w-full mt-2"
-                    />
-                    <button
-                      onClick={() => {
-                        if (newNote.trim()) {
-                          onAddNote(member.id, newNote);
-                          setNewNote('');
-                        } else {
-                          alert('Please enter a note before adding.');
-                        }
-                      }}
-                      className="px-2 py-1 bg-purple-500 text-white rounded hover:bg-purple-600 mt-2"
-                    >
-                      Add Note
-                    </button>
-                  </div>
-                )}
-                  </div>
-                </td>
-              </tr>
-            )}
-          </React.Fragment>
-        ))}
-      </tbody>
-    </table>
-  </div>
+              )}
+            </li>
+          ))}
+        </ul>
 
       {/* Logged Users Section */}
       <div className="mt-8">
