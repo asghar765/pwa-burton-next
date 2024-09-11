@@ -141,6 +141,10 @@ export interface LoggedUser {
     phoneNumber: string | null;
     photoURL: string;
   }[];
+  // Add Google sign-in specific fields
+  googleId?: string;
+  accessToken?: string;
+  idToken?: string;
 }
 
 export interface Collector {
