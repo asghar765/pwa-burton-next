@@ -35,13 +35,15 @@ const CollectorsSectionItem: React.FC<{ collector: { name: string; members: Memb
       </div>
       {isExpanded && (
         <div className="mt-4">
-          <div className="max-h-60 overflow-y-auto pr-4">
-            <table className="w-full">
+          <div className="max-h-60 overflow-x-auto overflow-y-auto">
+            <table className="w-full table-auto">
               <thead>
                 <tr className="bg-gray-100">
                   <th className="text-left p-2">Name</th>
                   <th className="text-left p-2">Member ID</th>
                   <th className="text-left p-2">Email</th>
+                  <th className="text-left p-2">Contact Number</th>
+                  <th className="text-left p-2">Address</th>
                 </tr>
               </thead>
               <tbody>
@@ -50,6 +52,8 @@ const CollectorsSectionItem: React.FC<{ collector: { name: string; members: Memb
                     <td className="p-2">{member.name || member.fullName}</td>
                     <td className="p-2">{member.memberNumber}</td>
                     <td className="p-2">{member.email}</td>
+                    <td className="p-2">{member.mobileNo}</td>
+                    <td className="p-2">{`${member.address}, ${member.town}, ${member.postCode}`}</td>
                   </tr>
                 ))}
               </tbody>
