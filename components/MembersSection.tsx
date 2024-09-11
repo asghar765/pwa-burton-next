@@ -81,6 +81,9 @@ const CollectorsSection: React.FC<CollectorsSectionProps> = ({
         />
         <MagnifyingGlassIcon className="h-5 w-5 text-gray-400" />
       </div>
+      <div className="mb-4">
+        <p>Showing 5 of {filteredMembers.length} members</p>
+      </div>
       <div className="overflow-x-auto">
         <table className="min-w-full bg-white">
           <thead>
@@ -271,8 +274,8 @@ const MembersSection: React.FC<MembersSectionProps> = ({
               <th className="py-3 px-6 text-center">Actions</th>
             </tr>
           </thead>
-          <tbody className="text-gray-600 text-sm font-light">
-            {filteredMembers.map(member => (
+          <tbody className="text-gray-600 text-sm font-light max-h-80 overflow-y-auto block">
+            {filteredMembers.slice(0, 5).map(member => (
               <React.Fragment key={member.id}>
                 <tr className="border-b border-gray-200 hover:bg-gray-100">
                   <td className="py-3 px-6 text-left whitespace-nowrap">
