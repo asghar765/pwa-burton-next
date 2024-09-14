@@ -530,7 +530,7 @@ const AdminDashboard: React.FC = () => {
 
     return (
       <ProfileSection
-        user={user as User | null}
+        user={user as import('firebase/auth').User | null}
         member={currentMember}
         userRole={userRole}
         accountBalance={calculatedAccountBalance}
