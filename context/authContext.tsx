@@ -27,10 +27,15 @@ export const useAuth = () => {
 };
 
 export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
-  console.log('AuthProvider rendered');
+  console.log(`AuthProvider rendered at ${new Date().toISOString()}`);
   const [user, setUser] = useState<User | null>(null);
   const [loading, setLoading] = useState(true);
   const [userRole, setUserRole] = useState<string | null>(null);
+
+  useEffect(() => {
+    console.log(`AuthProvider useEffect triggered at ${new Date().toISOString()}`);
+    // Rest of the useEffect code...
+  }, []);
 
   useEffect(() => {
     if (typeof window !== "undefined") {

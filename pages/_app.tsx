@@ -15,12 +15,13 @@ const ThemeProviderWithNoSSR = dynamic(() => import('../context/themeContext').t
 });
 
 const MyApp = ({ Component, pageProps }: AppProps) => {
+  console.log(`MyApp component rendered at ${new Date().toISOString()}`);
+
   useEffect(() => {
+    console.log(`MyApp useEffect triggered at ${new Date().toISOString()}`);
     const theme = localStorage.getItem('theme') || 'light';
     document.documentElement.setAttribute('data-theme', theme);
   }, []);
-
-  console.log('MyApp component rendered');
 
   return (
     <AuthProviderWithNoSSR>
