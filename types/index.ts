@@ -137,6 +137,7 @@ export interface FirebaseUser {
 
 export interface LoggedUser {
   id: string;
+  uid?: string;
   createdAt: {
     seconds: number;
     nanoseconds: number;
@@ -157,6 +158,12 @@ export interface LoggedUser {
   googleId?: string;
   accessToken?: string;
   idToken?: string;
+  // Add Firebase Auth User properties
+  refreshToken?: string;
+  tenantId?: string;
+  delete?: () => Promise<void>;
+  getIdToken?: (forceRefresh?: boolean) => Promise<string>;
+  // Add other properties as needed
 }
 
 export interface Collector {
