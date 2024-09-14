@@ -2,23 +2,29 @@ import React, { ErrorInfo, ReactNode } from 'react';
 import { User } from 'firebase/auth';
 import { Member, Payment, Expense, Note } from '../types';
 
-class ErrorBoundary extends React.Component<{children: ReactNode}, {hasError: boolean}> {
+class ErrorBoundary extends React.Component<{children: ReactNode}, {hasError: boolean, error: Error | null}> {
   constructor(props: {children: ReactNode}) {
     super(props);
-    this.state = { hasError: false };
+    this.state = { hasError: false, error: null };
   }
 
-  static getDerivedStateFromError(_: Error) {
-    return { hasError: true };
+  static getDerivedStateFromError(error: Error) {
+    return { hasError: true, error };
   }
 
   componentDidCatch(error: Error, errorInfo: ErrorInfo) {
-    console.log('ProfileSection error:', error, errorInfo);
+    console.error('ProfileSection error:', error, errorInfo);
   }
 
   render() {
     if (this.state.hasError) {
-      return <h1>Something went wrong in ProfileSection. Please try refreshing the page.</h1>;
+      return (
+        <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded relative" role="alert">
+          <strong className="font-bold">Error in ProfileSection:</strong>
+          <span className="block sm:inline"> {this.state.error?.message || 'Unknown error'}</span>
+          <p className="mt-2">Please try refreshing the page. If the problem persists, contact support.</p>
+        </div>
+      );
     }
 
     return this.props.children;
@@ -29,10 +35,11 @@ interface ProfileSectionProps {
   user: User | null;
   member: Member | null;
   userRole: string | null;
-  accountBalance: number;
-  expenses: Expense[];
-  payments: Payment[];
-  notes: Note[];
+  accountBalance: number | null;
+  expenses: Expense[] | null;
+  payments: Payment[] | null;
+  notes: Note[] | null;
+  isLoading?: boolean;
 }
 
 const ProfileSection: React.FC<ProfileSectionProps> = ({ 
@@ -42,21 +49,38 @@ const ProfileSection: React.FC<ProfileSectionProps> = ({
   accountBalance, 
   expenses, 
   payments, 
-  notes 
+  notes,
+  isLoading = false
 }) => {
-  console.log('ProfileSection props:', { user, member, userRole, accountBalance, expenses, payments, notes });
+  if (isLoading) {
+    return <div className="bg-blue-100 border border-blue-400 text-blue-700 px-4 py-3 rounded relative" role="alert">Loading profile information...</div>;
+  }
+  console.log('ProfileSection props:', { 
+    user: user ? 'User object present' : 'User is null', 
+    member: member ? 'Member object present' : 'Member is null', 
+    userRole, 
+    accountBalance, 
+    expenses: expenses?.length || 0, 
+    payments: payments?.length || 0, 
+    notes: notes?.length || 0 
+  });
 
   if (!user) {
-    console.log('User is null, returning message');
-    return <div>Please log in to view your profile.</div>;
+    console.log('User is null, returning login message');
+    return <div className="bg-yellow-100 border border-yellow-400 text-yellow-700 px-4 py-3 rounded relative" role="alert">Please log in to view your profile.</div>;
   }
 
   if (!member) {
-    console.log('Member is null, returning message');
-    return <div>Member information not found. Please contact support.</div>;
+    console.log('Member is null, returning not found message');
+    return <div className="bg-yellow-100 border border-yellow-400 text-yellow-700 px-4 py-3 rounded relative" role="alert">Member information not found. Please contact support.</div>;
   }
 
   console.log('Rendering ProfileSection with member:', member);
+
+  if (!member.fullName || !member.email) {
+    console.log('Essential member information missing');
+    return <div className="bg-yellow-100 border border-yellow-400 text-yellow-700 px-4 py-3 rounded relative" role="alert">Incomplete member information. Please update your profile.</div>;
+  }
 
   const renderField = (label: string, value: any) => (
     <p><strong>{label}:</strong> {value || 'N/A'}</p>
@@ -130,12 +154,12 @@ const ProfileSection: React.FC<ProfileSectionProps> = ({
 
       <div className="space-y-2">
         <h3 className="text-xl font-semibold">Account Information</h3>
-        {renderField('Account Balance', accountBalance !== undefined ? `£${accountBalance.toFixed(2)}` : 'Not available')}
+        {renderField('Account Balance', accountBalance !== null ? `£${accountBalance.toFixed(2)}` : 'Not available')}
       </div>
 
       <div className="space-y-2">
         <h3 className="text-xl font-semibold">Payments</h3>
-        {payments.length > 0 ? (
+        {payments && payments.length > 0 ? (
           <ul className="list-disc pl-5">
             {payments.map((payment, index) => (
               <li key={index}>
@@ -150,7 +174,7 @@ const ProfileSection: React.FC<ProfileSectionProps> = ({
 
       <div className="space-y-2">
         <h3 className="text-xl font-semibold">Expenses</h3>
-        {expenses.length > 0 ? (
+        {expenses && expenses.length > 0 ? (
           <ul className="list-disc pl-5">
             {expenses.map((expense, index) => (
               <li key={index}>
@@ -165,7 +189,7 @@ const ProfileSection: React.FC<ProfileSectionProps> = ({
 
       <div className="space-y-2">
         <h3 className="text-xl font-semibold">Notes</h3>
-        {notes.length > 0 ? (
+        {notes && notes.length > 0 ? (
           <ul className="list-disc pl-5">
             {notes.map((note, index) => (
               <li key={index}>
@@ -176,7 +200,7 @@ const ProfileSection: React.FC<ProfileSectionProps> = ({
         ) : (
           <p>No notes recorded.</p>
         )}
-        </div>
+      </div>
       </div>
     </ErrorBoundary>
   );
