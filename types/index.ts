@@ -106,6 +106,11 @@ export interface User {
   isAnonymous?: boolean;
   metadata?: any;
   providerData?: any[];
+  getIdTokenResult?: (forceRefresh?: boolean) => Promise<any>;
+  getIdToken?: (forceRefresh?: boolean) => Promise<string>;
+  refreshToken?: string;
+  tenantId?: string | null;
+  delete?: () => Promise<void>;
   // Add any other properties that your User type should have
 }
 
@@ -135,34 +140,17 @@ export interface FirebaseUser {
   }[];
 }
 
-export interface LoggedUser {
-  id: string;
-  uid?: string;
+export interface LoggedUser extends User {
   createdAt: {
     seconds: number;
     nanoseconds: number;
   };
-  displayName: string;
-  email: string;
   photoURL: string;
   role: string;
-  providerData?: {
-    providerId: string;
-    uid: string;
-    displayName: string;
-    email: string;
-    phoneNumber: string | null;
-    photoURL: string;
-  }[];
   // Add Google sign-in specific fields
   googleId?: string;
   accessToken?: string;
   idToken?: string;
-  // Add Firebase Auth User properties
-  refreshToken?: string;
-  tenantId?: string;
-  delete?: () => Promise<void>;
-  getIdToken?: (forceRefresh?: boolean) => Promise<string>;
   // Add other properties as needed
 }
 
