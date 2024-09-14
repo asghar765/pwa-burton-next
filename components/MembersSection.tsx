@@ -82,7 +82,7 @@ const CollectorsSection: React.FC<CollectorsSectionProps> = ({
         <MagnifyingGlassIcon className="h-5 w-5 text-gray-400" />
       </div>
       <div className="mb-4">
-        <p>Showing {filteredMembers.length} of {members.length} members</p>
+        <p>Showing {collectors.length} collectors</p>
       </div>
       <div className="overflow-x-auto">
         <table className="min-w-full bg-white">
