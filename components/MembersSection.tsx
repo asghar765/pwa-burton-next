@@ -70,10 +70,11 @@ const CollectorsSection: React.FC<CollectorsSectionProps> = ({
   }, [setExpandedCollectors]);
 
   return (
-    <div className="container mx-auto px-4">
-      <h2 className="text-2xl font-bold mb-4">Collectors</h2>
-      <div className="mb-4 flex items-center">
-        <input
+    <>
+      <div className="container mx-auto px-4">
+        <h2 className="text-2xl font-bold mb-4">Collectors</h2>
+        <div className="mb-4 flex items-center">
+          <input
           type="text"
           value={searchTerm}
           onChange={(e) => setSearchTerm(e.target.value)}
