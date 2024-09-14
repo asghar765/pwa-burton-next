@@ -20,6 +20,8 @@ const MyApp = ({ Component, pageProps }: AppProps) => {
     document.documentElement.setAttribute('data-theme', theme);
   }, []);
 
+  console.log('MyApp component rendered');
+
   return (
     <AuthProviderWithNoSSR>
       <ThemeProviderWithNoSSR>
