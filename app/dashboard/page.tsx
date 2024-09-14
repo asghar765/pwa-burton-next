@@ -443,33 +443,37 @@ const AdminDashboard: React.FC = () => {
   };
 
   const renderFinanceSection = () => {
-    const formattedPayments = payments.map(payment => ({
-      ...payment,
-      amount: typeof payment.amount === 'number' ? payment.amount : parseFloat(payment.amount) || 0,
-      date: typeof payment.date === 'string' 
-        ? (isNaN(Date.parse(payment.date)) ? new Date().toISOString() : new Date(payment.date).toISOString())
-        : new Date().toISOString(),
-      ...Object.entries(payment).reduce((acc, [key, value]) => {
-        acc[key] = typeof value === 'object' && value !== null ? JSON.stringify(value) : value;
-        return acc;
-      }, {} as Record<string, any>)
-    }));
+    const formattedPayments = payments
+      .map(payment => ({
+        ...payment,
+        amount: typeof payment.amount === 'number' ? payment.amount : parseFloat(payment.amount) || 0,
+        date: typeof payment.date === 'string' 
+          ? (isNaN(Date.parse(payment.date)) ? new Date().toISOString() : new Date(payment.date).toISOString())
+          : new Date().toISOString(),
+        ...Object.entries(payment).reduce((acc, [key, value]) => {
+          acc[key] = typeof value === 'object' && value !== null ? JSON.stringify(value) : value;
+          return acc;
+        }, {} as Record<string, any>)
+      }))
+      .sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime());
 
     const memberPayments = userRole === 'member' && user
       ? formattedPayments.filter(payment => payment.memberId === user.uid)
       : formattedPayments;
 
-    const formattedExpenses = expenses.map(expense => ({
-      ...expense,
-      amount: typeof expense.amount === 'number' ? expense.amount : parseFloat(expense.amount) || 0,
-      date: typeof expense.date === 'string' 
-        ? (isNaN(Date.parse(expense.date)) ? new Date().toISOString() : new Date(expense.date).toISOString())
-        : new Date().toISOString(),
-      ...Object.entries(expense).reduce((acc, [key, value]) => {
-        acc[key] = typeof value === 'object' && value !== null ? JSON.stringify(value) : value;
-        return acc;
-      }, {} as Record<string, any>)
-    }));
+    const formattedExpenses = expenses
+      .map(expense => ({
+        ...expense,
+        amount: typeof expense.amount === 'number' ? expense.amount : parseFloat(expense.amount) || 0,
+        date: typeof expense.date === 'string' 
+          ? (isNaN(Date.parse(expense.date)) ? new Date().toISOString() : new Date(expense.date).toISOString())
+          : new Date().toISOString(),
+        ...Object.entries(expense).reduce((acc, [key, value]) => {
+          acc[key] = typeof value === 'object' && value !== null ? JSON.stringify(value) : value;
+          return acc;
+        }, {} as Record<string, any>)
+      }))
+      .sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime());
 
     return (
       <FinanceSection
