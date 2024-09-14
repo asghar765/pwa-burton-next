@@ -140,7 +140,7 @@ export interface FirebaseUser {
   }[];
 }
 
-export interface LoggedUser extends User {
+export interface LoggedUser extends Omit<User, 'reload' | 'toJSON'> {
   createdAt: {
     seconds: number;
     nanoseconds: number;
@@ -152,6 +152,8 @@ export interface LoggedUser extends User {
   accessToken?: string;
   idToken?: string;
   // Add other properties as needed
+  reload?: () => Promise<void>;
+  toJSON?: () => object;
 }
 
 export interface Collector {
