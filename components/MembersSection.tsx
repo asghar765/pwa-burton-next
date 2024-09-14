@@ -6,6 +6,7 @@ import { MagnifyingGlassIcon, ChevronDownIcon, ChevronUpIcon } from '@heroicons/
 import { collection, getDocs, doc, updateDoc, addDoc } from 'firebase/firestore';
 import { db } from '../config/firebaseConfig';
 import { generateMemberNumber } from '../utils/memberUtils';
+import { useInView } from 'react-intersection-observer';
 
 interface MemberWithPayments extends Member {
   payments: Payment[];
@@ -156,6 +157,7 @@ const CollectorsSection: React.FC<CollectorsSectionProps> = ({
           </tbody>
         </table>
       </div>
+      <div ref={ref} className="h-10" />
     </div>
   );
 };
