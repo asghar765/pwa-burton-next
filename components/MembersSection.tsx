@@ -218,11 +218,6 @@ const MembersSection: React.FC<MembersSectionProps> = ({
       alert("Failed to update user role. Please try again.");
     }
   };
-        (member.name && member.name.toLowerCase().includes(search)) ||
-        (member.memberNumber && member.memberNumber.toLowerCase().includes(search))
-      );
-    });
-  }, [members, searchTerm]);
 
   const toggleMemberExpansion = useCallback((memberId: string) => {
     setExpandedMembers(prev => ({ ...prev, [memberId]: !prev[memberId] }));
