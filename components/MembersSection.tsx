@@ -190,46 +190,6 @@ const MembersSection: React.FC<MembersSectionProps> = ({
     });
   }, [members, searchTerm]);
 
-  useEffect(() => {
-    const fetchFirebaseUsers = async () => {
-      const usersCollection = collection(db, 'users');
-      const usersSnapshot = await getDocs(usersCollection);
-      const usersData = usersSnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() } as FirebaseUser));
-      setFirebaseUsers(usersData);
-    };
-
-    fetchFirebaseUsers();
-  }, []);
-
-  const handleUpdateUserRole = async (userId: string, newRole: string) => {
-    try {
-      const userRef = doc(db, 'users', userId);
-      await updateDoc(userRef, { role: newRole });
-      
-      setFirebaseUsers(prevUsers =>
-        prevUsers.map(user =>
-          user.id === userId ? { ...user, role: newRole } : user
-        )
-      );
-
-      console.log(`User ${userId} role updated to ${newRole}`);
-    } catch (error) {
-      console.error("Error updating user role:", error);
-      alert("Failed to update user role. Please try again.");
-    }
-  };
-
-  const filteredMembers = useMemo(() => {
-    return members.filter(member => {
-      const search = searchTerm.toLowerCase();
-      return (
-        (member.fullName && member.fullName.toLowerCase().includes(search)) ||
-        (member.memberNumber && member.memberNumber.toLowerCase().includes(search)) ||
-        (member.name && member.name.toLowerCase().includes(search))
-      );
-    });
-  }, [members, searchTerm]);
-
   const toggleMemberExpansion = useCallback((memberId: string) => {
     setExpandedMembers(prev => ({ ...prev, [memberId]: !prev[memberId] }));
   }, [setExpandedMembers]);
