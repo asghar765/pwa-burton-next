@@ -523,11 +523,6 @@ const AdminDashboard: React.FC = () => {
     const memberExpenses = expenses.filter(e => e.userId === userId);
     console.log('Member expenses:', memberExpenses);
 
-    if (!currentMember) {
-      console.log('Current member not found');
-      return null;
-    }
-
     return (
       <ProfileSection
         user={user as unknown as import('firebase/auth').User | null}
@@ -537,6 +532,7 @@ const AdminDashboard: React.FC = () => {
         expenses={memberExpenses}
         payments={memberPayments}
         notes={memberNotes}
+        isLoading={loading}
       />
     );
   };
