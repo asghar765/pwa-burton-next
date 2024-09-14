@@ -14,6 +14,7 @@ import CollectorsSection from '../../components/CollectorsSection';
 import RegistrationsSection from '../../components/RegistrationsSection';
 import DatabaseSection from '../../components/DatabaseSection';
 import FinanceSection from '../../components/FinanceSection';
+import { format } from 'date-fns';
 import ProfileSection from '../../components/ProfileSection';
 import ErrorBoundary from '../../components/ErrorBoundary';
 import { v4 as uuidv4 } from 'uuid';
@@ -445,17 +446,25 @@ const AdminDashboard: React.FC = () => {
   const renderFinanceSection = () => {
     const formatAndSortItems = (items: any[]) => {
       return items
-        .map(item => ({
-          ...item,
-          amount: typeof item.amount === 'number' ? item.amount : parseFloat(item.amount) || 0,
-          date: typeof item.date === 'string' 
-            ? (isNaN(Date.parse(item.date)) ? new Date().toISOString() : new Date(item.date).toISOString())
-            : new Date().toISOString(),
-          ...Object.entries(item).reduce((acc, [key, value]) => {
-            acc[key] = typeof value === 'object' && value !== null ? JSON.stringify(value) : value;
-            return acc;
-          }, {} as Record<string, any>)
-        }))
+        .map(item => {
+          let amount = typeof item.amount === 'number' ? item.amount : parseFloat(item.amount) || 0;
+          let date = new Date();
+          
+          if (typeof item.date === 'string') {
+            const parsedDate = new Date(item.date);
+            if (!isNaN(parsedDate.getTime())) {
+              date = parsedDate;
+            }
+          }
+
+          return {
+            ...item,
+            amount,
+            date: date.toISOString(),
+            formattedDate: date.toLocaleDateString('en-GB'),
+            formattedAmount: `£${amount.toFixed(2)}`
+          };
+        })
         .sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime());
     };
 
