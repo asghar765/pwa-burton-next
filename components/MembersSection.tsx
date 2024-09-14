@@ -219,6 +219,17 @@ const MembersSection: React.FC<MembersSectionProps> = ({
     }
   };
 
+  const filteredMembers = useMemo(() => {
+    return members.filter(member => {
+      const search = searchTerm.toLowerCase();
+      return (
+        (member.fullName && member.fullName.toLowerCase().includes(search)) ||
+        (member.memberNumber && member.memberNumber.toLowerCase().includes(search)) ||
+        (member.name && member.name.toLowerCase().includes(search))
+      );
+    });
+  }, [members, searchTerm]);
+
   const toggleMemberExpansion = useCallback((memberId: string) => {
     setExpandedMembers(prev => ({ ...prev, [memberId]: !prev[memberId] }));
   }, [setExpandedMembers]);
