@@ -462,7 +462,11 @@ const AdminDashboard: React.FC = () => {
             amount,
             date: date.toISOString(),
             formattedDate: date.toLocaleDateString('en-GB'),
-            formattedAmount: `£${amount.toFixed(2)}`
+            formattedAmount: `£${amount.toFixed(2)}`,
+            // Ensure all properties are strings for React rendering
+            id: String(item.id),
+            memberId: String(item.memberId),
+            description: String(item.description || '')
           };
         })
         .sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime());
@@ -470,7 +474,7 @@ const AdminDashboard: React.FC = () => {
 
     const formattedPayments = formatAndSortItems(payments);
     const memberPayments = userRole === 'member' && user
-      ? formattedPayments.filter(payment => payment.memberId === user.uid)
+      ? formattedPayments.filter(payment => payment.memberId === String(user.uid))
       : formattedPayments;
 
     const formattedExpenses = formatAndSortItems(expenses);
