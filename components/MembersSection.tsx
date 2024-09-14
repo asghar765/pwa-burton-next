@@ -70,10 +70,9 @@ const CollectorsSection: React.FC<CollectorsSectionProps> = ({
   }, [setExpandedCollectors]);
 
   return (
-    <>
-      <div className="container mx-auto px-4">
-        <h2 className="text-2xl font-bold mb-4">Collectors</h2>
-        <div className="mb-4 flex items-center">
+    <div className="container mx-auto px-4">
+      <h2 className="text-2xl font-bold mb-4">Collectors</h2>
+      <div className="mb-4 flex items-center">
           <input
           type="text"
           value={searchTerm}
@@ -162,6 +161,8 @@ const CollectorsSection: React.FC<CollectorsSectionProps> = ({
   );
 };
 
+export { CollectorsSection };
+
 const MembersSection: React.FC<MembersSectionProps> = ({
   members,
   searchTerm,
@@ -176,7 +177,7 @@ const MembersSection: React.FC<MembersSectionProps> = ({
   onAddNote,
   onUpdateUserRole
 }) => {
-  const [firebaseUsers, setFirebaseUsers] = useState<FirebaseUser[]>([]);
+  const [firebaseUsers] = useState<FirebaseUser[]>([]);
   const [userSearchTerm, setUserSearchTerm] = useState('');
   const [newPaymentAmounts, setNewPaymentAmounts] = useState<Record<string, string>>({});
   const [newNote, setNewNote] = useState('');
