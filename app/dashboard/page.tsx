@@ -449,7 +449,7 @@ const AdminDashboard: React.FC = () => {
         .map(item => {
           let amount = typeof item.amount === 'number' ? item.amount : parseFloat(item.amount) || 0;
           let date = new Date();
-          
+        
           if (typeof item.date === 'string') {
             const parsedDate = new Date(item.date);
             if (!isNaN(parsedDate.getTime())) {
