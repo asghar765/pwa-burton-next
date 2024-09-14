@@ -21,6 +21,12 @@ import { v4 as uuidv4 } from 'uuid';
 
 import { FirebaseUser, LoggedUser } from '../../types';
 
+const loadMoreMembers = (members: MemberWithPayments[], displayedMembers: MemberWithPayments[]) => {
+  const currentLength = displayedMembers.length;
+  const more = members.slice(currentLength, currentLength + 10);
+  return [...displayedMembers, ...more];
+};
+
 const AdminDashboard: React.FC = () => {
   const { user, userRole } = useAuth() as { user: (LoggedUser & { uid?: string }) | null; userRole: string | null };
   const router = useRouter();
@@ -419,7 +425,7 @@ const AdminDashboard: React.FC = () => {
         onAddPayment={handleAddPayment}
         onAddNote={handleAddNote}
         onUpdateUserRole={handleUpdateUserRole}
-        onLoadMore={loadMoreMembers}
+        onLoadMore={() => setDisplayedMembers(prev => loadMoreMembers(members, prev))}
       />
     </div>
   );
