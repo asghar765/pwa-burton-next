@@ -403,11 +403,11 @@ const AdminDashboard: React.FC = () => {
     );
   };
 
-  const loadMoreMembers = useCallback(() => {
+  const loadMoreMembers = () => {
     const currentLength = displayedMembers.length;
     const more = members.slice(currentLength, currentLength + 10);
     setDisplayedMembers(prev => [...prev, ...more]);
-  }, [members, displayedMembers]);
+  };
 
   const renderMembersSection = () => (
     <div className="h-[600px] overflow-y-auto">
@@ -425,7 +425,7 @@ const AdminDashboard: React.FC = () => {
         onAddPayment={handleAddPayment}
         onAddNote={handleAddNote}
         onUpdateUserRole={handleUpdateUserRole}
-        onLoadMore={() => setDisplayedMembers(prev => loadMoreMembers(members, prev))}
+        onLoadMore={loadMoreMembers}
       />
     </div>
   );
