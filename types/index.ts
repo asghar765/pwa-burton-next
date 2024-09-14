@@ -102,6 +102,10 @@ export interface User {
   id?: string;
   email?: string;
   displayName?: string;
+  emailVerified?: boolean;
+  isAnonymous?: boolean;
+  metadata?: any;
+  providerData?: any[];
   // Add any other properties that your User type should have
 }
 
