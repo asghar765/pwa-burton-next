@@ -1,6 +1,29 @@
-import React from 'react';
+import React, { ErrorInfo, ReactNode } from 'react';
 import { User } from 'firebase/auth';
 import { Member, Payment, Expense, Note } from '../types';
+
+class ErrorBoundary extends React.Component<{children: ReactNode}, {hasError: boolean}> {
+  constructor(props: {children: ReactNode}) {
+    super(props);
+    this.state = { hasError: false };
+  }
+
+  static getDerivedStateFromError(_: Error) {
+    return { hasError: true };
+  }
+
+  componentDidCatch(error: Error, errorInfo: ErrorInfo) {
+    console.log('ProfileSection error:', error, errorInfo);
+  }
+
+  render() {
+    if (this.state.hasError) {
+      return <h1>Something went wrong in ProfileSection. Please try refreshing the page.</h1>;
+    }
+
+    return this.props.children;
+  }
+}
 
 interface ProfileSectionProps {
   user: User | null;
@@ -23,9 +46,14 @@ const ProfileSection: React.FC<ProfileSectionProps> = ({
 }) => {
   console.log('ProfileSection props:', { user, member, userRole, accountBalance, expenses, payments, notes });
 
-  if (!user || !member) {
-    console.log('User or member is null, returning null');
-    return null;
+  if (!user) {
+    console.log('User is null, returning message');
+    return <div>Please log in to view your profile.</div>;
+  }
+
+  if (!member) {
+    console.log('Member is null, returning message');
+    return <div>Member information not found. Please contact support.</div>;
   }
 
   console.log('Rendering ProfileSection with member:', member);
@@ -35,10 +63,11 @@ const ProfileSection: React.FC<ProfileSectionProps> = ({
   );
 
   return (
-    <div className="bg-white p-6 rounded-lg shadow-md space-y-6">
-      <h2 className="text-2xl font-bold mb-4">User Profile</h2>
-      
-      <div className="space-y-2">
+    <ErrorBoundary>
+      <div className="bg-white p-6 rounded-lg shadow-md space-y-6">
+        <h2 className="text-2xl font-bold mb-4">User Profile</h2>
+        
+        <div className="space-y-2">
         <h3 className="text-xl font-semibold">Basic Information</h3>
         {renderField('Full Name', member.fullName)}
         {renderField('Email', member.email)}
@@ -101,7 +130,7 @@ const ProfileSection: React.FC<ProfileSectionProps> = ({
 
       <div className="space-y-2">
         <h3 className="text-xl font-semibold">Account Information</h3>
-        {renderField('Account Balance', `£${accountBalance.toFixed(2)}`)}
+        {renderField('Account Balance', accountBalance !== undefined ? `£${accountBalance.toFixed(2)}` : 'Not available')}
       </div>
 
       <div className="space-y-2">
@@ -147,8 +176,9 @@ const ProfileSection: React.FC<ProfileSectionProps> = ({
         ) : (
           <p>No notes recorded.</p>
         )}
+        </div>
       </div>
-    </div>
+    </ErrorBoundary>
   );
 };
 
