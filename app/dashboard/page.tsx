@@ -404,15 +404,13 @@ const AdminDashboard: React.FC = () => {
   };
 
   const loadMoreMembers = () => {
-    const currentLength = displayedMembers.length;
-    const more = members.slice(currentLength, currentLength + 10);
-    setDisplayedMembers(prev => [...prev, ...more]);
+    setDisplayedMembers(members);
   };
 
   const renderMembersSection = () => (
     <div className="h-[600px] overflow-y-auto">
       <MembersSection
-        members={displayedMembers}
+        members={members}
         firebaseUsers={firebaseUsers}
         searchTerm={searchTerm}
         setSearchTerm={setSearchTerm}
@@ -425,7 +423,6 @@ const AdminDashboard: React.FC = () => {
         onAddPayment={handleAddPayment}
         onAddNote={handleAddNote}
         onUpdateUserRole={handleUpdateUserRole}
-        onLoadMore={loadMoreMembers}
       />
     </div>
   );
