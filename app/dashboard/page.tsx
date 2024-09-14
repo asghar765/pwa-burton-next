@@ -530,7 +530,7 @@ const AdminDashboard: React.FC = () => {
 
     return (
       <ProfileSection
-        user={user as User}
+        user={user as LoggedUser}
         member={currentMember}
         userRole={userRole}
         accountBalance={calculatedAccountBalance}
