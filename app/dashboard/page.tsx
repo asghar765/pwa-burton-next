@@ -28,6 +28,7 @@ const AdminDashboard: React.FC = () => {
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
   
   const [members, setMembers] = useState<MemberWithPayments[]>([]);
+  const [displayedMembers, setDisplayedMembers] = useState<MemberWithPayments[]>([]);
   const [registrations, setRegistrations] = useState<Registration[]>([]);
   const [collectors, setCollectors] = useState<Collector[]>([]);
   const [notes, setNotes] = useState<Note[]>([]);
@@ -73,7 +74,7 @@ const AdminDashboard: React.FC = () => {
         getDocs(usersQuery)
       ]);
 
-      setMembers(membersSnapshot.docs.map(doc => {
+      const fetchedMembers = membersSnapshot.docs.map(doc => {
         const data = doc.data();
         return {
           id: doc.id,
@@ -101,7 +102,9 @@ const AdminDashboard: React.FC = () => {
           payments: [],
           notes: data.notes || []
         } as MemberWithPayments;
-      }));
+      });
+      setMembers(fetchedMembers);
+      setDisplayedMembers(fetchedMembers.slice(0, 10));
       setRegistrations(registrationsSnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() } as Registration)));
       setNotes(notesSnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() } as Note)));
       setCollectors(collectorsSnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() } as Collector)));
@@ -394,10 +397,16 @@ const AdminDashboard: React.FC = () => {
     );
   };
 
+  const loadMoreMembers = useCallback(() => {
+    const currentLength = displayedMembers.length;
+    const more = members.slice(currentLength, currentLength + 10);
+    setDisplayedMembers(prev => [...prev, ...more]);
+  }, [members, displayedMembers]);
+
   const renderMembersSection = () => (
     <div className="h-[600px] overflow-y-auto">
       <MembersSection
-        members={members.slice(0, 10)}
+        members={displayedMembers}
         firebaseUsers={firebaseUsers}
         searchTerm={searchTerm}
         setSearchTerm={setSearchTerm}
@@ -410,6 +419,7 @@ const AdminDashboard: React.FC = () => {
         onAddPayment={handleAddPayment}
         onAddNote={handleAddNote}
         onUpdateUserRole={handleUpdateUserRole}
+        onLoadMore={loadMoreMembers}
       />
     </div>
   );
