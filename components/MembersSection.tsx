@@ -175,16 +175,6 @@ const MembersSection: React.FC<MembersSectionProps> = ({
   onAddNote,
   onUpdateUserRole
 }) => {
-  const [ref, inView] = useInView({
-    threshold: 0,
-  });
-
-  useEffect(() => {
-    if (inView) {
-      // Implement your load more logic here if needed
-      console.log('Reached end of list');
-    }
-  }, [inView]);
   const [firebaseUsers, setFirebaseUsers] = useState<FirebaseUser[]>([]);
   const [userSearchTerm, setUserSearchTerm] = useState('');
   const [newPaymentAmounts, setNewPaymentAmounts] = useState<Record<string, string>>({});
