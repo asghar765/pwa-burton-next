@@ -455,6 +455,7 @@ const AdminDashboard: React.FC = () => {
           return acc;
         }, {} as Record<string, any>)
       }))
+      .sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime())
       .sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime());
 
     const memberPayments = userRole === 'member' && user
@@ -473,6 +474,7 @@ const AdminDashboard: React.FC = () => {
           return acc;
         }, {} as Record<string, any>)
       }))
+      .sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime())
       .sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime());
 
     return (
