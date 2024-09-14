@@ -5,7 +5,7 @@ import { useRouter } from 'next/navigation';
 import { collection, query, getDocs, addDoc, updateDoc, deleteDoc, doc, where, getDoc, writeBatch } from 'firebase/firestore';
 import { db, auth } from '../../config/firebaseConfig';
 import { useAuth } from '../../context/authContext';
-import { Member, MemberWithPayments, Registration, Collector, Note, Payment, Expense } from '../../types';
+import { Member, MemberWithPayments, Registration, Collector, Note, Payment, Expense, User } from '../../types';
 import DashboardSection from '../../components/DashboardSection';
 import { groupBy } from 'lodash';
 import { MembersSection } from '../../components/MembersSection';
@@ -530,7 +530,7 @@ const AdminDashboard: React.FC = () => {
 
     return (
       <ProfileSection
-        user={user as User | null}
+        user={user as User}
         member={currentMember}
         userRole={userRole}
         accountBalance={calculatedAccountBalance}
