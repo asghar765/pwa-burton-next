@@ -395,21 +395,23 @@ const AdminDashboard: React.FC = () => {
   };
 
   const renderMembersSection = () => (
-    <MembersSection
-      members={members}
-      firebaseUsers={firebaseUsers}
-      searchTerm={searchTerm}
-      setSearchTerm={setSearchTerm}
-      expandedMembers={expandedMembers}
-      setExpandedMembers={setExpandedMembers}
-      onUpdateMember={handleUpdateMember}
-      onDeleteMember={handleDeleteMember}
-      onRevokeMember={handleRevokeMember}
-      currentUserRole={userRole || ''}
-      onAddPayment={handleAddPayment}
-      onAddNote={handleAddNote}
-      onUpdateUserRole={handleUpdateUserRole}
-    />
+    <div className="h-[600px] overflow-y-auto">
+      <MembersSection
+        members={members.slice(0, 10)}
+        firebaseUsers={firebaseUsers}
+        searchTerm={searchTerm}
+        setSearchTerm={setSearchTerm}
+        expandedMembers={expandedMembers}
+        setExpandedMembers={setExpandedMembers}
+        onUpdateMember={handleUpdateMember}
+        onDeleteMember={handleDeleteMember}
+        onRevokeMember={handleRevokeMember}
+        currentUserRole={userRole || ''}
+        onAddPayment={handleAddPayment}
+        onAddNote={handleAddNote}
+        onUpdateUserRole={handleUpdateUserRole}
+      />
+    </div>
   );
 
   const renderCollectorsSection = () => {
