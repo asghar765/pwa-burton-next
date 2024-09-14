@@ -97,6 +97,14 @@ export interface Payment {
   memberId: string;
 }
 
+export interface User {
+  uid?: string;
+  id?: string;
+  email?: string;
+  displayName?: string;
+  // Add any other properties that your User type should have
+}
+
 export interface Expense {
   id: string;
   amount: number; // Changed from string to number
