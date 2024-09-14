@@ -174,8 +174,7 @@ const MembersSection: React.FC<MembersSectionProps> = ({
   currentUserRole,
   onAddPayment,
   onAddNote,
-  onUpdateUserRole,
-  onLoadMore
+  onUpdateUserRole
 }) => {
   const [ref, inView] = useInView({
     threshold: 0,
