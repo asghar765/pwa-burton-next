@@ -38,7 +38,6 @@ export interface MembersSectionProps {
   onAddPayment: (memberNumber: string, payment: Omit<Payment, 'id'>) => void;
   onAddNote: (memberId: string, note: string) => void;
   onUpdateUserRole: (userId: string, newRole: string) => void;
-  onLoadMore: () => void;
 }
 
 export interface CollectorsSectionProps {
@@ -182,9 +181,10 @@ const MembersSection: React.FC<MembersSectionProps> = ({
 
   useEffect(() => {
     if (inView) {
-      onLoadMore();
+      // Implement your load more logic here if needed
+      console.log('Reached end of list');
     }
-  }, [inView, onLoadMore]);
+  }, [inView]);
   const [firebaseUsers, setFirebaseUsers] = useState<FirebaseUser[]>([]);
   const [userSearchTerm, setUserSearchTerm] = useState('');
   const [newPaymentAmounts, setNewPaymentAmounts] = useState<Record<string, string>>({});
