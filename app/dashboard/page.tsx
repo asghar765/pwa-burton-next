@@ -21,7 +21,7 @@ import { v4 as uuidv4 } from 'uuid';
 import { FirebaseUser, LoggedUser } from '../../types';
 
 const AdminDashboard: React.FC = () => {
-  const { user, userRole } = useAuth() as { user: LoggedUser | null; userRole: string | null };
+  const { user, userRole } = useAuth() as { user: (LoggedUser & { uid?: string }) | null; userRole: string | null };
   const router = useRouter();
   const [loading, setLoading] = useState(true);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
@@ -379,7 +379,7 @@ const AdminDashboard: React.FC = () => {
   };
 
   const renderDashboardSection = () => {
-    const currentUser = members.find(m => m.id === user?.uid) || null;
+    const currentUser = members.find(m => m.id === (user?.uid || user?.id)) || null;
     return (
       <DashboardSection
         members={members}
@@ -513,13 +513,14 @@ const AdminDashboard: React.FC = () => {
     const currentMember = members.find(m => m.id === user?.uid) || null;
     console.log('Current member:', currentMember);
 
-    const memberNotes = notes.filter(n => n.memberId === user?.uid);
+    const userId = user?.uid || user?.id;
+    const memberNotes = notes.filter(n => n.memberId === userId);
     console.log('Member notes:', memberNotes);
 
-    const memberPayments = payments.filter(p => p.memberId === user?.uid);
+    const memberPayments = payments.filter(p => p.memberId === userId);
     console.log('Member payments:', memberPayments);
 
-    const memberExpenses = expenses.filter(e => e.userId === user?.uid);
+    const memberExpenses = expenses.filter(e => e.userId === userId);
     console.log('Member expenses:', memberExpenses);
 
     if (!currentMember) {
