@@ -179,6 +179,16 @@ const MembersSection: React.FC<MembersSectionProps> = ({
   const [newNote, setNewNote] = useState('');
   const [memberToDelete, setMemberToDelete] = useState<string | null>(null);
 
+  const filteredMembers = useMemo(() => {
+    return members.filter(member => {
+      const search = searchTerm.toLowerCase();
+      return (
+        (member.fullName && member.fullName.toLowerCase().includes(search)) ||
+        (member.memberNumber && member.memberNumber.toLowerCase().includes(search))
+      );
+    });
+  }, [members, searchTerm]);
+
   useEffect(() => {
     const fetchFirebaseUsers = async () => {
       const usersCollection = collection(db, 'users');
