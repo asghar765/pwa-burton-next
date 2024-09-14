@@ -86,18 +86,19 @@ const CollectorsSection: React.FC<CollectorsSectionProps> = ({
         <p>Showing {collectors.length} collectors</p>
       </div>
       <div className="overflow-x-auto">
-        <table className="min-w-full bg-white">
-          <thead className="sticky top-0 bg-gray-200">
-            <tr className="text-gray-600 uppercase text-sm leading-normal">
-              <th className="py-3 px-6 text-left">Name</th>
-              <th className="py-3 px-6 text-left">Member No</th>
-              <th className="py-3 px-6 text-left">Address</th>
-              <th className="py-3 px-6 text-left">Contact</th>
-              <th className="py-3 px-6 text-left">Collector</th>
-              <th className="py-3 px-6 text-center">Actions</th>
-            </tr>
-          </thead>
-          <tbody className="text-gray-600 text-sm font-light">
+        <div className="max-h-[70vh] overflow-y-auto">
+          <table className="min-w-full bg-white">
+            <thead className="sticky top-0 bg-gray-200">
+              <tr className="text-gray-600 uppercase text-sm leading-normal">
+                <th className="py-3 px-6 text-left">Name</th>
+                <th className="py-3 px-6 text-left">Member No</th>
+                <th className="py-3 px-6 text-left">Address</th>
+                <th className="py-3 px-6 text-left">Contact</th>
+                <th className="py-3 px-6 text-left">Collector</th>
+                <th className="py-3 px-6 text-center">Actions</th>
+              </tr>
+            </thead>
+            <tbody className="text-gray-600 text-sm font-light">
             {filteredCollectors.map(collector => (
               <React.Fragment key={collector.id}>
                 <tr className="border-b border-gray-200 hover:bg-gray-100">
@@ -156,7 +157,6 @@ const CollectorsSection: React.FC<CollectorsSectionProps> = ({
           </tbody>
         </table>
       </div>
-      <div ref={ref} className="h-10" />
     </div>
   );
 };
