@@ -24,7 +24,35 @@ export default function CollectorResponsibilities() {
           <GradientText>Collector Responsibilities</GradientText>
         </h1>
 
-        {/* Rest of the content remains the same */}
+        <section className="bg-gray-800 p-6 rounded-lg shadow-lg">
+          <h2 className="text-2xl font-semibold mb-4">Key Responsibilities:</h2>
+          <ul className="list-disc list-inside space-y-2">
+            <li>Collect membership fees and donations from assigned members</li>
+            <li>Maintain accurate records of all transactions</li>
+            <li>Issue receipts for all payments received</li>
+            <li>Report any issues or concerns to the finance committee</li>
+            <li>Attend monthly collector meetings</li>
+            <li>Assist in organizing fundraising events</li>
+            <li>Promote the association's activities and goals</li>
+            <li>Ensure compliance with financial regulations and policies</li>
+          </ul>
+        </section>
+
+        <section className="bg-gray-800 p-6 rounded-lg shadow-lg">
+          <h2 className="text-2xl font-semibold mb-4">Important Guidelines:</h2>
+          <ul className="list-disc list-inside space-y-2">
+            <li>Always be professional and courteous when interacting with members</li>
+            <li>Maintain confidentiality of member information</li>
+            <li>Use the provided collection tools and software</li>
+            <li>Submit collected funds to the treasurer within 48 hours</li>
+            <li>Attend training sessions to stay updated on procedures</li>
+            <li>Wear your official collector badge during collection activities</li>
+          </ul>
+        </section>
+
+        <p className="text-center mt-8">
+          For any questions or additional information, please contact the Finance Committee.
+        </p>
       </main>
 
       <footer className="w-full max-w-4xl text-center text-blue-200 mt-12">
