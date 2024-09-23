@@ -8,15 +8,14 @@ const GradientText = ({ children, className = '' }) => (
   </span>
 );
 
+export const metadata = {
+  title: 'Collector Responsibilities - Pakistan Welfare Association',
+  description: 'Detailed responsibilities for collectors of the Pakistan Welfare Association.',
+};
+
 export default function CollectorResponsibilities() {
   return (
     <div className="min-h-screen flex flex-col items-center p-8 bg-gradient-to-b from-gray-900 to-blue-900 text-gray-100">
-      {/* Head Component for SEO */}
-      <Head>
-        <title>Collector Responsibilities - Pakistan Welfare Association</title>
-        <meta name="description" content="Detailed responsibilities for collectors of the Pakistan Welfare Association." />
-      </Head>
-
       <header className="w-full max-w-4xl flex justify-between items-center mb-12">
         <Link href="/">
           <div className="text-3xl font-bold cursor-pointer">
