@@ -1,17 +1,5 @@
-'use client';
-
 import Link from 'next/link';
-
-const GradientText = ({ children, className = '' }) => (
-  <span className={`font-bold bg-clip-text text-transparent bg-gradient-to-r from-blue-400 to-teal-300 ${className}`}>
-    {children}
-  </span>
-);
-
-export const metadata = {
-  title: 'Collector Responsibilities - Pakistan Welfare Association',
-  description: 'Detailed responsibilities for collectors of the Pakistan Welfare Association.',
-};
+import GradientText from '@/components/GradientText';
 
 export default function CollectorResponsibilities() {
   return (
@@ -40,7 +28,7 @@ export default function CollectorResponsibilities() {
       </main>
 
       <footer className="w-full max-w-4xl text-center text-blue-200 mt-12">
-        <p>© {new Date().getFullYear()} Pakistan Welfare Association. All rights reserved.</p>
+        <p>© Pakistan Welfare Association. All rights reserved.</p>
       </footer>
     </div>
   );
