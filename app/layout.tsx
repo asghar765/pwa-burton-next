@@ -16,6 +16,9 @@ export interface RootLayoutProps {
 export const metadata: Metadata = {
   title: "PWA Burton",
   description: "Pakistan Welfare Association Burton Upon Trent",
+  icons: {
+    icon: '/favicon.ico',
+  },
 };
 
 export default function RootLayout({ children }: RootLayoutProps) {
