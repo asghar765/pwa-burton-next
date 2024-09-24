@@ -32,7 +32,7 @@ export default function CollectorResponsibilities() {
             <li>Issue receipts for all payments received</li>
             <li>Report any issues or concerns to the finance committee</li>
             <li>Attend monthly collector meetings</li>
-            <li>Promote the association's activities and goals</li>
+            <li>Promote the association&apos;s activities and goals</li>
             <li>Ensure compliance with financial regulations and policies</li>
           </ul>
         </section>
