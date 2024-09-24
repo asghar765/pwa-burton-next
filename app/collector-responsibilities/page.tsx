@@ -32,7 +32,6 @@ export default function CollectorResponsibilities() {
             <li>Issue receipts for all payments received</li>
             <li>Report any issues or concerns to the finance committee</li>
             <li>Attend monthly collector meetings</li>
-            <li>Assist in organizing fundraising events</li>
             <li>Promote the association's activities and goals</li>
             <li>Ensure compliance with financial regulations and policies</li>
           </ul>
@@ -44,7 +43,7 @@ export default function CollectorResponsibilities() {
             <li>Always be professional and courteous when interacting with members</li>
             <li>Maintain confidentiality of member information</li>
             <li>Use the provided collection tools and software</li>
-            <li>Submit collected funds to the treasurer within 48 hours</li>
+            <li>Submit collected funds to the treasurer within 24 hours</li>
             <li>Attend training sessions to stay updated on procedures</li>
             <li>Wear your official collector badge during collection activities</li>
           </ul>
