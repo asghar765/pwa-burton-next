@@ -238,7 +238,7 @@ const MembersSection: React.FC<MembersSectionProps> = ({
         <MagnifyingGlassIcon className="h-5 w-5 text-gray-400" />
       </div>
       <div className="overflow-x-auto">
-        <div className="max-h-[calc(100vh-200px)] overflow-y-auto">
+        <div className="max-h-[calc(100vh-200px)] overflow-y-auto scrollbar-thin scrollbar-thumb-gray">
           <table className="min-w-full bg-white">
             <thead className="sticky top-0 bg-gray-200 z-10">
             <tr className="text-gray-600 uppercase text-sm leading-normal">
