@@ -1,146 +1,88 @@
 'use client';
 
-import React, { ReactNode } from 'react';
+import React from 'react';
 import Link from 'next/link';
-import { auth } from '../config/firebaseConfig';
 
-const IconUsers = () => (
-  <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-    <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path><circle cx="9" cy="7" r="4"></circle><path d="M23 21v-2a4 4 0 0 0-3-3.87"></path><path d="M16 3.13a4 4 0 0 1 0 7.75"></path>
-  </svg>
-);
-
-const IconHeart = () => (
-  <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-    <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"></path>
-  </svg>
-);
-
-interface GradientTextProps {
-  children: ReactNode;
-  className?: string;
-}
-
-const GradientText = ({ children, className = '' }: GradientTextProps) => (
+const GradientText = ({ children, className = '' }: { children: React.ReactNode; className?: string }) => (
   <span className={`font-bold bg-clip-text text-transparent bg-gradient-to-r from-blue-400 to-teal-300 ${className}`}>
     {children}
   </span>
 );
 
-const LoginButton = () => {
-  return (
-    <div>
-      <Link href="/login" passHref>
-        <button
-          className="bg-blue-600 text-white px-4 py-2 rounded-full text-sm font-semibold hover:bg-blue-700 transition-colors flex items-center"
-        >
-          Login
-        </button>
-      </Link>
-    </div>
-  );
-};
+const Section = ({ title, children }: { title: string; children: React.ReactNode }) => (
+  <section className="bg-gray-800 p-6 rounded-lg shadow-md mb-8">
+    <h2 className="text-2xl font-semibold mb-4"><GradientText>{title}</GradientText></h2>
+    {children}
+  </section>
+);
 
 export default function Home() {
   return (
     <div className="min-h-screen flex flex-col items-center justify-between p-8 bg-gradient-to-b from-gray-900 to-blue-900 text-gray-100">
       <header className="w-full max-w-5xl flex justify-between items-center mb-12">
-        <div className="text-2xl font-bold">
+        <div className="text-3xl font-bold">
           <GradientText>PWA</GradientText>
         </div>
         <nav>
-          <LoginButton />
+          <Link href="/login" passHref>
+            <button className="bg-blue-600 text-white px-6 py-2 rounded-full text-sm font-semibold hover:bg-blue-700 transition-colors flex items-center">
+              Login
+            </button>
+          </Link>
         </nav>
       </header>
 
-      <div className="text-center mb-16">
-        <h1 className="text-5xl mb-4">
-          <GradientText className="">Pakistan Welfare Association</GradientText>
+      <main className="w-full max-w-5xl space-y-8">
+        <h1 className="text-4xl font-bold mb-10 text-center">
+          <GradientText>Pakistan Welfare Association Updates</GradientText>
         </h1>
-        <p className="text-xl text-blue-200 mb-8">Supporting our Muslim community in Burton Upon Trent since early 1970s</p>
-        <div className="flex justify-center space-x-4">
-          <Link
-            href="/registration"
-            className="bg-blue-600 text-white px-6 py-3 rounded-full text-lg font-semibold hover:bg-blue-700 transition-colors"
-          >
-            Join PWA
-          </Link>
-          <a
-            href="https://buy.stripe.com/eVabMD6D92oj78QfYY"
-            target="_blank"
-            rel="noopener noreferrer"
-            className="bg-green-600 text-white px-6 py-3 rounded-full text-lg font-semibold hover:bg-green-700 transition-colors"
-          >
-            Pay Now
-          </a>
-        </div>
-      </div>
 
-      <div id="about" className="w-full max-w-5xl mb-16">
-        <h2 className="text-3xl mb-4">
-          <GradientText className="">About Us</GradientText>
-        </h2>
-        <p className="text-blue-100 mb-4">
-          The Pakistan Welfare Association (PWA) is dedicated to supporting the Muslim community in Burton Upon Trent.
-          We provide essential services including financial assistance and funeral arrangements.
-        </p>
-        <p className="text-blue-100">
-          Our association is built on the principles of community support, welfare, and mutual aid. We strive to ensure
-          that every member of our community has access to the help they need in times of joy and sorrow.
-        </p>
-      </div>
-
-      <div id="services" className="grid grid-cols-1 md:grid-cols-2 gap-8 w-full max-w-5xl mb-16">
-        <div className="bg-gray-800 p-6 rounded-lg shadow-md">
-          <div className="w-12 h-12 text-blue-400 mb-4">
-            <IconUsers />
+        <Section title="What we've been doing">
+          <div className="space-y-4 text-blue-100">
+            <p>Brother Sajid has resigned and a new Committee was formally created. We would like to thank brother Sajid for his previous efforts, and he will continue helping the Committee where possible in an informal capacity.</p>
+            
+            <p>New Committee, <Link href="/terms-and-conditions" className="text-blue-300 hover:underline">terms and conditions</Link>, and registration, formalise roles for <Link href="/collector-responsibilities" className="text-blue-300 hover:underline">Collectors Responsibilities</Link></p>
+            
+            <h3 className="text-xl font-semibold mt-6">New Committee as of December 2023</h3>
+            <ul className="list-disc pl-5">
+              <li>Chairperson: Anjum Riaz & Habib Mushtaq</li>
+              <li>Secretary: Tariq Majid</li>
+              <li>Treasurer: Faizan Qadiri</li>
+            </ul>
+            
+            <p>Terms have been updated.</p>
+            <p>Website has been created and coded by Zaheer Asghar</p>
           </div>
-          <h2 className="text-xl mb-2">
-            <GradientText className="">Community Support</GradientText>
-          </h2>
-          <p className="text-blue-100">We provide assistance to our community members in times of need, including financial support for bereaved families.</p>
-        </div>
-        <div className="bg-gray-800 p-6 rounded-lg shadow-md">
-          <div className="w-12 h-12 text-blue-400 mb-4">
-            <IconHeart />
+        </Section>
+
+        <Section title="What we expect">
+          <ul className="list-disc pl-5 space-y-2 text-blue-100">
+            <li>All members have been given membership numbers. Please contact your collector to find this out.</li>
+            <li>Please login individually and fill in required data.</li>
+            <li>We expect timely payments that are up to date.</li>
+            <li>Collectors who are timely and up to date, thank you, and please continue with your efforts. Those not up to date, please find out your membership number from your collector, then please login online and make payment as soon as possible. If payments are not up to date then you will not be covered.</li>
+          </ul>
+        </Section>
+
+        <Section title="Important Information">
+          <div className="space-y-4 text-blue-100">
+            <p>Trialled so far online payment using Stripe - not enough uptake, sidelined for possible future use.</p>
+            
+            <p className="font-semibold text-yellow-300">Check with your collector if payments up to date, if not up to date YOU ARE NOT COVERED! The responsibility to pay is on the member, not the Collector.</p>
+            
+            <p>Unfortunately we are not taking on new members. So if Collectors are in arrears, they will be given deadlines to clear arrears. After this deadline you will no longer be considered to be a member of Pakistan Welfare Committee, and currently we are not taking any more members on so you will be advised to join another Committee if they are willing to take new members.</p>
+            
+            <p>Only members who become of age will be added as new members.</p>
+            
+            <p>We humbly request everyone keeps their payments up to date, the best method is to pay directly <Link href="/payment" className="text-blue-300 hover:underline">here</Link></p>
+            
+            <p>If there are members in the community that feel they can assist in a voluntary capacity to improve aspects of the processes involved, please get in touch with the Committee.</p>
           </div>
-          <h2 className="text-xl mb-2">
-            <GradientText className="">Funeral Services</GradientText>
-          </h2>
-          <p className="text-blue-100">We offer comprehensive funeral arrangements, including Ghusl facilities and burial services for members.</p>
-        </div>
-      </div>
+        </Section>
+      </main>
 
-      <div id="membership" className="w-full max-w-5xl mb-16">
-        <h2 className="text-3xl mb-4">
-          <GradientText className="">Membership Information</GradientText>
-        </h2>
-        <ul className="list-disc list-inside text-blue-100 space-y-2">
-          <li>Membership is open to Muslims in the Burton Upon Trent area.</li>
-          <li>Current membership fee is £150 as of January 2024, plus annual collection amounts.</li>
-          <li>Members must register their dependents for accurate coverage.</li>
-          <li>Young males over 18 must have separate membership.</li>
-          <li>Special provisions are available for unmarried females, widows, and those with multiple spouses.</li>
-          <li>Residency within East Staffordshire Borough Council area is required for full benefits.</li>
-        </ul>
-      </div>
-
-      <div id="contact" className="w-full max-w-5xl mb-16">
-        <h2 className="text-3xl mb-4">
-          <GradientText className="">Contact Us</GradientText>
-        </h2>
-        <p className="text-blue-100 mb-4">
-          For more information about our services, membership, or to speak with a PWA representative, please contact us:
-        </p>
-        <p className="text-blue-100">
-          Email: pwaburton@proton.me<br />
-          Phone: +44 1234 567890<br />
-          Address: Wellington Street Post Office, Burton Upon Trent, DE14 2DR
-        </p>
-      </div>
-
-      <footer className="w-full max-w-5xl text-center text-blue-200">
-        <p>&copy; 2024 SmartFIX Technologies, Burton Upon Trent. All rights reserved.</p>
+      <footer className="w-full max-w-5xl text-center text-blue-200 mt-12">
+        <p>© 2024 SmartFIX Technologies, Burton Upon Trent. All rights reserved.</p>
       </footer>
     </div>
   );

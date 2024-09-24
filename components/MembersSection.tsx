@@ -73,7 +73,7 @@ const CollectorsSection: React.FC<CollectorsSectionProps> = ({
     <div className="container mx-auto px-4">
       <h2 className="text-2xl font-bold mb-4">Collectors</h2>
       <div className="mb-4 flex items-center">
-          <input
+        <input
           type="text"
           value={searchTerm}
           onChange={(e) => setSearchTerm(e.target.value)}
@@ -158,10 +158,9 @@ const CollectorsSection: React.FC<CollectorsSectionProps> = ({
         </table>
       </div>
     </div>
+  </div>
   );
 };
-
-export { CollectorsSection };
 
 const MembersSection: React.FC<MembersSectionProps> = ({
   members,
