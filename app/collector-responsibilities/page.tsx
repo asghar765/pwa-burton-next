@@ -44,8 +44,6 @@ export default function CollectorResponsibilities() {
             <li>Maintain confidentiality of member information</li>
             <li>Use the provided collection tools and software</li>
             <li>Submit collected funds to the treasurer within 24 hours</li>
-            <li>Attend training sessions to stay updated on procedures</li>
-            <li>Wear your official collector badge during collection activities</li>
           </ul>
         </section>
 
