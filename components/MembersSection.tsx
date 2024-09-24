@@ -225,7 +225,7 @@ const MembersSection: React.FC<MembersSectionProps> = ({
   }, [memberToDelete, onDeleteMember]);
 
   return (
-    <div className="container mx-auto px-4">
+    <div className="container mx-auto px-4 max-w-full">
       <h2 className="text-2xl font-bold mb-4">Members</h2>
       <div className="mb-4 flex items-center">
         <input
@@ -239,7 +239,7 @@ const MembersSection: React.FC<MembersSectionProps> = ({
       </div>
       <div className="overflow-x-auto">
         <div className="max-h-[calc(100vh-200px)] overflow-y-auto scrollbar-thin scrollbar-thumb-gray">
-          <table className="min-w-full bg-white">
+          <table className="w-full bg-white">
             <thead className="sticky top-0 bg-gray-200 z-10">
             <tr className="text-gray-600 uppercase text-sm leading-normal">
               <th className="py-3 px-6 text-left">Name</th>
