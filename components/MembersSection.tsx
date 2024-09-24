@@ -238,8 +238,9 @@ const MembersSection: React.FC<MembersSectionProps> = ({
         <MagnifyingGlassIcon className="h-5 w-5 text-gray-400" />
       </div>
       <div className="overflow-x-auto">
-        <table className="min-w-full bg-white">
-          <thead className="sticky top-0 bg-gray-200">
+        <div className="max-h-[calc(100vh-200px)] overflow-y-auto">
+          <table className="min-w-full bg-white">
+            <thead className="sticky top-0 bg-gray-200 z-10">
             <tr className="text-gray-600 uppercase text-sm leading-normal">
               <th className="py-3 px-6 text-left">Name</th>
               <th className="py-3 px-6 text-left">Member No</th>
@@ -420,6 +421,7 @@ const MembersSection: React.FC<MembersSectionProps> = ({
             ))}
           </tbody>
         </table>
+        </div>
       </div>
 
       {/* Delete Confirmation Dialog */}
