@@ -26,15 +26,15 @@ export default function RootLayout({ children }: RootLayoutProps) {
           <ThemeProvider>
             <div className="min-h-screen flex flex-col">
               <nav className="bg-gray-800 text-white p-4">
-                <div className="container mx-auto flex justify-between items-center">
-                  <Link href="/" className="text-xl font-bold">PWA Burton</Link>
+                <div className="container mx-auto flex flex-col xs:flex-row justify-between items-center">
+                  <Link href="/" className="text-xl font-bold mb-2 xs:mb-0">PWA Burton</Link>
                   <div className="flex items-center space-x-4">
                     <Link href="/dashboard" className="hover:text-gray-300">Dashboard</Link>
                     <ThemeSwitcher />
                   </div>
                 </div>
               </nav>
-              <main className="flex-grow">
+              <main className="flex-grow container mx-auto py-4">
                 {children}
               </main>
             </div>

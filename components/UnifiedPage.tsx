@@ -3,7 +3,11 @@ import React, { useContext } from 'react';
 import { ThemeContext } from '../context/themeContext';
 import { auth } from '../config/firebaseConfig';
 
-const UnifiedPage = () => {
+interface UnifiedPageProps {
+  children: React.ReactNode;
+}
+
+const UnifiedPage: React.FC<UnifiedPageProps> = ({ children }) => {
   const themeContext = useContext(ThemeContext);
 
   if (!themeContext) {
@@ -12,14 +16,11 @@ const UnifiedPage = () => {
 
   const { foreground, background } = themeContext;
 
-  const unifiedPageStyle = {
-    color: foreground,
-    backgroundColor: background,
-  };
-
   return (
-    <div style={unifiedPageStyle}>
-      {/* Your component JSX */}
+    <div className="min-h-screen p-4 md:p-6 lg:p-8" style={{ color: foreground, backgroundColor: background }}>
+      <div className="max-w-7xl mx-auto">
+        {children}
+      </div>
     </div>
   );
 };
