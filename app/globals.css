@@ -68,4 +68,25 @@ button {
       max-width: 1280px;
     }
   }
+
+  .table-container {
+    @apply w-full overflow-x-auto scrollbar-thin scrollbar-thumb-gray;
+  }
+
+  .responsive-table {
+    @apply min-w-full divide-y divide-gray-200;
+  }
+
+  .responsive-table th {
+    @apply px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider;
+  }
+
+  .responsive-table td {
+    @apply px-6 py-4 whitespace-nowrap text-sm;
+  }
+
+  .responsive-table th,
+  .responsive-table td {
+    @apply min-w-table-cell;
+  }
 }
