@@ -37,7 +37,7 @@ export default function RootLayout({ children }: RootLayoutProps) {
                   </div>
                 </div>
               </nav>
-              <main className="flex-grow container mx-auto py-4 px-4">
+              <main className="flex-grow w-full">
                 {children}
               </main>
             </div>

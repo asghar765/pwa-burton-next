@@ -17,10 +17,8 @@ const UnifiedPage: React.FC<UnifiedPageProps> = ({ children }) => {
   const { foreground, background } = themeContext;
 
   return (
-    <div className="min-h-screen p-2 xs:p-4 sm:p-6 md:p-8" style={{ color: foreground, backgroundColor: background }}>
-      <div className="max-w-7xl mx-auto w-full">
-        {children}
-      </div>
+    <div className="min-h-screen w-full p-2 xs:p-4 sm:p-6 md:p-8" style={{ color: foreground, backgroundColor: background }}>
+      {children}
     </div>
   );
 };
