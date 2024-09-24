@@ -2,6 +2,8 @@
 
 import React, { useState } from 'react';
 import Link from 'next/link';
+import { addDoc, collection } from 'firebase/firestore';
+import { db } from '../../config/firebaseConfig';
 
 const GradientText = ({ children, className = '' }: { children: React.ReactNode; className?: string }) => (
   <span className={`font-bold bg-clip-text text-transparent bg-gradient-to-r from-blue-400 to-teal-300 ${className}`}>
@@ -14,18 +16,27 @@ export default function Payment() {
   const [memberNumber, setMemberNumber] = useState('');
   const [existingMemberNumber, setExistingMemberNumber] = useState('');
 
+  const [accountHolderName, setAccountHolderName] = useState('');
+  const [sortCode, setSortCode] = useState('');
+  const [accountNumber, setAccountNumber] = useState('');
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    // Here you would handle the form submission
-    const docRef = await addDoc(collection(db, 'directDebits'), {
-      memberNumber: existingMemberNumber,
-      accountHolderName: accountHolderName,
-      sortCode: sortCode,
-      accountNumber: accountNumber,
-      createdAt: new Date(),
-      userId: currentUser.uid
-    });
-    console.log('Form submitted');
+    try {
+      const docRef = await addDoc(collection(db, 'directDebits'), {
+        memberNumber: existingMemberNumber,
+        accountHolderName,
+        sortCode,
+        accountNumber,
+        paymentMethod,
+        createdAt: new Date(),
+      });
+      console.log('Document written with ID: ', docRef.id);
+      // Here you would handle successful submission (e.g., show a success message, redirect, etc.)
+    } catch (error) {
+      console.error('Error adding document: ', error);
+      // Here you would handle errors (e.g., show an error message to the user)
+    }
   };
 
   return (    <div className="min-h-screen flex flex-col items-center p-8 bg-gradient-to-b from-gray-900 to-blue-900 text-gray-100">
@@ -76,15 +87,33 @@ export default function Payment() {
             <>
               <div className="mb-4">
                 <label className="block text-blue-300 mb-2">Account Holder Name</label>
-                <input type="text" className="w-full p-2 rounded bg-gray-700 text-white" required />
+                <input 
+                  type="text" 
+                  value={accountHolderName}
+                  onChange={(e) => setAccountHolderName(e.target.value)}
+                  className="w-full p-2 rounded bg-gray-700 text-white" 
+                  required 
+                />
               </div>
               <div className="mb-4">
                 <label className="block text-blue-300 mb-2">Sort Code</label>
-                <input type="text" className="w-full p-2 rounded bg-gray-700 text-white" required />
+                <input 
+                  type="text" 
+                  value={sortCode}
+                  onChange={(e) => setSortCode(e.target.value)}
+                  className="w-full p-2 rounded bg-gray-700 text-white" 
+                  required 
+                />
               </div>
               <div className="mb-4">
                 <label className="block text-blue-300 mb-2">Account Number</label>
-                <input type="text" className="w-full p-2 rounded bg-gray-700 text-white" required />
+                <input 
+                  type="text" 
+                  value={accountNumber}
+                  onChange={(e) => setAccountNumber(e.target.value)}
+                  className="w-full p-2 rounded bg-gray-700 text-white" 
+                  required 
+                />
               </div>
             </>
           )}
