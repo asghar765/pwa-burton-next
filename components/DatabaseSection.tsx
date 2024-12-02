@@ -1,11 +1,16 @@
-     // DatabaseSection.tsx
+// DatabaseSection.tsx
 import React from 'react';
+import { runConversion } from '../utils/conversionUtils';
 
 interface DatabaseSectionProps {
   collections: { name: string; count: number }[];
 }
 
 const DatabaseSection: React.FC<DatabaseSectionProps> = ({ collections }) => {
+  const handleRunConversion = () => {
+    runConversion();
+  };
+
   return (
     <div className="p-4 bg-white shadow rounded-lg">
       <h2 className="text-xl font-semibold mb-4">Database Information</h2>
@@ -23,6 +28,9 @@ const DatabaseSection: React.FC<DatabaseSectionProps> = ({ collections }) => {
         ) : (
           <p>No collections found in the database.</p>
         )}
+        <button className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded" onClick={handleRunConversion}>
+          Run Conversion
+        </button>
       </div>
     </div>
   );
