@@ -8,16 +8,23 @@ export type MemberNumberOptions = {
   memberSequence: number;
 };
 
-const generateMemberNumber = ({
-  collectorInitials, 
-  collectorOrder, 
-  memberSequence
-}: MemberNumberOptions): string => {
+const generateMemberNumber = (
+  collectorInfo?: {
+    initials?: string;
+    order?: number;
+  },
+  memberSequence?: number
+): string => {
+  // Default fallback values if not provided
+  const initials = collectorInfo?.initials || 'UN'; // UN for Unknown/Unassigned
+  const order = collectorInfo?.order || 0;
+  const sequence = memberSequence || 1;
+
   // Ensure memberSequence is padded to 3 digits
-  const paddedMemberSequence = memberSequence.toString().padStart(3, '0');
+  const paddedMemberSequence = sequence.toString().padStart(3, '0');
   
   // Construct member number: Collector Initials + Collector Order + Member Sequence
-  return `${collectorInitials}${collectorOrder}${paddedMemberSequence}`;
+  return `${initials}${order}${paddedMemberSequence}`;
 };
 
 const migrateMemberNumbers = async (
@@ -38,10 +45,9 @@ const migrateMemberNumbers = async (
       
       // Generate new member number
       const newMemberNumber = generateMemberNumber({
-        collectorInitials,
-        collectorOrder,
-        memberSequence
-      });
+        initials: collectorInitials,
+        order: collectorOrder
+      }, memberSequence);
 
       // Update member document with new number
       await updateDoc(doc(db, 'members', memberDoc.id), {

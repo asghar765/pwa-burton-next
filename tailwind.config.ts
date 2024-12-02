@@ -1,11 +1,13 @@
 import type { Config } from "tailwindcss";
+import plugin from 'tailwindcss/plugin';
+import { PluginAPI } from 'tailwindcss/types/config';
 
 const config: Config = {
   content: [
     "./pages/**/*.{js,ts,jsx,tsx,mdx}",
     "./components/**/*.{js,ts,jsx,tsx,mdx}",
     "./app/**/*.{js,ts,jsx,tsx,mdx}",
-    "./styles/**/*.css", // Updated path for Tailwind CSS to watch over CSS files
+    "./styles/**/*.css",
   ],
   theme: {
     extend: {
@@ -17,10 +19,10 @@ const config: Config = {
     },
   },
   plugins: [
-    function ({ addUtilities }) {
-      const newUtilities = {
+    plugin(function({ addUtilities }: PluginAPI) {
+      addUtilities({
         '.scrollbar-thin': {
-          scrollbarWidth: 'thin',
+          'scrollbar-width': 'thin',
           '&::-webkit-scrollbar': {
             width: '6px',
             height: '6px',
@@ -31,9 +33,8 @@ const config: Config = {
             backgroundColor: '#4B5563',
           },
         },
-      }
-      addUtilities(newUtilities, ['responsive', 'hover'])
-    }
+      });
+    })
   ],
 };
 export default config;

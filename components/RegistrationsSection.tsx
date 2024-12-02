@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { Registration, Member, NewMember } from '../types';
 import { ChevronDownIcon, ChevronUpIcon } from '@heroicons/react/24/solid';
 import { generateMemberNumber } from '../utils/memberUtils';
+import { useAuth } from '../context/authContext';
 
 interface RegistrationsSectionProps {
   registrations: Registration[];
@@ -18,6 +19,7 @@ const RegistrationsSection: React.FC<RegistrationsSectionProps> = ({
 }) => {
   const [expandedItems, setExpandedItems] = useState<Record<string, boolean>>({});
   const [processing, setProcessing] = useState<Record<string, boolean>>({});
+  const { user, userRole } = useAuth();
 
   const toggleItemExpansion = (itemId: string) => {
     setExpandedItems(prev => ({
@@ -29,7 +31,17 @@ const RegistrationsSection: React.FC<RegistrationsSectionProps> = ({
   const handleApprove = async (registration: Registration) => {
     setProcessing(prev => ({ ...prev, [registration.id]: true }));
     try {
-      const memberNumber = generateMemberNumber();
+      // Extract collector initials from user's email or name
+      const collectorInitials = user?.email?.substring(0, 2).toUpperCase() || 'UN';
+      
+      // Use the current user's order (or default to 0 if not available)
+      const collectorOrder = userRole === 'collector' ? 5 : 0;
+
+      const memberNumber = generateMemberNumber(
+        { initials: collectorInitials, order: collectorOrder }, 
+        1 // Start with sequence 1
+      );
+
       const newMember: NewMember = {
         fullName: registration.fullName,
         email: registration.email,
@@ -44,7 +56,7 @@ const RegistrationsSection: React.FC<RegistrationsSectionProps> = ({
         gender: '',
         maritalStatus: '',
         mobileNo: '',
-        collector: '',
+        collector: user?.uid || '',
         nextOfKinName: '',
         nextOfKinAddress: '',
         nextOfKinPhone: '',
