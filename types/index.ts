@@ -76,6 +76,7 @@ export interface Registration {
 }
 
 export interface Collector {
+  order: number;
   id: string;
   name: string;
   email: string;
