@@ -9,10 +9,17 @@ const CollectorsSectionItem: React.FC<{ collector: { name: string; members: Memb
   const [isExpanded, setIsExpanded] = useState(false);
 
   const filteredMembers = useMemo(() => {
-    return collector.members.map(member => ({
-      ...member,
-      memberNumber: member.memberNumber.slice(1) // Remove the first digit of the member number
-    })).filter(member => 
+    return collector.members.map((member, index) => {
+      // Extract collector initials
+      const collectorInitials = collector.name.split(' ').map(word => word[0]).join('').toUpperCase();
+      // Format the member number without hyphens
+      const formattedMemberNumber = `${collectorInitials}${collector.number}${String(index + 1).padStart(3, '0')}`;
+
+      return {
+        ...member,
+        memberNumber: formattedMemberNumber
+      };
+    }).filter(member => 
       member.memberNumber.toLowerCase().includes(searchTerm.toLowerCase()) ||
       (member.name || member.fullName).toLowerCase().includes(searchTerm.toLowerCase())
     );
@@ -56,6 +63,9 @@ const CollectorsSectionItem: React.FC<{ collector: { name: string; members: Memb
                     <td className="p-2">{member.memberNumber}</td>
                     <td className="p-2">{member.email}</td>
                     <td className="p-2">{member.mobileNo}</td>
+                    <td className="p-2">{member.address}</td>
+                  </tr>
+                ))}
               </tbody>
             </table>
           </div>

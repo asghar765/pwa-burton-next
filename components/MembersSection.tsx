@@ -36,7 +36,7 @@ export interface MembersSectionProps {
   onRevokeMember: (id: string) => void;
   currentUserRole: string;
   onAddPayment: (memberNumber: string, payment: Omit<Payment, 'id'>) => void;
-  onAddNote: (memberId: string, note: string) => void;
+  onAddNote: (memberNumber: string, note: string) => void;
   onUpdateUserRole: (userId: string, newRole: string) => void;
 }
 
@@ -143,16 +143,16 @@ const MembersSection: React.FC<MembersSectionProps> = ({
     fetchCollectors();
   }, []);
 
-  const toggleMemberExpansion = useCallback((memberId: string) => {
-    setExpandedMembers(prev => ({ ...prev, [memberId]: !prev[memberId] }));
+  const toggleMemberExpansion = useCallback((memberNumber: string) => {
+    setExpandedMembers(prev => ({ ...prev, [memberNumber]: !prev[memberNumber] }));
   }, [setExpandedMembers]);
 
-  const handleDeleteMember = useCallback((id: string) => {
-    setMemberToDelete(id);
+  const handleDeleteMember = useCallback((memberNumber: string) => {
+    setMemberToDelete(memberNumber);
   }, []);
 
   // Handle collector change
-  const handleCollectorChange = async (memberId: string, newCollectorId: string) => {
+  const handleCollectorChange = async (memberNumber: string, newCollectorId: string) => {
     try {
       const collector = collectors.find(c => c.id === newCollectorId);
       if (!collector) {
@@ -162,7 +162,7 @@ const MembersSection: React.FC<MembersSectionProps> = ({
       const names = collector.name.split(' ');
       const initials = names.map(n => n[0]).join('').toUpperCase();
 
-      await updateMemberNumberOnCollectorChange(db, memberId, newCollectorId, {
+      await updateMemberNumberOnCollectorChange(db, memberNumber, newCollectorId, {
         initials,
         order: collector.order ?? 0 // Provide default order if missing
       });
@@ -176,7 +176,17 @@ const MembersSection: React.FC<MembersSectionProps> = ({
   };
 
   const filteredMembers = useMemo(() => {
-    return members.filter(member => {
+    return members.map((member, index) => {
+      const collector = collectors.find(c => c.id === member.collector);
+      const collectorInitials = collector ? collector.name.split(' ').map(word => word[0]).join('').toUpperCase() : '';
+      const collectorNumber = collector ? String(collector.order).padStart(2, '0') : '00';
+      const formattedMemberNumber = `${collectorInitials}${collectorNumber}${String(index + 1).padStart(3, '0')}`;
+
+      return {
+        ...member,
+        memberNumber: formattedMemberNumber
+      };
+    }).filter(member => {
       const search = searchTerm.toLowerCase();
       return (
         (member.fullName && member.fullName.toLowerCase().includes(search)) ||
@@ -184,7 +194,7 @@ const MembersSection: React.FC<MembersSectionProps> = ({
         (member.name && member.name.toLowerCase().includes(search))
       );
     });
-  }, [members, searchTerm]);
+  }, [members, searchTerm, collectors]);
 
   const confirmDeleteMember = useCallback(() => {
     if (memberToDelete) {
@@ -237,7 +247,7 @@ const MembersSection: React.FC<MembersSectionProps> = ({
             </thead>
             <tbody className="text-gray-600 text-sm font-light">
               {filteredMembers.map(member => (
-                <React.Fragment key={member.id}>
+                <React.Fragment key={member.memberNumber}>
                   <tr className="border-b border-gray-200 hover:bg-gray-100">
                     <td className="py-3 px-6 text-left whitespace-nowrap">
                       <div className="flex items-center">
@@ -259,24 +269,24 @@ const MembersSection: React.FC<MembersSectionProps> = ({
                     <td className="py-3 px-6 text-center">
                       <div className="flex items-center justify-center space-x-2">
                         <button
-                          onClick={() => toggleMemberExpansion(member.id)}
+                          onClick={() => toggleMemberExpansion(member.memberNumber)}
                           className="p-1 bg-blue-100 text-blue-600 rounded hover:bg-blue-200 transition-colors duration-200"
                         >
-                          {expandedMembers[member.id] ? (
+                          {expandedMembers[member.memberNumber] ? (
                             <ChevronUpIcon className="h-5 w-5" />
                           ) : (
                             <ChevronDownIcon className="h-5 w-5" />
                           )}
                         </button>
                         <button
-                          onClick={() => setCollectorChangeModal({ isOpen: true, memberId: member.id })}
+                          onClick={() => setCollectorChangeModal({ isOpen: true, memberId: member.memberNumber })}
                           className="p-1 bg-purple-100 text-purple-600 rounded hover:bg-purple-200 transition-colors duration-200"
                         >
                           <span className="sr-only">Change Collector</span>
                           <UserGroupIcon className="h-5 w-5" />
                         </button>
                         <button
-                          onClick={() => onUpdateMember(member.id, { ...member, name: member.name + ' (updated)' })}
+                          onClick={() => onUpdateMember(member.memberNumber, { ...member, name: member.name + ' (updated)' })}
                           className="p-1 bg-yellow-100 text-yellow-600 rounded hover:bg-yellow-200 transition-colors duration-200"
                         >
                           <span className="sr-only">Edit</span>
@@ -285,7 +295,7 @@ const MembersSection: React.FC<MembersSectionProps> = ({
                           </svg>
                         </button>
                         <button
-                          onClick={() => handleDeleteMember(member.id)}
+                          onClick={() => handleDeleteMember(member.memberNumber)}
                           className="p-1 bg-red-100 text-red-600 rounded hover:bg-red-200 transition-colors duration-200"
                         >
                           <span className="sr-only">Delete</span>
@@ -294,7 +304,7 @@ const MembersSection: React.FC<MembersSectionProps> = ({
                           </svg>
                         </button>
                         <button
-                          onClick={() => onRevokeMember(member.id)}
+                          onClick={() => onRevokeMember(member.memberNumber)}
                           className="p-1 bg-orange-100 text-orange-600 rounded hover:bg-orange-200 transition-colors duration-200"
                         >
                           <span className="sr-only">Revoke</span>
@@ -305,7 +315,7 @@ const MembersSection: React.FC<MembersSectionProps> = ({
                       </div>
                     </td>
                   </tr>
-                  {expandedMembers[member.id] && (
+                  {expandedMembers[member.memberNumber] && (
                     <tr>
                       <td colSpan={6}>
                         <div className="p-4 bg-gray-50">
@@ -393,7 +403,7 @@ const MembersSection: React.FC<MembersSectionProps> = ({
                               <button
                                 onClick={() => {
                                   if (newNote.trim()) {
-                                    onAddNote(member.id, newNote);
+                                    onAddNote(member.memberNumber, newNote);
                                     setNewNote('');
                                   } else {
                                     alert('Please enter a note before adding.');
