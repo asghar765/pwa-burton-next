@@ -5,10 +5,11 @@ import { Dialog } from '@headlessui/react';
 import { MagnifyingGlassIcon, ChevronDownIcon, ChevronUpIcon, UserGroupIcon } from '@heroicons/react/24/solid';
 import { collection, getDocs, doc, updateDoc, addDoc } from 'firebase/firestore';
 import { db } from '../config/firebaseConfig';
-import { generateMemberNumber, updateMemberNumberOnCollectorChange } from '../utils/memberUtils';
+import { updateMemberNumberOnCollectorChange } from '../utils/memberUtils';
 import { useInView } from 'react-intersection-observer';
 
 interface MemberWithPayments extends Member {
+  memberNumber: any;
   payments: Payment[];
 }
 
@@ -159,15 +160,13 @@ const MembersSection: React.FC<MembersSectionProps> = ({
         throw new Error('Collector not found');
       }
 
-      const names = collector.name.split(' ');
-      const initials = names.map(n => n[0]).join('').toUpperCase();
-
+      // Keep the existing member number during collector change
       await updateMemberNumberOnCollectorChange(db, memberNumber, newCollectorId, {
-        initials,
-        order: collector.order ?? 0 // Provide default order if missing
+        initials: collector.name.split(' ').map(n => n[0]).join('').toUpperCase(),
+        order: collector.order ?? 0
       });
 
-      // Refresh the page or update the local state
+      // Refresh the page to show updated data
       window.location.reload();
     } catch (error) {
       console.error('Error changing collector:', error);
@@ -176,26 +175,16 @@ const MembersSection: React.FC<MembersSectionProps> = ({
   };
 
   const filteredMembers = useMemo(() => {
-    return members.map((member, index) => {
-      const collector = collectors.find(c => c.id === member.collector);
-      const collectorInitials = collector ? collector.name.split(' ').map(word => word[0]).join('').toUpperCase() : '';
-      const collectorNumber = collector ? String(collector.order).padStart(2, '0') : '00';
-      const formattedMemberNumber = `${collectorInitials}${collectorNumber}${String(index + 1).padStart(3, '0')}`;
-
-      return {
-        ...member,
-        memberNumber: formattedMemberNumber
-      };
-    }).filter(member => {
-      const search = searchTerm.toLowerCase();
-      return (
-        (member.fullName && member.fullName.toLowerCase().includes(search)) ||
-        (member.memberNumber && member.memberNumber.toLowerCase().includes(search)) ||
-        (member.name && member.name.toLowerCase().includes(search))
-      );
-    });
-  }, [members, searchTerm, collectors]);
-
+    return members
+      .filter(member => {
+        const search = searchTerm.toLowerCase();
+        return (
+          (member.fullName && member.fullName.toLowerCase().includes(search)) ||
+          (member.memberNumber && member.memberNumber.toLowerCase().includes(search)) ||
+          (member.name && member.name.toLowerCase().includes(search))
+        );
+      });
+  }, [members, searchTerm]);
   const confirmDeleteMember = useCallback(() => {
     if (memberToDelete) {
       onDeleteMember(memberToDelete);
