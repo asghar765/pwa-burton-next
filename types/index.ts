@@ -2,7 +2,6 @@ export interface Member {
   id: string;
   fullName: string;
   email: string;
-  memberNumber: string;
   verified: boolean;
   address: string;
   postCode: string;
@@ -17,14 +16,10 @@ export interface Member {
   nextOfKinAddress: string;
   nextOfKinPhone: string;
   dependants: Array<{
-    name: string;
-    dateOfBirth: string;
-    gender: string;
-    category: string;
+    // redacted
   }>;
   spouses: Array<{
-    name: { value: string };
-    dateOfBirth: { value: string };
+    // redacted
   }>;
   membershipInfo: string;
   name?: string;
@@ -37,6 +32,10 @@ export interface Member {
   membershipEndDate?: string;
   lastPaymentDate?: string;
   totalPayments?: number;
+}
+
+export interface NewMember extends Omit<Member, 'id'> {
+  // No changes needed here since 'id' is already omitted
 }
 
 export interface NewMember extends Omit<Member, 'id' | 'memberNumber'> {
@@ -58,8 +57,8 @@ export interface MembersSectionProps {
   onDeleteMember: (id: string) => Promise<void>;
   onRevokeMember: (id: string) => Promise<void>;
   currentUserRole: string;
-  onAddPayment: (memberId: string, payment: Omit<Payment, 'id'>) => Promise<void>;
-  onAddNote: (memberId: string, note: string) => Promise<void>;
+  onAddPayment: (memberNumber: string, payment: Omit<Payment, 'id'>) => Promise<void>;
+  onAddNote: (memberNumber: string, note: string) => Promise<void>;
   onUpdateUserRole: (userId: string, newRole: string) => Promise<void>;
 }
 
@@ -85,7 +84,7 @@ export interface Collector {
 
 export interface Note {
   id: string;
-  memberId: string;
+  memberNumber: string;
   content: string;
   date: string; // ISO date string
 }
@@ -95,7 +94,6 @@ export interface Payment {
   amount: number;
   date: string; // ISO date string
   memberNumber: string;
-  memberId: string;
 }
 
 export interface User {
