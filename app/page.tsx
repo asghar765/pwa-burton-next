@@ -79,6 +79,13 @@ export default function Home() {
             <p>If there are members in the community that feel they can assist in a voluntary capacity to improve aspects of the processes involved, please get in touch with the Committee.</p>
           </div>
         </Section>
+
+        <Section title="Medical Examiner Process">
+          <div className="space-y-4 text-blue-100">
+            <p>To understand our comprehensive Medical Examiner Death Certification process, please review our detailed <Link href="/flow-chart" className="text-blue-300 hover:underline">Medical Examiner Flow Chart</Link>.</p>
+            <p>This flow chart provides a step-by-step guide to the death certification process, ensuring transparency and clarity for all members.</p>
+          </div>
+        </Section>
       </main>
 
       <footer className="w-full max-w-5xl text-center text-blue-200 mt-12">

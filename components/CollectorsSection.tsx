@@ -1,5 +1,6 @@
 import React, { useMemo, useState } from 'react';
 import { Member } from '../types';
+import { generateRawMemberNumber } from '../utils/memberUtils';
 
 interface CollectorsSectionProps {
   members: Member[];
@@ -10,14 +11,16 @@ const CollectorsSectionItem: React.FC<{ collector: { name: string; members: Memb
 
   const filteredMembers = useMemo(() => {
     return collector.members.map((member, index) => {
-      // Extract collector initials
-      const collectorInitials = collector.name.split(' ').map(word => word[0]).join('').toUpperCase();
-      // Format the member number without hyphens
-      const formattedMemberNumber = `${collectorInitials}${collector.number}${String(index + 1).padStart(3, '0')}`;
+      // Generate the raw member number using the new utility function
+      const memberNumber = generateRawMemberNumber(
+        collector.name, 
+        parseInt(collector.number, 10), 
+        index + 1
+      );
 
       return {
         ...member,
-        memberNumber: formattedMemberNumber
+        memberNumber
       };
     }).filter(member => 
       member.memberNumber.toLowerCase().includes(searchTerm.toLowerCase()) ||

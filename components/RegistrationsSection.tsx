@@ -1,7 +1,8 @@
-import React, { useState } from 'react';
-import { Registration, Member, NewMember } from '../types';
+import React, { useState, useEffect } from 'react';
+import { Registration, Member, NewMember, Collector } from '../types';
 import { ChevronDownIcon, ChevronUpIcon } from '@heroicons/react/24/solid';
-import { generateMemberNumber } from '../utils/memberUtils';
+import { collection, query, where, getDocs } from 'firebase/firestore';
+import { db } from '../firebase/clientApp';
 import { useAuth } from '../context/authContext';
 
 interface RegistrationsSectionProps {
@@ -19,7 +20,22 @@ const RegistrationsSection: React.FC<RegistrationsSectionProps> = ({
 }) => {
   const [expandedItems, setExpandedItems] = useState<Record<string, boolean>>({});
   const [processing, setProcessing] = useState<Record<string, boolean>>({});
+  const [collectors, setCollectors] = useState<Collector[]>([]);
   const { user, userRole } = useAuth();
+
+  useEffect(() => {
+    const fetchCollectors = async () => {
+      const collectorsQuery = query(collection(db, 'collectors'));
+      const collectorsSnapshot = await getDocs(collectorsQuery);
+      const collectorsData = collectorsSnapshot.docs.map(doc => ({
+        id: doc.id,
+        ...doc.data()
+      } as Collector));
+      setCollectors(collectorsData);
+    };
+
+    fetchCollectors();
+  }, []);
 
   const toggleItemExpansion = (itemId: string) => {
     setExpandedItems(prev => ({
@@ -31,17 +47,21 @@ const RegistrationsSection: React.FC<RegistrationsSectionProps> = ({
   const handleApprove = async (registration: Registration) => {
     setProcessing(prev => ({ ...prev, [registration.id]: true }));
     try {
-      // Extract collector initials from user's email or name
-      const collectorInitials = user?.email?.substring(0, 2).toUpperCase() || 'UN';
+      const collector = collectors.find((c: Collector) => c.id === user?.uid);
+      if (!collector) throw new Error('Collector not found');
       
-      // Use the current user's order (or default to 0 if not available)
-      const collectorOrder = userRole === 'collector' ? 5 : 0;
-
-      const memberNumber = generateMemberNumber(
-        { initials: collectorInitials, order: collectorOrder }, 
-        1 // Start with sequence 1
+      const collectorInitials = collector.name.split(' ').map((word: string) => word[0]).join('').toUpperCase();
+      const collectorNumber = String(collector.order || 0).padStart(2, '0');
+      
+      // Get current count of members for this collector
+      const membersQuery = query(collection(db, 'members'), 
+        where('collectorId', '==', collector.id)
       );
-
+      const membersSnapshot = await getDocs(membersQuery);
+      const sequence = membersSnapshot.size + 1;
+      
+      const memberNumber = `${collectorInitials}${collectorNumber}${String(sequence).padStart(3, '0')}`;
+      
       const newMember: NewMember = {
         fullName: registration.fullName,
         email: registration.email,

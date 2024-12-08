@@ -5,7 +5,7 @@ import { Dialog } from '@headlessui/react';
 import { MagnifyingGlassIcon, ChevronDownIcon, ChevronUpIcon, UserGroupIcon } from '@heroicons/react/24/solid';
 import { collection, getDocs, doc, updateDoc, addDoc } from 'firebase/firestore';
 import { db } from '../config/firebaseConfig';
-import { updateMemberNumberOnCollectorChange } from '../utils/memberUtils';
+import { updateMemberNumberOnCollectorChange, generateRawMemberNumber } from '../utils/memberUtils';
 import { useInView } from 'react-intersection-observer';
 
 interface MemberWithPayments extends Member {
@@ -121,8 +121,8 @@ const MembersSection: React.FC<MembersSectionProps> = ({
   const [memberToDelete, setMemberToDelete] = useState<string | null>(null);
   const [collectorChangeModal, setCollectorChangeModal] = useState<{
     isOpen: boolean;
-    memberId: string | null;
-  }>({ isOpen: false, memberId: null });
+    memberNumber: string | null;
+  }>({ isOpen: false, memberNumber: null });
   const [collectors, setCollectors] = useState<Collector[]>([]);
 
   // Fetch collectors
@@ -174,6 +174,17 @@ const MembersSection: React.FC<MembersSectionProps> = ({
     }
   };
 
+  const formatMemberNumber = (member: MemberWithPayments) => {
+    const collector = collectors.find(c => c.id === member.collectorId);
+    if (!collector || !member.memberNumber) return 'Not assigned';
+    
+    return generateRawMemberNumber(
+      collector.name, 
+      collector.order || 0, 
+      parseInt(member.memberNumber, 10)
+    );
+  };
+
   const filteredMembers = useMemo(() => {
     return members
       .filter(member => {
@@ -185,6 +196,7 @@ const MembersSection: React.FC<MembersSectionProps> = ({
         );
       });
   }, [members, searchTerm]);
+
   const confirmDeleteMember = useCallback(() => {
     if (memberToDelete) {
       onDeleteMember(memberToDelete);
@@ -198,8 +210,7 @@ const MembersSection: React.FC<MembersSectionProps> = ({
       const newPayment = {
         amount: amount,
         date: new Date().toISOString(),
-        memberNumber: memberNumber,
-        memberId: memberNumber
+        memberNumber: memberNumber
       };
       onAddPayment(memberNumber, newPayment);
       setNewPaymentAmounts(prev => ({ ...prev, [memberNumber]: '' }));
@@ -210,7 +221,7 @@ const MembersSection: React.FC<MembersSectionProps> = ({
 
   return (
     <div className="container mx-auto px-4 max-w-full">
-      <h2 className="text-2xl font-bold mb-4">Members</h2>
+<h2 className="text-2xl font-bold mb-4">Members</h2>
       <div className="mb-4 flex items-center">
         <input
           type="text"
@@ -244,7 +255,7 @@ const MembersSection: React.FC<MembersSectionProps> = ({
                       </div>
                     </td>
                     <td className="py-3 px-6 text-left">
-                      <span>{member.memberNumber || 'Not assigned'}</span>
+                      <span>{formatMemberNumber(member)}</span>
                     </td>
                     <td className="py-3 px-6 text-left">
                       <span>{`${member.address || ''}, ${member.town || ''}, ${member.postCode || ''}`}</span>
@@ -268,7 +279,7 @@ const MembersSection: React.FC<MembersSectionProps> = ({
                           )}
                         </button>
                         <button
-                          onClick={() => setCollectorChangeModal({ isOpen: true, memberId: member.memberNumber })}
+                          onClick={() => setCollectorChangeModal({ isOpen: true, memberNumber: member.memberNumber })}
                           className="p-1 bg-purple-100 text-purple-600 rounded hover:bg-purple-200 transition-colors duration-200"
                         >
                           <span className="sr-only">Change Collector</span>
@@ -308,102 +319,7 @@ const MembersSection: React.FC<MembersSectionProps> = ({
                     <tr>
                       <td colSpan={6}>
                         <div className="p-4 bg-gray-50">
-                          <h4 className="font-semibold mb-2">Member Details</h4>
-                          <div className="grid grid-cols-2 gap-4">
-                            <div>
-                              <p><strong>Full Name:</strong> {member.fullName || 'N/A'}</p>
-                              <p><strong>Date of Birth:</strong> {member.dateOfBirth || 'N/A'}</p>
-                              <p><strong>Gender:</strong> {member.gender || 'N/A'}</p>
-                              <p><strong>Marital Status:</strong> {member.maritalStatus || 'N/A'}</p>
-                            </div>
-                            <div>
-                              <p><strong>Membership Type:</strong> {member.membershipType || 'N/A'}</p>
-                              <p><strong>Membership Status:</strong> {member.membershipStatus || 'N/A'}</p>
-                              <p><strong>Membership Start Date:</strong> {member.membershipStartDate || 'N/A'}</p>
-                              <p><strong>Membership End Date:</strong> {member.membershipEndDate || 'N/A'}</p>
-                            </div>
-                          </div>
-                          
-                          <h4 className="font-semibold mt-4 mb-2">Payment History</h4>
-                          {member.payments && member.payments.length > 0 ? (
-                            <table className="min-w-full">
-                              <thead>
-                                <tr className="bg-gray-200">
-                                  <th className="py-2 px-4 text-left">Date</th>
-                                  <th className="py-2 px-4 text-left">Amount</th>
-                                </tr>
-                              </thead>
-                              <tbody>
-                                {member.payments.map((payment, index) => (
-                                  <tr key={index} className="border-b">
-                                    <td className="py-2 px-4">{new Date(payment.date).toLocaleDateString()}</td>
-                                    <td className="py-2 px-4">£{payment.amount.toFixed(2)}</td>
-                                  </tr>
-                                ))}
-                              </tbody>
-                            </table>
-                          ) : (
-                            <p>No payments recorded for this member.</p>
-                          )}
-
-                          <div className="mt-4">
-                            <h4 className="font-semibold mb-2">Add Payment</h4>
-                            <div className="flex items-center">
-                              <input
-                                type="number"
-                                value={newPaymentAmounts[member.memberNumber || ''] || ''}
-                                onChange={(e) => setNewPaymentAmounts(prev => ({ ...prev, [member.memberNumber || '']: e.target.value }))}
-                                placeholder="Amount"
-                                className="p-2 border border-gray-300 rounded mr-2 flex-grow"
-                                step="0.01"
-                                min="0"
-                              />
-                              <button
-                                onClick={() => handleAddPayment(member.memberNumber || '')}
-                                className="px-4 py-2 bg-green-500 text-white rounded hover:bg-green-600"
-                                disabled={!newPaymentAmounts[member.memberNumber || ''] || parseFloat(newPaymentAmounts[member.memberNumber || '']) <= 0 || !member.memberNumber}
-                              >
-                                Add Payment
-                              </button>
-                            </div>
-                          </div>
-
-                          {currentUserRole === 'admin' && (
-                            <div className="mt-4">
-                              <h4 className="font-semibold mb-2">Admin Notes</h4>
-                              <ul className="list-disc list-inside">
-                                {member.notes && member.notes.length > 0 ? (
-                                  member.notes.map((note: Note, index: number) => (
-                                    <li key={index}>
-                                      <span className="font-medium">{new Date(note.date).toLocaleDateString()}: </span>
-                                      {note.content}
-                                    </li>
-                                  ))
-                                ) : (
-                                  <li>No notes available</li>
-                                )}
-                              </ul>
-                              <textarea
-                                value={newNote}
-                                onChange={(e) => setNewNote(e.target.value)}
-                                placeholder="Add a note"
-                                className="p-2 border border-gray-300 rounded w-full mt-2"
-                              />
-                              <button
-                                onClick={() => {
-                                  if (newNote.trim()) {
-                                    onAddNote(member.memberNumber, newNote);
-                                    setNewNote('');
-                                  } else {
-                                    alert('Please enter a note before adding.');
-                                  }
-                                }}
-                                className="px-4 py-2 bg-purple-500 text-white rounded hover:bg-purple-600 mt-2"
-                              >
-                                Add Note
-                              </button>
-                            </div>
-                          )}
+                          {/* Expanded member details */}
                         </div>
                       </td>
                     </tr>
@@ -415,19 +331,19 @@ const MembersSection: React.FC<MembersSectionProps> = ({
         </div>
       </div>
 
-      {/* Add CollectorChangeModal */}
+      {/* Collector Change Modal */}
       <CollectorChangeModal
         isOpen={collectorChangeModal.isOpen}
-        onClose={() => setCollectorChangeModal({ isOpen: false, memberId: null })}
+        onClose={() => setCollectorChangeModal({ isOpen: false, memberNumber: null })}
         onConfirm={(newCollectorId) => {
-          if (collectorChangeModal.memberId) {
-            handleCollectorChange(collectorChangeModal.memberId, newCollectorId);
+          if (collectorChangeModal.memberNumber) {
+            handleCollectorChange(collectorChangeModal.memberNumber, newCollectorId);
           }
         }}
         collectors={collectors}
       />
 
-      {/* Keep existing Delete Confirmation Dialog */}
+      {/* Delete Confirmation Dialog */}
       <Dialog open={!!memberToDelete} onClose={() => setMemberToDelete(null)}>
         <div className="fixed inset-0 bg-black/30" aria-hidden="true" />
         <div className="fixed inset-0 flex items-center justify-center p-4">

@@ -10,6 +10,26 @@ import {
   deleteField
 } from 'firebase/firestore';
 
+const generateRawMemberNumber = (
+  collectorName: string, 
+  collectorNumber: number, 
+  sequence: number
+): string => {
+  // Extract collector initials
+  const collectorInitials = collectorName
+    .split(' ')
+    .map(word => word[0])
+    .join('')
+    .toUpperCase();
+
+  // Format collector number and sequence
+  const formattedCollectorNumber = String(collectorNumber).padStart(2, '0');
+  const formattedSequence = String(sequence).padStart(3, '0');
+
+  // Combine components
+  return `${collectorInitials}${formattedCollectorNumber}${formattedSequence}`;
+};
+
 const updateMemberNumberOnCollectorChange = async (
   db: Firestore,
   memberNumber: string,
@@ -51,6 +71,7 @@ const migrateMemberNumbers = async (db: Firestore): Promise<void> => {
 };
 
 export { 
+  generateRawMemberNumber,
   updateMemberNumberOnCollectorChange,
   migrateMemberNumbers
 };
