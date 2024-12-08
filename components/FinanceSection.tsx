@@ -32,89 +32,55 @@ const FinanceSection: React.FC<FinanceSectionProps> = ({
     const balance = totalPayments - totalExpenses;
     return isNaN(balance) ? 0 : balance;
   }, [totalPayments, totalExpenses]);
+
   const [newExpenseAmount, setNewExpenseAmount] = useState<string>('');
   const [newExpenseDescription, setNewExpenseDescription] = useState<string>('');
   const [searchTerm, setSearchTerm] = useState<string>('');
   const [expenseSearchTerm, setExpenseSearchTerm] = useState<string>('');
 
-  const handleAddExpense = (e: React.FormEvent) => {
+  const handleAddExpense = async (e: React.FormEvent) => {
     e.preventDefault();
     const amount = parseFloat(newExpenseAmount);
     if (!isNaN(amount) && newExpenseDescription && onAddExpense) {
-      onAddExpense(amount, newExpenseDescription);
+      await onAddExpense(amount, newExpenseDescription);
       setNewExpenseAmount('');
       setNewExpenseDescription('');
     }
   };
 
   const formatDate = (date: Date | string | number): string => {
-    if (date instanceof Date) {
-      return date.toLocaleDateString('en-GB');
-    }
-    if (typeof date === 'string') {
-      try {
-        const parsedDate = JSON.parse(date);
-        if (parsedDate && parsedDate.date) {
-          return new Date(parsedDate.date).toLocaleDateString('en-GB');
-        }
-      } catch (e) {
-        // If JSON parsing fails, continue with normal date parsing
-      }
-      const parsedDate = new Date(date);
-      return isNaN(parsedDate.getTime()) ? 'Invalid Date' : parsedDate.toLocaleDateString('en-GB');
-    }
-    if (typeof date === 'number') {
-      const parsedDate = new Date(date);
-      return isNaN(parsedDate.getTime()) ? 'Invalid Date' : parsedDate.toLocaleDateString('en-GB');
-    }
-    return 'Invalid Date';
+    const parsedDate = new Date(date);
+    return isNaN(parsedDate.getTime()) ? 'Invalid Date' : parsedDate.toLocaleDateString('en-GB');
   };
 
   const formatAmount = (amount: number | string): string => {
-    if (typeof amount === 'string') {
-      try {
-        const parsedAmount = JSON.parse(amount);
-        if (parsedAmount && parsedAmount.amount) {
-          amount = parseFloat(parsedAmount.amount);
-        }
-      } catch (e) {
-        // If JSON parsing fails, continue with normal parsing
-      }
-    }
     const parsedAmount = typeof amount === 'string' ? parseFloat(amount) : amount;
     return isNaN(parsedAmount) ? '0.00' : parsedAmount.toFixed(2);
   };
 
   const filteredPayments = useMemo(() => {
     return payments
-      .filter(payment => 
-        (payment.memberNumber?.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        payment.memberNumber?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      .filter(payment =>
         formatDate(payment.date).toLowerCase().includes(searchTerm.toLowerCase()) ||
-        formatAmount(payment.amount).includes(searchTerm))
+        formatAmount(payment.amount).includes(searchTerm)
       )
       .sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime());
   }, [payments, searchTerm]);
 
   const filteredExpenses = useMemo(() => {
     return expenses
-      .filter(expense => 
+      .filter(expense =>
         formatDate(expense.date).toLowerCase().includes(expenseSearchTerm.toLowerCase()) ||
-        expense.description.toLowerCase().includes(expenseSearchTerm.toLowerCase()) ||
+        expense.description.toLowerCase().includes(expenseSearchTerm) ||
         formatAmount(expense.amount).includes(expenseSearchTerm)
       )
-      .sort((a, b) => {
-        const dateA = new Date(a.date);
-        const dateB = new Date(b.date);
-        return dateB.getTime() - dateA.getTime();
-      });
+      .sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime());
   }, [expenses, expenseSearchTerm]);
-
 
   return (
     <div className="space-y-6">
       <h2 className="text-2xl font-bold">Finance Section</h2>
-      
+
       {userRole === 'admin' && (
         <div className="bg-white p-6 rounded shadow">
           <h3 className="text-2xl font-bold mb-4">Account Summary</h3>

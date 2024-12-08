@@ -83,35 +83,50 @@ const CollectorsSectionItem: React.FC<{ collector: { name: string; members: Memb
 
   return (
     <li className="bg-white shadow-md rounded-lg p-4 mb-4">
-      <div 
-        className="flex justify-between items-center cursor-pointer" 
-        onClick={() => setIsExpanded(!isExpanded)}
-      >
-        <div className="flex items-center">
+      <div className="flex justify-between items-center">
+        <div className="flex items-center flex-grow">
           {isEditing ? (
-            <input
-              type="text"
-              value={editedName}
-              onChange={(e) => setEditedName(e.target.value)}
-              className="border rounded-md px-2 py-1"
-            />
+            <div className="flex items-center space-x-2 flex-grow">
+              <input
+                type="text"
+                value={editedName}
+                onChange={(e) => setEditedName(e.target.value)}
+                className="border rounded-md px-2 py-1 flex-grow"
+              />
+              <button 
+                onClick={handleSaveClick} 
+                className="px-3 py-1 bg-blue-500 text-white rounded-md hover:bg-blue-600 transition-colors"
+              >
+                Save
+              </button>
+            </div>
           ) : (
-            <h3 className="text-xl font-bold">{`${collector.number} - ${collector.name}`}</h3>
-          )}
-          {isEditing ? (
-            <button onClick={handleSaveClick} className="ml-2 px-3 py-1 bg-blue-500 text-white rounded-md focus:outline-none">
-              Save
-            </button>
-          ) : (
-            <button onClick={handleEditClick} className="ml-2 px-3 py-1 bg-gray-300 text-gray-700 rounded-md focus:outline-none">
-              Edit
-            </button>
+            <div className="flex items-center space-x-2 flex-grow">
+              <h3 className="text-xl font-bold">{`${collector.number} - ${collector.name}`}</h3>
+              <button 
+                onClick={handleEditClick} 
+                className="px-3 py-1 bg-gray-300 text-gray-700 rounded-md hover:bg-gray-400 transition-colors"
+              >
+                Edit
+              </button>
+            </div>
           )}
         </div>
         <div className="flex items-center">
           <span className="text-sm text-gray-500 mr-2">Members: {filteredMembers.length}</span>
-          <button className="text-blue-500 focus:outline-none">
-            {isExpanded ? '▲' : '▼'}
+          <button 
+            onClick={() => setIsExpanded(!isExpanded)} 
+            className="text-gray-500 hover:text-gray-700 transition-colors focus:outline-none"
+          >
+            {isExpanded ? (
+              <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 15l7-7 7 7" />
+              </svg>
+            ) : (
+              <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+              </svg>
+            )}
           </button>
         </div>
       </div>
@@ -130,7 +145,7 @@ const CollectorsSectionItem: React.FC<{ collector: { name: string; members: Memb
               </thead>
               <tbody>
                 {filteredMembers.map(member => (
-                  <tr key={member.id} className="border-b">
+                  <tr key={`${member.id}-${collector.number}`} className="border-b">
                     <td className="p-2">{member.name || member.fullName}</td>
                     <td className="p-2">{member.memberNumber}</td>
                     <td className="p-2">{member.email}</td>
