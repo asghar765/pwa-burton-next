@@ -1,15 +1,28 @@
 import React, { useMemo, useState } from 'react';
 import { Member } from '../types';
+import { generateRawMemberNumber } from '../utils/memberUtils';
 
 interface CollectorsSectionProps {
   members: Member[];
 }
 
-const CollectorsSectionItem: React.FC<{ collector: { name: string; members: Member[] }, searchTerm: string }> = ({ collector, searchTerm }) => {
+const CollectorsSectionItem: React.FC<{ collector: { name: string; members: Member[], number: string }, searchTerm: string }> = ({ collector, searchTerm }) => {
   const [isExpanded, setIsExpanded] = useState(false);
 
   const filteredMembers = useMemo(() => {
-    return collector.members.filter(member => 
+    return collector.members.map((member, index) => {
+      // Generate the raw member number using the new utility function
+      const memberNumber = generateRawMemberNumber(
+        collector.name, 
+        parseInt(collector.number, 10), 
+        index + 1
+      );
+
+      return {
+        ...member,
+        memberNumber
+      };
+    }).filter(member => 
       member.memberNumber.toLowerCase().includes(searchTerm.toLowerCase()) ||
       (member.name || member.fullName).toLowerCase().includes(searchTerm.toLowerCase())
     );
@@ -25,7 +38,7 @@ const CollectorsSectionItem: React.FC<{ collector: { name: string; members: Memb
         className="flex justify-between items-center cursor-pointer" 
         onClick={() => setIsExpanded(!isExpanded)}
       >
-        <h3 className="text-xl font-bold">{collector.name}</h3>
+        <h3 className="text-xl font-bold">{`${collector.number} - ${collector.name}`}</h3>
         <div className="flex items-center">
           <span className="text-sm text-gray-500 mr-2">Members: {filteredMembers.length}</span>
           <button className="text-blue-500 focus:outline-none">
@@ -53,7 +66,7 @@ const CollectorsSectionItem: React.FC<{ collector: { name: string; members: Memb
                     <td className="p-2">{member.memberNumber}</td>
                     <td className="p-2">{member.email}</td>
                     <td className="p-2">{member.mobileNo}</td>
-                    <td className="p-2">{`${member.address}, ${member.town}, ${member.postCode}`}</td>
+                    <td className="p-2">{member.address}</td>
                   </tr>
                 ))}
               </tbody>
@@ -81,7 +94,11 @@ const CollectorsSection: React.FC<CollectorsSectionProps> = ({ members }) => {
     });
 
     return Array.from(collectorMap.values())
-      .sort((a, b) => b.members.length - a.members.length);
+      .sort((a, b) => b.members.length - a.members.length)
+      .map((collector, index) => ({
+        ...collector,
+        number: String(index + 1).padStart(2, '0') // Add collector number
+      }));
   }, [members]);
 
   const filteredCollectors = useMemo(() => {

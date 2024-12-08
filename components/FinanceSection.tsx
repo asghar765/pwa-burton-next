@@ -89,7 +89,7 @@ const FinanceSection: React.FC<FinanceSectionProps> = ({
     return payments
       .filter(payment => 
         (payment.memberNumber?.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        payment.memberId?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        payment.memberNumber?.toLowerCase().includes(searchTerm.toLowerCase()) ||
         formatDate(payment.date).toLowerCase().includes(searchTerm.toLowerCase()) ||
         formatAmount(payment.amount).includes(searchTerm))
       )
@@ -163,7 +163,7 @@ const FinanceSection: React.FC<FinanceSectionProps> = ({
               {filteredPayments.map((payment) => (
                 <tr key={payment.id} className="border-b">
                   <td>{formatDate(payment.date)}</td>
-                  {userRole === 'admin' && <td>{payment.memberNumber || payment.memberId || 'N/A'}</td>}
+                  {userRole === 'admin' && <td>{payment.memberNumber || payment.memberNumber || 'N/A'}</td>}
                   <td className="text-right font-semibold">{currencySymbol}{formatAmount(payment.amount)}</td>
                 </tr>
               ))}

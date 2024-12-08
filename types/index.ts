@@ -1,8 +1,8 @@
 export interface Member {
+  [x: string]: any;
   id: string;
   fullName: string;
   email: string;
-  memberNumber: string;
   verified: boolean;
   address: string;
   postCode: string;
@@ -17,14 +17,10 @@ export interface Member {
   nextOfKinAddress: string;
   nextOfKinPhone: string;
   dependants: Array<{
-    name: string;
-    dateOfBirth: string;
-    gender: string;
-    category: string;
+    // redacted
   }>;
   spouses: Array<{
-    name: { value: string };
-    dateOfBirth: { value: string };
+    // redacted
   }>;
   membershipInfo: string;
   name?: string;
@@ -39,11 +35,16 @@ export interface Member {
   totalPayments?: number;
 }
 
+export interface NewMember extends Omit<Member, 'id'> {
+  // No changes needed here since 'id' is already omitted
+}
+
 export interface NewMember extends Omit<Member, 'id' | 'memberNumber'> {
   memberNumber?: string;
 }
 
-export interface MemberWithPayments extends Omit<Member, 'payments'> {
+export interface MemberWithPayments extends Member {
+  memberNumber: string; // Ensure this is defined
   payments: Payment[];
 }
 
@@ -58,8 +59,8 @@ export interface MembersSectionProps {
   onDeleteMember: (id: string) => Promise<void>;
   onRevokeMember: (id: string) => Promise<void>;
   currentUserRole: string;
-  onAddPayment: (memberId: string, payment: Omit<Payment, 'id'>) => Promise<void>;
-  onAddNote: (memberId: string, note: string) => Promise<void>;
+  onAddPayment: (memberNumber: string, payment: Omit<Payment, 'id'>) => Promise<void>;
+  onAddNote: (memberNumber: string, note: string) => Promise<void>;
   onUpdateUserRole: (userId: string, newRole: string) => Promise<void>;
 }
 
@@ -76,6 +77,7 @@ export interface Registration {
 }
 
 export interface Collector {
+  order: number;
   id: string;
   name: string;
   email: string;
@@ -84,7 +86,7 @@ export interface Collector {
 
 export interface Note {
   id: string;
-  memberId: string;
+  memberNumber: string;
   content: string;
   date: string; // ISO date string
 }
@@ -94,7 +96,6 @@ export interface Payment {
   amount: number;
   date: string; // ISO date string
   memberNumber: string;
-  memberId: string;
 }
 
 export interface User {
