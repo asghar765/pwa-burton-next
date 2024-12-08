@@ -1,6 +1,8 @@
 import React, { useMemo, useState } from 'react';
 import { Member } from '../types';
 import { generateRawMemberNumber } from '../utils/memberUtils';
+import { db } from '../firebase/clientApp'; // Import Firestore instance
+import { doc, updateDoc, setDoc, getDoc, collection, getDocs, query, where } from 'firebase/firestore'; // Import Firestore functions
 
 interface CollectorsSectionProps {
   members: Member[];
@@ -8,6 +10,8 @@ interface CollectorsSectionProps {
 
 const CollectorsSectionItem: React.FC<{ collector: { name: string; members: Member[], number: string }, searchTerm: string }> = ({ collector, searchTerm }) => {
   const [isExpanded, setIsExpanded] = useState(false);
+  const [isEditing, setIsEditing] = useState(false);
+  const [editedName, setEditedName] = useState(collector.name);
 
   const filteredMembers = useMemo(() => {
     return collector.members.map((member, index) => {
@@ -32,13 +36,78 @@ const CollectorsSectionItem: React.FC<{ collector: { name: string; members: Memb
     return null;
   }
 
+  const handleEditClick = () => {
+    setIsEditing(true);
+  };
+
+  const handleSaveClick = async () => {
+    // Sanitize the collector name to remove any invalid characters or extra spaces
+    const sanitizedName = editedName.replace(/\s+/g, ' ').trim().replace(/\//g, '-');
+
+    // Log the document ID and collection path before the update call
+    console.log(`Document ID: ${sanitizedName}, Collection Path: collectors`);
+
+    // Log the edited name before passing it to the update function
+    console.log(`Edited Name: ${sanitizedName}`);
+
+    try {
+      // Check if the document exists in the Firestore database
+      const collectorRef = doc(db, 'collectors', sanitizedName);
+      const collectorDoc = await getDoc(collectorRef);
+
+      if (!collectorDoc.exists()) {
+        // If the document does not exist, create it with the necessary fields
+        await setDoc(collectorRef, { name: sanitizedName });
+      } else {
+        // If the document exists, update it with the new collector name
+        await updateDoc(collectorRef, { name: sanitizedName });
+      }
+
+      // Update the collector field in the members collection
+      const membersRef = collection(db, 'members');
+      const q = query(membersRef, where('collector', '==', collector.name));
+      const querySnapshot = await getDocs(q);
+
+      querySnapshot.forEach(async (doc) => {
+        await updateDoc(doc.ref, { collector: sanitizedName });
+      });
+
+      // Update the local state
+      collector.name = sanitizedName;
+      setIsEditing(false);
+    } catch (error) {
+      // Log any errors that occur during the update process
+      console.error('Error updating collector name:', error);
+    }
+  };
+
   return (
     <li className="bg-white shadow-md rounded-lg p-4 mb-4">
       <div 
         className="flex justify-between items-center cursor-pointer" 
         onClick={() => setIsExpanded(!isExpanded)}
       >
-        <h3 className="text-xl font-bold">{`${collector.number} - ${collector.name}`}</h3>
+        <div className="flex items-center">
+          {isEditing ? (
+            <input
+              type="text"
+              value={editedName}
+              onChange={(e) => setEditedName(e.target.value)}
+              className="border rounded-md px-2 py-1"
+            />
+          ) : (
+            <h3 className="text-xl font-bold">{`${collector.number} - ${collector.name}`}</h3>
+          )}
+          {isEditing ? (
+            <button onClick={handleSaveClick} className="ml-2 px-3 py-1 bg-blue-500 text-white rounded-md focus:outline-none">
+              Save
+            </button>
+          ) : (
+            <button onClick={handleEditClick} className="ml-2 px-3 py-1 bg-gray-300 text-gray-700 rounded-md focus:outline-none">
+              Edit
+            </button>
+          )}
+        </div>
         <div className="flex items-center">
           <span className="text-sm text-gray-500 mr-2">Members: {filteredMembers.length}</span>
           <button className="text-blue-500 focus:outline-none">
