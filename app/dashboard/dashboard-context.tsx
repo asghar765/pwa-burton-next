@@ -93,9 +93,35 @@ export const DashboardProvider: React.FC<{ children: React.ReactNode }> = ({ chi
 
       const fetchedMembers = membersSnapshot.docs.map(doc => ({
         id: doc.id,
-        ...doc.data(),
-        memberNumber: doc.data().memberNumber || '',
-        payments: []
+        fullName: doc.data().fullName || '',
+        email: doc.data().email || '',
+        verified: doc.data().verified || false,
+        address: doc.data().address || '',
+        postCode: doc.data().postCode || '',
+        town: doc.data().town || '',
+        dateOfBirth: doc.data().dateOfBirth || '',
+        placeOfBirth: doc.data().placeOfBirth || '',
+        gender: doc.data().gender || '',
+        maritalStatus: doc.data().maritalStatus || '',
+        mobileNo: doc.data().mobileNo || '',
+        collector: doc.data().collector || '',
+        nextOfKinName: doc.data().nextOfKinName || '',
+        nextOfKinAddress: doc.data().nextOfKinAddress || '',
+        nextOfKinPhone: doc.data().nextOfKinPhone || '',
+        dependants: doc.data().dependants || [],
+        spouses: doc.data().spouses || [],
+        membershipInfo: doc.data().membershipInfo || '',
+        name: doc.data().name || '',
+        role: doc.data().role || '',
+        payments: doc.data().payments || [],
+        notes: doc.data().notes || [],
+        membershipType: doc.data().membershipType || '',
+        membershipStatus: doc.data().membershipStatus || '',
+        membershipStartDate: doc.data().membershipStartDate || '',
+        membershipEndDate: doc.data().membershipEndDate || '',
+        lastPaymentDate: doc.data().lastPaymentDate || '',
+        totalPayments: doc.data().totalPayments || 0,
+        memberNumber: doc.data().memberNumber || ''
       } as MemberWithPayments));
 
       setMembers(fetchedMembers);

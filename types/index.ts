@@ -43,7 +43,8 @@ export interface NewMember extends Omit<Member, 'id' | 'memberNumber'> {
   memberNumber?: string;
 }
 
-export interface MemberWithPayments extends Omit<Member, 'payments'> {
+export interface MemberWithPayments extends Member {
+  memberNumber: string; // Ensure this is defined
   payments: Payment[];
 }
 

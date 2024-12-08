@@ -94,13 +94,10 @@ export const DashboardLayout: React.FC = () => {
           <MembersSection
             members={members.map(member => {
               const memberWithPayments: MemberWithPayments = {
-                ...member,
                 id: member.id || '',
                 fullName: member.fullName || member.name || '',
                 email: member.email || '',
-                memberNumber: member.memberNumber || '',
                 verified: member.verified || false,
-                payments: member.payments || [],
                 address: member.address || '',
                 postCode: member.postCode || '',
                 town: member.town || '',
@@ -117,8 +114,17 @@ export const DashboardLayout: React.FC = () => {
                 spouses: member.spouses || [],
                 membershipInfo: member.membershipInfo || '',
                 name: member.name || '',
-                role: member.role || ''
-              } as MemberWithPayments;
+                role: member.role || '',
+                payments: member.payments || [],
+                notes: member.notes || [],
+                membershipType: member.membershipType || '',
+                membershipStatus: member.membershipStatus || '',
+                membershipStartDate: member.membershipStartDate || '',
+                membershipEndDate: member.membershipEndDate || '',
+                lastPaymentDate: member.lastPaymentDate || '',
+                totalPayments: member.totalPayments || 0,
+                memberNumber: member.memberNumber || ''
+              };
               return memberWithPayments;
             }) as MemberWithPayments[]}
             firebaseUsers={firebaseUsers}
